@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.tfg.inhometfgcarloshernandez.domain.errores.CustomedException;
+import org.tfg.inhometfgcarloshernandez.domain.errores.NotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -15,4 +16,9 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleBadUserException(NotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
 }

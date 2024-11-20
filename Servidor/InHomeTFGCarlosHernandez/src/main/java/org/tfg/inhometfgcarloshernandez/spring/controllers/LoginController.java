@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tfg.inhometfgcarloshernandez.domain.modelo.Usuario;
-import org.tfg.inhometfgcarloshernandez.domain.modelo.mappers.UsuarioMappers;
+import org.tfg.inhometfgcarloshernandez.domain.model.Usuario;
 import org.tfg.inhometfgcarloshernandez.domain.servicios.UsuarioServicios;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.LoginRequestDTO;
@@ -31,12 +30,9 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
-        Usuario usuario = this.usuarioService.findByEmail(loginRequest.getCorreo());
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } else {
-            LoginResponseDTO responseDTO = new LoginResponseDTO(usuario.getEstado());
-            return ResponseEntity.ok(responseDTO);
-        }
+        Usuario usuario = this.usuarioService.findByEmail(loginRequest.getCorreo()); // Lanza NotFoundException si no encuentra
+        LoginResponseDTO responseDTO = new LoginResponseDTO(usuario.getId());
+        return ResponseEntity.ok(responseDTO);
     }
+
 }

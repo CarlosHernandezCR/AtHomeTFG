@@ -1,4 +1,4 @@
-package org.tfg.inhometfgcarloshernandez.domain.modelo;
+package org.tfg.inhometfgcarloshernandez.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

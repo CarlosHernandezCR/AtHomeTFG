@@ -2,11 +2,12 @@ package org.tfg.inhometfgcarloshernandez.spring.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDTO {
-    private int id;
+public class UsuarioCasaDTO {
+    private String nombre;
+    private String estado;
 }

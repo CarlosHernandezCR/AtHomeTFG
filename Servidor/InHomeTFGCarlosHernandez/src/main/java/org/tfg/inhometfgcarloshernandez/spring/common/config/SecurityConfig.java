@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
@@ -22,7 +23,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
+                            .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
+                            .requestMatchers(GET, ConstantesServer.CASAPATH+ConstantesServer.CASAPRIMERAPANTALLA).permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
