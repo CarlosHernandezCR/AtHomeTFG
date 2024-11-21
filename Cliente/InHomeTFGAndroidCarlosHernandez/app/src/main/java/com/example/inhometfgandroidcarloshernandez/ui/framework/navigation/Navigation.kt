@@ -12,8 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.inhometfgandroidcarloshernandez.ui.common.BottomBar
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
-import com.example.inhometfgandroidcarloshernandez.ui.framework.navigation.screensBottomBar
-import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.portada.PortadaActivity
+import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.login.PortadaActivity
 import kotlinx.coroutines.launch
 
 @Composable
