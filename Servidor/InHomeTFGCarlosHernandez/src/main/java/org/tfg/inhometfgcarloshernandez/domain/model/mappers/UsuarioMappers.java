@@ -12,6 +12,6 @@ public interface UsuarioMappers {
     @Mapping(target = "id", ignore = true)
     UsuarioEntity toUsuarioEntity(Usuario usuario);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id")
     Usuario toUsuario(UsuarioEntity usuarioEntity);
 }

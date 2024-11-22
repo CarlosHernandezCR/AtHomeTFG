@@ -30,7 +30,7 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
-        Usuario usuario = this.usuarioService.findByEmail(loginRequest.getCorreo()); // Lanza NotFoundException si no encuentra
+        Usuario usuario = this.usuarioService.findByEmail(loginRequest.getCorreo());
         LoginResponseDTO responseDTO = new LoginResponseDTO(usuario.getId());
         return ResponseEntity.ok(responseDTO);
     }
