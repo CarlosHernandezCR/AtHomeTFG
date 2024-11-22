@@ -31,13 +31,13 @@ class LoginViewModel @Inject constructor(
 
     private fun login(correo: String) {
         viewModelScope.launch {
-            _uiState.value.estado.let {
+            _uiState.value.id.let {
                 login.invoke(correo).collect { result ->
                     when (result) {
                         is NetworkResult.Success -> {
                             val loginResponse = result.data
-                            val estado = loginResponse?.estado
-                            _uiState.update { it.copy(estado = estado, loading = false) }
+                            val id = loginResponse?.id ?: 0
+                            _uiState.update { it.copy(id = id, isLoading = false) }
                         }
                         is NetworkResult.Error -> {
                             result.message?.let {
@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor(
                             }
                         }
                         is NetworkResult.Loading -> {
-                            _uiState.update { it.copy(loading = true) }
+                            _uiState.update { it.copy(isLoading = true) }
                         }
                     }
                 }
@@ -56,7 +56,7 @@ class LoginViewModel @Inject constructor(
 
     private fun showError(error: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(error = error, loading = false) }
+            _uiState.update { it.copy(error = error, isLoading = false) }
         }
     }
 

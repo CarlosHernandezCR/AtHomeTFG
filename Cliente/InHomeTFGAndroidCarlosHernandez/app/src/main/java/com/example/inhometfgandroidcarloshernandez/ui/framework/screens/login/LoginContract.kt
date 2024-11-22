@@ -7,8 +7,8 @@ interface LoginContract {
     }
 
     data class PortadaState(
-        val loading: Boolean = false,
+        val isLoading: Boolean = false,
         val error: String? = null,
-        val estado: String? = null
+        val id: Int = 0
     )
 }

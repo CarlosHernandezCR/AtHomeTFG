@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun PortadaActivity(
+fun LoginActivity(
     viewModel: LoginViewModel = hiltViewModel(),
-    onNavigateLogin: (String) -> Unit = {},
+    onNavigateLogin: (Int) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
     innerPadding: PaddingValues,
 ) {
@@ -25,25 +25,31 @@ fun PortadaActivity(
         }
     }
 
+    LaunchedEffect(uiState.id) {
+        if(uiState.id != 0) {
+            onNavigateLogin(uiState.id)
+        }
+    }
+
     Box(
         Modifier
             .fillMaxSize()
             .padding(paddingValues = innerPadding)
     ) {
         Portada(
-            estado = uiState.estado ?: "",
             onCorreoChange = { correo ->
                 viewModel.handleEvent(LoginContract.PortadaEvent.Login(correo))
-            }
+            },
+            isLoading = uiState.isLoading
         )
     }
 }
 
 @Composable
 fun Portada(
-    estado: String,
     onCorreoChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: Boolean
 ) {
     var correo by remember { mutableStateOf("") }
 
@@ -68,7 +74,9 @@ fun Portada(
             Text("Enviar")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = estado)
+        if (isLoading) {
+            CircularProgressIndicator()
+        }
     }
 }
 
@@ -76,7 +84,7 @@ fun Portada(
 @Composable
 fun PortadaPreview() {
     Portada(
-        estado = "DURMIENDO",
-        onCorreoChange = {}
+        onCorreoChange = {},
+        isLoading = false
     )
 }

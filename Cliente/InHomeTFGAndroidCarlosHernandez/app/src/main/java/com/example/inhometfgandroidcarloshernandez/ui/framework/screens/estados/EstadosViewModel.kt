@@ -3,6 +3,7 @@ package com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.inhometfgandroidcarloshernandez.data.model.response.PantallaEstadosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.GetHomeDataUseCase
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,34 +21,28 @@ class EstadosViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EstadosContract.EstadosState())
     val uiState: StateFlow<EstadosContract.EstadosState> = _uiState.asStateFlow()
 
-    init {
-        getHomeData()
+    fun handleEvent(event: EstadosContract.EstadosEvent) {
+        when (event) {
+            is EstadosContract.EstadosEvent.LoadCasa -> getHomeData(event.id)
+            is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(error = null)
+        }
     }
-    //todo Pasar el id del usuario desde la pantalla de login y hacer la llamada
-    private fun getHomeData() {
-//        viewModelScope.launch {
-//            _uiState.value = _uiState.value.copy(loading = true)
-//            when (val result = getHomeDataUseCase()) {
-//                is NetworkResult.Success -> {
-//                    val data = result.data
-//                    _uiState.value = _uiState.value.copy(
-//                        loading = false,
-//                        nombreCasa = data?.nombreCasa,
-//                        direccion = data?.direccion,
-//                        usuariosCasa = data?.usuariosCasa ?: emptyList(),
-//                        estadoActual = data?.estadoActual
-//                    )
-//                }
-//                is NetworkResult.Error -> {
-//                    _uiState.value = _uiState.value.copy(
-//                        loading = false,
-//                        error = result.message
-//                    )
-//                }
-//                is NetworkResult.Loading -> {
-//                    _uiState.value = _uiState.value.copy(loading = true)
-//                }
-//            }
-//        }
+
+    private fun getHomeData(id:Int) {
+        viewModelScope.launch {
+            getHomeDataUseCase.invoke(id).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiState.value = EstadosContract.EstadosState(pantallaEstados = result.data ?: PantallaEstadosResponseDTO())
+                    }
+                    is NetworkResult.Error -> {
+                        _uiState.value = EstadosContract.EstadosState(error = result.message)
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiState.value = EstadosContract.EstadosState(isLoading = true)
+                    }
+                }
+            }
+        }
     }
 }

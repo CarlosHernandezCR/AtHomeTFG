@@ -1,18 +1,18 @@
 package com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados
 
+import com.example.inhometfgandroidcarloshernandez.data.model.response.PantallaEstadosResponseDTO
+
 interface EstadosContract {
 
     data class EstadosState(
-        val loading: Boolean = false,
+        val isLoading: Boolean = false,
         val error: String? = null,
-        val nombreCasa: String? = null,
-        val direccion: String? = null,
-        val usuariosCasa: List<UsuarioCasa> = emptyList(),
-        val estadoActual: String? = null
+        val pantallaEstados: PantallaEstadosResponseDTO = PantallaEstadosResponseDTO()
     )
 
-    data class UsuarioCasa (
-        val nombre: String = "",
-        val estado: String = "",
-    )
+    sealed class EstadosEvent {
+        data class LoadCasa(val id: Int) : EstadosEvent()
+        data object ErrorMostrado: EstadosEvent()
+
+    }
 }
