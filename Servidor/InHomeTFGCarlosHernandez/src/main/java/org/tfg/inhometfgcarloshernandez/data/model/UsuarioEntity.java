@@ -16,25 +16,25 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.common.constantes.UsuarioConstantes;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "USUARIO")
+@Table(name = UsuarioConstantes.TABLE_NAME)
 public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = UsuarioConstantes.COLUMN_ID, nullable = false)
     private Integer id;
-    @Column(name = "nombre", nullable = false, length = 100)
-    private @Size(max = 100)
-    @NotNull String nombre;
-    @Column(name = "correo", length = 100)
-    private @Size(max = 100) String correo;
-    @Column(name = "telefono", length = 15)
-    private @Size(max = 15) String telefono;
-    @Column(name = "estado_actual", nullable = false)
+    @Column(name = UsuarioConstantes.COLUMN_NOMBRE, nullable = false, length = 100)
+    private String nombre;
+    @Column(name = UsuarioConstantes.COLUMN_CORREO, length = 100)
+    private String correo;
+    @Column(name = UsuarioConstantes.COLUMN_TELEFONO)
+    private String telefono;
+    @Column(name = UsuarioConstantes.ESTADO_ACTUAL, nullable = false)
     private String estado;
 
 }

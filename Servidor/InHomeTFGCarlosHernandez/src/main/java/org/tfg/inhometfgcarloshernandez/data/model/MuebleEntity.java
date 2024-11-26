@@ -1,36 +1,27 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package org.tfg.inhometfgcarloshernandez.data.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.common.constantes.MuebleConstantes;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "MUEBLE")
+@Table(name = MuebleConstantes.TABLE_NAME)
 public class MuebleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = MuebleConstantes.COLUMN_ID, nullable = false)
     private Integer id;
-    @Column(name = "nombre", nullable = false, length = 100)
-    private @Size(max = 100)
-    @NotNull String nombre;
-    @Column(name = "nombre_habitacion", nullable = false, length = 100)
-    private @Size(max = 100)
-    @NotNull String nombre_habitacion;
+
+    @Column(name = MuebleConstantes.COLUMN_NOMBRE, nullable = false, length = 100)
+    private @Size(max = 100) @NotNull String nombre;
+
+    @Column(name = MuebleConstantes.COLUMN_NOMBRE_HABITACION, nullable = false, length = 100)
+    private @Size(max = 100) @NotNull String nombre_habitacion;
 }

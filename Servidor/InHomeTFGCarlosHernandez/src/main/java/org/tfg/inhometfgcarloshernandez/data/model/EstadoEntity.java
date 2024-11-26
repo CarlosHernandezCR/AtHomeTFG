@@ -7,14 +7,15 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.common.constantes.EstadosConstantes;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "ESTADOS")
+@Table(name = EstadosConstantes.TABLE_NAME)
 public class EstadoEntity {
     @Id
-    @Column(name = "descripcion", nullable = false)
+    @Column(name = EstadosConstantes.COLUMN_DESCRIPCION, nullable = false)
     private String descripcion;
 }

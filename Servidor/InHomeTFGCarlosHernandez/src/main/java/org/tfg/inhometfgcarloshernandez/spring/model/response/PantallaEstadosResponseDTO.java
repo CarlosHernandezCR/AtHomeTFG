@@ -13,7 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PantallaEstadosResponseDTO {
     private String estado;
+    private Integer idCasa;
     private String nombreCasa;
     private String direccion;
     private List<UsuarioCasaDTO> usuariosCasa;
+    private List<String> estadosDisponibles;
 }

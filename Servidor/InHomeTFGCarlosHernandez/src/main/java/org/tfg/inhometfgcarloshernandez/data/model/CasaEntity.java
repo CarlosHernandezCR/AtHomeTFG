@@ -6,22 +6,23 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.common.constantes.CasaConstantes;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "CASA")
+@Table(name = CasaConstantes.TABLE_NAME)
 public class CasaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = CasaConstantes.COLUMN_ID, nullable = false)
     private Integer id;
-    @Column(name = "direccion", nullable = false, length = 255)
+    @Column(name = CasaConstantes.COLUMN_DIRECCION, nullable = false)
     private @Size(max = 255)
     @NotNull String direccion;
-    @Column(name = "codigo", nullable = false)
+    @Column(name = CasaConstantes.COLUMN_CODIGO, nullable = false)
     private String codigo;
-    @Column(name = "nombre", nullable = false)
+    @Column(name = CasaConstantes.COLUMN_NOMBRE, nullable = false)
     private String nombre;
 }
