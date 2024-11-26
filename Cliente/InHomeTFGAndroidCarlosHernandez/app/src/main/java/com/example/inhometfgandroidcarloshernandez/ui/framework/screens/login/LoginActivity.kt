@@ -8,15 +8,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 
 @Composable
 fun LoginActivity(
     viewModel: LoginViewModel = hiltViewModel(),
-    onNavigateLogin: (Int) -> Unit = {},
+    onNavigateLogin: (id: Int) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
     innerPadding: PaddingValues,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val loginResult by viewModel.loginResult.collectAsState()
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
@@ -25,12 +27,11 @@ fun LoginActivity(
         }
     }
 
-    LaunchedEffect(uiState.id) {
-        if(uiState.id != 0) {
-            onNavigateLogin(uiState.id)
+    LaunchedEffect(loginResult) {
+        loginResult?.let { id ->
+            onNavigateLogin(id)
         }
     }
-
     Box(
         Modifier
             .fillMaxSize()
@@ -51,31 +52,41 @@ fun Portada(
     modifier: Modifier = Modifier,
     isLoading: Boolean
 ) {
-    var correo by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("carlos@ejemplo.com") }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        TextField(
-            value = correo,
-            onValueChange = { correo = it },
-            label = { Text("Correo") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = { onCorreoChange(correo) },
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Enviar")
+            TextField(
+                value = correo,
+                onValueChange = { correo = it },
+                label = { Text("Correo") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { onCorreoChange(correo) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Enviar")
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
         if (isLoading) {
-            CircularProgressIndicator()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 }

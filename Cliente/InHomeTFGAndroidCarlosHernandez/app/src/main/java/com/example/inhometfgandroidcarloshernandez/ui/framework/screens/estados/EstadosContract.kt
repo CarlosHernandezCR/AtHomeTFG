@@ -6,13 +6,18 @@ interface EstadosContract {
 
     data class EstadosState(
         val isLoading: Boolean = false,
-        val error: String? = null,
+        val mensaje: String? = null,
         val pantallaEstados: PantallaEstadosResponseDTO = PantallaEstadosResponseDTO()
+    )
+
+    data class CambiarEstadoState(
+        val isLoading: Boolean = false,
+        val mensaje: String? = null
     )
 
     sealed class EstadosEvent {
         data class LoadCasa(val id: Int) : EstadosEvent()
         data object ErrorMostrado: EstadosEvent()
-
+        data class CambiarEstado(val estado: String, val id: Int) : EstadosEvent()
     }
 }

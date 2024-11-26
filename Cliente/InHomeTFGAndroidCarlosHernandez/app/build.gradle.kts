@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     kotlin("kapt")
     alias(libs.plugins.daggerHilt)
+
 }
 
 android {
@@ -83,4 +84,7 @@ dependencies {
     implementation(libs.datastore)
     //jwt
     implementation(libs.jwt)
+
+    implementation (libs.androidx.material.icons.extended)
+    implementation (libs.material3)
 }

@@ -26,13 +26,13 @@ fun BottomBar(
                 label = { Text(screen.route) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
-                    navController.navigate(screen.route) {
+                    navController.navigate(ConstantesPantallas.LOGIN) {
                         popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                            inclusive = true
                         }
                         launchSingleTop = true
-                        restoreState = true
                     }
+
                 }
             )
 

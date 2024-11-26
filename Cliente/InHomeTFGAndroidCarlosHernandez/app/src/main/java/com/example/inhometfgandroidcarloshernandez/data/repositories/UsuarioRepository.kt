@@ -1,5 +1,6 @@
 package com.example.inhometfgandroidcarloshernandez.data.repositories
 
+import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.remote.datasource.UsuarioRemoteDataSource
@@ -17,4 +18,11 @@ class UsuarioRepository @Inject constructor(
         emit(NetworkResult.Loading())
         val result = remoteDataSource.login(LoginRequestDTO(correo))
         emit(result)
-    }.flowOn(Dispatchers.IO)}
+    }.flowOn(Dispatchers.IO)
+
+    fun cambiarEstado(estado: String, id:Int): Flow<NetworkResult<Boolean>> = flow {
+        emit(NetworkResult.Loading())
+        val result = remoteDataSource.cambiarEstado(CambiarEstadoRequestDTO(estado, id))
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+}

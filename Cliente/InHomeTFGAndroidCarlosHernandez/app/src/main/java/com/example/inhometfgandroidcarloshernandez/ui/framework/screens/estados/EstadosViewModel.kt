@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.inhometfgandroidcarloshernandez.data.model.response.PantallaEstadosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.GetHomeDataUseCase
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
+import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.ChangeStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,16 +16,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EstadosViewModel @Inject constructor(
-    private val getHomeDataUseCase: GetHomeDataUseCase
+    private val getHomeDataUseCase: GetHomeDataUseCase,
+    private val changeStateUseCase: ChangeStateUseCase,
 ) : ViewModel() {
+
 
     private val _uiState = MutableStateFlow(EstadosContract.EstadosState())
     val uiState: StateFlow<EstadosContract.EstadosState> = _uiState.asStateFlow()
 
+    private val _uiStateEstado = MutableStateFlow(EstadosContract.CambiarEstadoState())
+    val uiStateEstado: StateFlow<EstadosContract.CambiarEstadoState> = _uiStateEstado.asStateFlow()
+
     fun handleEvent(event: EstadosContract.EstadosEvent) {
         when (event) {
             is EstadosContract.EstadosEvent.LoadCasa -> getHomeData(event.id)
-            is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(error = null)
+            is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
+            is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.id)
         }
     }
 
@@ -33,13 +40,37 @@ class EstadosViewModel @Inject constructor(
             getHomeDataUseCase.invoke(id).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        _uiState.value = EstadosContract.EstadosState(pantallaEstados = result.data ?: PantallaEstadosResponseDTO())
+                        val datosCasa = result.data ?: PantallaEstadosResponseDTO()
+                        _uiState.value = EstadosContract.EstadosState(
+                            isLoading = false,
+                            pantallaEstados = datosCasa
+                        )
                     }
                     is NetworkResult.Error -> {
-                        _uiState.value = EstadosContract.EstadosState(error = result.message)
+                        _uiState.value = EstadosContract.EstadosState(mensaje = result.message)
                     }
                     is NetworkResult.Loading -> {
                         _uiState.value = EstadosContract.EstadosState(isLoading = true)
+                    }
+                }
+            }
+        }
+    }
+    private fun cambiarEstado(estado:String, id:Int){
+        viewModelScope.launch {
+            changeStateUseCase.invoke(estado,id).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(
+                            isLoading = false,
+                            mensaje = "Estado cambiado correctamente"
+                        )
+                    }
+                    is NetworkResult.Error -> {
+                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(mensaje = result.message)
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(isLoading = true)
                     }
                 }
             }

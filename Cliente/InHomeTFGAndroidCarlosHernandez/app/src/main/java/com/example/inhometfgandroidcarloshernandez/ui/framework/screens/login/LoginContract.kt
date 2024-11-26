@@ -9,6 +9,5 @@ interface LoginContract {
     data class PortadaState(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val id: Int = 0
     )
 }
