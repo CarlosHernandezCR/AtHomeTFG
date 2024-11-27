@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
-import org.tfg.inhometfgcarloshernandez.data.model.EstadoEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.EstadosUsuarioEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 import org.tfg.inhometfgcarloshernandez.data.repositories.CasaRepository;
@@ -24,7 +23,6 @@ public class CasaServicios {
     private final UsuarioRepository usuarioRepository;
     private final CasaRepository casaRepository;
     private final EstadosUsuariosRepository estadosUsuariosRepository;
-    private final UsuarioServicios usuarioServicios;
 
     public PantallaEstadosResponseDTO getDatosPrimeraPantalla(Integer id) {
         UsuarioEntity usuario = usuarioRepository.findById(id)
