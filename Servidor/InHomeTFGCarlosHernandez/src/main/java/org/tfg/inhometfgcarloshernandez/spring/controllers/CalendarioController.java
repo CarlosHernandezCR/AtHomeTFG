@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tfg.inhometfgcarloshernandez.domain.servicios.EventosServicios;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
-import org.tfg.inhometfgcarloshernandez.spring.model.request.GetEventosMesRequestDTO;
-import org.tfg.inhometfgcarloshernandez.spring.model.response.GetEventosMesResponseDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.request.DiasEventosRequestDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.response.DiasEventosResponseDTO;
 
 import static org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer.GET_EVENTOS_MES;
 
@@ -21,8 +21,8 @@ public class CalendarioController {
         this.eventosServicios = eventosServicios;
     }
 
-    @GetMapping(GET_EVENTOS_MES)
-    public ResponseEntity<GetEventosMesResponseDTO> getEventosMes(@RequestBody GetEventosMesRequestDTO getEventosMesRequestDTO) {
+    @PostMapping(GET_EVENTOS_MES)
+    public ResponseEntity<DiasEventosResponseDTO> getEventosMes(@RequestBody DiasEventosRequestDTO getEventosMesRequestDTO) {
         return ResponseEntity.ok(eventosServicios.getEventosMes(getEventosMesRequestDTO.getIdCasa(), getEventosMesRequestDTO.getMes(), getEventosMesRequestDTO.getAnio()));
     }
 }

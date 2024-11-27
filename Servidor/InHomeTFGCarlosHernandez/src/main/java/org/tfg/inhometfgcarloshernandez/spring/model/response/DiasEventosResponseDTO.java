@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetEventosMesResponseDTO {
+public class DiasEventosResponseDTO {
     private List<Integer> diasConEvento;
 }

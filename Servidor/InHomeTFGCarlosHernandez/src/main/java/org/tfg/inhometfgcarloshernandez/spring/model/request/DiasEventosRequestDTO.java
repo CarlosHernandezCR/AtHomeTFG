@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class GetEventosMesRequestDTO {
+public class DiasEventosRequestDTO {
     private int idCasa;
     private int mes;
     private int anio;
