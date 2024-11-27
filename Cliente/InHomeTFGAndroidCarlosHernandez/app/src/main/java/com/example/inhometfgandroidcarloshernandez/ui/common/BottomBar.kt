@@ -13,11 +13,11 @@ import com.example.inhometfgandroidcarloshernandez.ui.framework.navigation.Scree
 
 @Composable
 fun BottomBar(
-    navController : NavController,
-    screens : List<Screens>,
-
-    ) {
-    NavigationBar{
+    navController: NavController,
+    screens: List<Screens>,
+    onLogout: () -> Unit
+) {
+    NavigationBar {
         val state = navController.currentBackStackEntryAsState()
         val currentDestination = state.value?.destination
         screens.forEach { screen ->
@@ -26,16 +26,24 @@ fun BottomBar(
                 label = { Text(screen.route) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
-                    navController.navigate(ConstantesPantallas.LOGIN) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
+                    if (screen.route == ConstantesPantallas.LOGIN) {
+                        onLogout()
+                        navController.navigate(ConstantesPantallas.LOGIN) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
-                        launchSingleTop = true
+                    } else {
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
-
                 }
             )
-
         }
     }
 }

@@ -33,10 +33,14 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
         }
     }
 
+    val onLogout: () -> Unit = {
+        globalViewModel.updateIdUsuario(0)
+//        globalViewModel.updateIdCasa(0)
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BottomBar(navController = navController, screens = screensBottomBar) }
+        bottomBar = { BottomBar(navController = navController, screens = screensBottomBar, onLogout = onLogout) }
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -55,16 +59,18 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
 
             composable(ConstantesPantallas.CASA) {
                 EstadosActivity(
-                    idUsuario = globalViewModel.idUsuario,
-                    innerPadding = paddingValues
-                )
+                    globalViewModel=globalViewModel,
+                    innerPadding = paddingValues,
+                    showSnackbar = showSnackbar,
+                    )
             }
 
             composable(ConstantesPantallas.CALENDARIO) {
                 CalendarioActivity(
-                    idUsuario = globalViewModel.idUsuario,
-                    idCasa = globalViewModel.idCasa,
-                    innerPadding = paddingValues)
+                    globalViewModel = globalViewModel,
+                    innerPadding = paddingValues,
+                    showSnackbar = showSnackbar,
+                )
             }
         }
     }

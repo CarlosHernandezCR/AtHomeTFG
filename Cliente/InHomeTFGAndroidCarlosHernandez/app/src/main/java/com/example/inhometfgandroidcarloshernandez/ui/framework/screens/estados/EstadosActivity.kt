@@ -22,26 +22,34 @@ import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 
 @Composable
 fun EstadosActivity(
-    idUsuario: Int,
+    globalViewModel: GlobalViewModel,
     showSnackbar: (String) -> Unit = {},
     viewModel: EstadosViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val globalViewModel = hiltViewModel<GlobalViewModel>()
+    val uiStateEstado by viewModel.uiStateEstado.collectAsState()
 
-    LaunchedEffect(idUsuario) {
-        viewModel.handleEvent(EstadosContract.EstadosEvent.LoadCasa(idUsuario))
+    LaunchedEffect(globalViewModel.idUsuario) {
+        viewModel.handleEvent(EstadosContract.EstadosEvent.LoadCasa(globalViewModel.idUsuario))
     }
 
     LaunchedEffect(uiState.pantallaEstados) {
-        globalViewModel.updateIdCasa(uiState.pantallaEstados.idCasa)
+        if (uiState.pantallaEstados.idCasa != 0) {
+            globalViewModel.updateIdCasa(uiState.pantallaEstados.idCasa)
+        }
     }
 
     LaunchedEffect(uiState.mensaje) {
         uiState.mensaje?.let {
             showSnackbar(it)
             viewModel.handleEvent(EstadosContract.EstadosEvent.ErrorMostrado)
+        }
+    }
+    LaunchedEffect(uiStateEstado.mensaje) {
+        uiState.mensaje?.let {
+            showSnackbar(it)
+            viewModel.handleEvent(EstadosContract.EstadosEvent.ErrorMostradoEstado)
         }
     }
 
@@ -63,9 +71,10 @@ fun EstadosActivity(
                 estadosDisponibles = uiState.pantallaEstados.estadosDisponibles,
                 cambioEstado = { nuevoEstado ->
                     viewModel.handleEvent(
-                        EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, idUsuario)
+                        EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, globalViewModel.idUsuario)
                     )
-                }
+                },
+                cargandoEstado = uiStateEstado.isLoading,
             )
         }
     }
@@ -79,6 +88,7 @@ fun PantallaEstados(
     estadoActual: String,
     estadosDisponibles: List<String>,
     cambioEstado: (String) -> Unit,
+    cargandoEstado: Boolean,
 ) {
     var estadoSeleccionado by remember { mutableStateOf(estadoActual) }
 
@@ -96,17 +106,20 @@ fun PantallaEstados(
                 .weight(1f)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        ComboBox(
-            items = estadosDisponibles,
-            selectedItem = estadoSeleccionado,
-            onItemSelected = { nuevoEstado ->
-                if (estadoSeleccionado != nuevoEstado) {
-                    estadoSeleccionado = nuevoEstado
-                    cambioEstado(nuevoEstado)
+        if (cargandoEstado) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else{
+            ComboBox(
+                items = estadosDisponibles,
+                selectedItem = estadoSeleccionado,
+                onItemSelected = { nuevoEstado ->
+                    if (estadoSeleccionado != nuevoEstado) {
+                        estadoSeleccionado = nuevoEstado
+                        cambioEstado(nuevoEstado)
+                    }
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+            )
+        }
     }
 }
 
@@ -149,7 +162,6 @@ fun ComboBox(
     items: List<String>,
     selectedItem: String,
     onItemSelected: (String) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val backgroundColor = when (selectedItem) {
         "En casa" -> Color.Green

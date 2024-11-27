@@ -19,5 +19,7 @@ interface EstadosContract {
         data class LoadCasa(val id: Int) : EstadosEvent()
         data object ErrorMostrado: EstadosEvent()
         data class CambiarEstado(val estado: String, val id: Int) : EstadosEvent()
+        data object ErrorMostradoEstado: EstadosEvent()
+
     }
 }

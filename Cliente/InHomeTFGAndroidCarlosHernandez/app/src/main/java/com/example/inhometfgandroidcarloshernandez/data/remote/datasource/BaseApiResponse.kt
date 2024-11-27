@@ -10,7 +10,7 @@ abstract class BaseApiResponse {
 
 
     suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
-        return try {
+        try {
             val response = apiCall()
             if (response.isSuccessful) {
                 val body = response.body()

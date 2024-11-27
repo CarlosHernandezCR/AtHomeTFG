@@ -27,10 +27,12 @@ class EstadosViewModel @Inject constructor(
     private val _uiStateEstado = MutableStateFlow(EstadosContract.CambiarEstadoState())
     val uiStateEstado: StateFlow<EstadosContract.CambiarEstadoState> = _uiStateEstado.asStateFlow()
 
+
     fun handleEvent(event: EstadosContract.EstadosEvent) {
         when (event) {
             is EstadosContract.EstadosEvent.LoadCasa -> getHomeData(event.id)
             is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
+            is EstadosContract.EstadosEvent.ErrorMostradoEstado -> _uiStateEstado.value = _uiStateEstado.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.id)
         }
     }

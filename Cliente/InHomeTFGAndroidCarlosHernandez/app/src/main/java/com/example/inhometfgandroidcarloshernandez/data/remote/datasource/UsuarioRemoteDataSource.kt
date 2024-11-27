@@ -16,7 +16,6 @@ class UsuarioRemoteDataSource @Inject constructor(
     suspend fun login(loginRequestDTO: LoginRequestDTO): NetworkResult<LoginResponseDTO> =
         safeApiCall{ usuarioService.login(loginRequestDTO) }
 
-
     suspend fun cambiarEstado(cambiarEstadoRequestDTO : CambiarEstadoRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody{ usuarioService.cambiarEstado(cambiarEstadoRequestDTO) }
 
