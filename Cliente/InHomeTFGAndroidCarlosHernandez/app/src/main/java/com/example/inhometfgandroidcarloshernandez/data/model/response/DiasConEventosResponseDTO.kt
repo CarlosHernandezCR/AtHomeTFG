@@ -1,5 +1,5 @@
 package com.example.inhometfgandroidcarloshernandez.data.model.response
 
-data class DiasEventosResponseDTO (
+data class DiasConEventosResponseDTO (
     val diasConEvento: List<Int>,
 )

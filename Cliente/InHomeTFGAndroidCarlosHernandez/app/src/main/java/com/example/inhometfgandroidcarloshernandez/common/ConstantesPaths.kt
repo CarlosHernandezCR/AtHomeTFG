@@ -5,4 +5,5 @@ object ConstantesPaths {
     const val ESTADOS = "casa/primeraPantallaEstados/{id}"
     const val CAMBIAR_ESTADO = "casa/cambiarEstado"
     const val GET_EVENTOS_MES = "calendario/getEventosMes"
+    const val GET_EVENTOS_DIA = "calendario/getEventosDia"
 }
