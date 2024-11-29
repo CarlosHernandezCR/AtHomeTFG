@@ -1,7 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
 
 package org.tfg.inhometfgcarloshernandez.data.model;
 
@@ -17,21 +13,22 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.common.constantes.ViveConstantes;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "VIVE")
+@Table(name = ViveConstantes.TABLE_NAME)
 public class ViveEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = ViveConstantes.COLUMN_ID, nullable = false)
     private Integer id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = ViveConstantes.COLUMN_ID_USUARIO, nullable = false)
     private UsuarioEntity usuarioEntity;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_casa", nullable = false)
+    @JoinColumn(name = ViveConstantes.COLUMN_ID_CASA, nullable = false)
     private CasaEntity casaEntity;
 }

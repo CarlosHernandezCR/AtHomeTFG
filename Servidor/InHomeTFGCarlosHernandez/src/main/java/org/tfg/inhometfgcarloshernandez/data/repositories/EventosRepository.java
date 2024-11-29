@@ -13,5 +13,8 @@ public interface EventosRepository extends JpaRepository<EventoEntity, Long> {
 
     @Query("SELECT DISTINCT DAY(e.fecha) FROM EventoEntity e WHERE e.idCasaEntity.id = :idCasa AND MONTH(e.fecha) = :mes AND YEAR(e.fecha) = :anio")
     List<Integer> findDiasConEventos(@Param("idCasa") int idCasa, @Param("mes") int mes, @Param("anio") int anio);
+
+    @Query("SELECT e FROM EventoEntity e WHERE e.idCasaEntity.id = :idCasa AND DAY(e.fecha) = :dia AND MONTH(e.fecha) = :mes AND YEAR(e.fecha) = :anio")
+    List<EventoEntity> findEventosEnDia(int idCasa, int dia, int mes, int anio);
 }
 

@@ -14,8 +14,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tfg.inhometfgcarloshernandez.common.constantes.AlmacenaConstantes;
 
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

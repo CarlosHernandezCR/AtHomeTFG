@@ -10,6 +10,7 @@ public class ConstantesServer {
     public static final String ESTADO_VARIABLE = "/{estado}";
     public static final String CALENDARIOPATH = "/calendario";
     public static final String GET_EVENTOS_MES = "/getEventosMes";
+    public static final String GET_EVENTOS_DIA = "/getEventosDia";
 
     private ConstantesServer() {
     }

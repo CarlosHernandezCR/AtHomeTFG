@@ -18,4 +18,6 @@ public class EstadoEntity {
     @Id
     @Column(name = EstadosConstantes.COLUMN_DESCRIPCION, nullable = false)
     private String descripcion;
+    @Column(name = EstadosConstantes.COLUMN_COLOR, nullable = false)
+    private String color;
 }

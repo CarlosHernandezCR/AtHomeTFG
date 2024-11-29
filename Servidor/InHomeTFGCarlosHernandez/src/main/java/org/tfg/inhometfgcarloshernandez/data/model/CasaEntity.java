@@ -1,8 +1,6 @@
 package org.tfg.inhometfgcarloshernandez.data.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +17,7 @@ public class CasaEntity {
     @Column(name = CasaConstantes.COLUMN_ID, nullable = false)
     private Integer id;
     @Column(name = CasaConstantes.COLUMN_DIRECCION, nullable = false)
-    private @Size(max = 255)
-    @NotNull String direccion;
+    private String direccion;
     @Column(name = CasaConstantes.COLUMN_CODIGO, nullable = false)
     private String codigo;
     @Column(name = CasaConstantes.COLUMN_NOMBRE, nullable = false)

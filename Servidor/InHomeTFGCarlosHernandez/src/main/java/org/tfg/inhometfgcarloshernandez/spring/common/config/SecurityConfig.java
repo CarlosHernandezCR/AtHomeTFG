@@ -27,6 +27,7 @@ public class SecurityConfig {
                             .requestMatchers(GET, ConstantesServer.CASAPATH+ConstantesServer.CASA_PRIMERA_PANTALLA +"/{id}").permitAll()
                             .requestMatchers(POST, ConstantesServer.CASAPATH+ConstantesServer.CAMBIAR_ESTADO).permitAll()
                             .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_MES).permitAll()
+                            .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_DIA).permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

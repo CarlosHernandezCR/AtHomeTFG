@@ -3,10 +3,15 @@ package org.tfg.inhometfgcarloshernandez.spring.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.tfg.inhometfgcarloshernandez.domain.model.Evento;
 import org.tfg.inhometfgcarloshernandez.domain.servicios.EventosServicios;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.DiasEventosRequestDTO;
-import org.tfg.inhometfgcarloshernandez.spring.model.response.DiasEventosResponseDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.request.EventosEnDiaRequestDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.response.DiasConEventosResponseDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.response.EventosEnDiaResponseDTO;
+
+import java.util.List;
 
 import static org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer.GET_EVENTOS_MES;
 
@@ -22,7 +27,14 @@ public class CalendarioController {
     }
 
     @PostMapping(GET_EVENTOS_MES)
-    public ResponseEntity<DiasEventosResponseDTO> getEventosMes(@RequestBody DiasEventosRequestDTO getEventosMesRequestDTO) {
-        return ResponseEntity.ok(eventosServicios.getEventosMes(getEventosMesRequestDTO.getIdCasa(), getEventosMesRequestDTO.getMes(), getEventosMesRequestDTO.getAnio()));
+    public ResponseEntity<DiasConEventosResponseDTO> getEventosMes(@RequestBody DiasEventosRequestDTO getEventosMesRequestDTO) {
+        List<Integer> diasConEvento = eventosServicios.getEventosMes(getEventosMesRequestDTO.getIdCasa(), getEventosMesRequestDTO.getMes(), getEventosMesRequestDTO.getAnio());
+        return ResponseEntity.ok(new DiasConEventosResponseDTO(diasConEvento));
+    }
+
+    @PostMapping(ConstantesServer.GET_EVENTOS_DIA)
+    public ResponseEntity<EventosEnDiaResponseDTO> getEventosDia(@RequestBody EventosEnDiaRequestDTO getEventosEnDiaRequestDTO) {
+        List<Evento> eventosDia = eventosServicios.getEventosDia(getEventosEnDiaRequestDTO.getIdCasa(), getEventosEnDiaRequestDTO.getDia(), getEventosEnDiaRequestDTO.getMes(), getEventosEnDiaRequestDTO.getAnio());
+        return ResponseEntity.ok(new EventosEnDiaResponseDTO(eventosDia));
     }
 }

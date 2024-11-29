@@ -1,9 +1,8 @@
 package org.tfg.inhometfgcarloshernandez.data.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,11 +20,11 @@ public class EventoEntity {
     @Column(name = EventoConstantes.COLUMN_ID, nullable = false)
     private Integer id;
 
-    @Column(name = EventoConstantes.COLUMN_TIPO, length = 50)
-    private @Size(max = 50) String tipo;
+    @Column(name = EventoConstantes.COLUMN_TIPO)
+    private String tipo;
 
-    @Column(name = EventoConstantes.COLUMN_NOMBRE, nullable = false, length = 100)
-    private @Size(max = 100) @NotNull String nombre;
+    @Column(name = EventoConstantes.COLUMN_NOMBRE, nullable = false)
+    private String nombre;
 
     @Column(name = EventoConstantes.COLUMN_FECHA)
     private LocalDate fecha;
@@ -33,7 +32,14 @@ public class EventoEntity {
     @Column(name = EventoConstantes.COLUMN_VOTACION)
     private String votacion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = EventoConstantes.COLUMN_HORA_COMIENZO)
+    private LocalTime horaComienzo;
+
+    @Column(name = EventoConstantes.COLUMN_HORA_FIN)
+    private LocalTime horaFin;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = EventoConstantes.COLUMN_ORGANIZADOR)
     private UsuarioEntity organizador;
 
