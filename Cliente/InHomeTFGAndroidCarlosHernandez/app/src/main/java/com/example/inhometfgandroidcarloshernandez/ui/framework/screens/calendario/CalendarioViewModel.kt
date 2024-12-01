@@ -5,19 +5,24 @@ import androidx.lifecycle.viewModelScope
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.calendario.CargarEventosDelDiaUseCase
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.calendario.CargarEventosDelMesUseCase
+import com.example.inhometfgandroidcarloshernandez.domain.usecases.calendario.CrearEventoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarioViewModel @Inject constructor(
     private val cargarEventosDelMesUseCase: CargarEventosDelMesUseCase,
-    private val cargarEventosDelDiaUseCase: CargarEventosDelDiaUseCase
+    private val cargarEventosDelDiaUseCase: CargarEventosDelDiaUseCase,
+    private val crearEventoUseCase: CrearEventoUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CalendarioContract.CalendarioState())
@@ -41,6 +46,63 @@ class CalendarioViewModel @Inject constructor(
             is CalendarioContract.CalendarioEvent.CargarEventos -> cargarEventosDelMes(event.idCasa, _uiState.value.mesActual, _uiState.value.anioActual)
             is CalendarioContract.CalendarioEvent.ErrorMostrado -> _uiState.update { it.copy(error = null, isLoading = false) }
             is CalendarioContract.CalendarioEvent.GetEventosDia -> getEventosDia(event.idCasa, event.dia,_uiState.value.mesActual, _uiState.value.anioActual)
+            is CalendarioContract.CalendarioEvent.CambioDiaSeleccionado -> cambiarDiaSeleccionado(event.dia)
+            is CalendarioContract.CalendarioEvent.CrearEvento -> crearEvento(event.eventoCasa)
+            is CalendarioContract.CalendarioEvent.CambiarDialogo -> _uiState.update { it.copy(mostrarDialogo = !_uiState.value.mostrarDialogo) }
+        }
+    }
+    private fun cambiarDiaSeleccionado(dia:Int){
+        _uiStateEventos.update { it.copy(diaSeleccionado = dia) }
+        getEventosDia(_uiState.value.idCasa,_uiStateEventos.value.diaSeleccionado,_uiState.value.mesActual, _uiState.value.anioActual)
+    }
+
+    private fun crearEvento(evento: CalendarioContract.EventoCasa) {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+
+        try {
+            val horaInicio = LocalTime.parse(evento.horaComienzo, formatter)
+            val horaFin = LocalTime.parse(evento.horaFin, formatter)
+
+            if (horaInicio.isAfter(horaFin) || horaInicio == horaFin) {
+                _uiStateEventos.value = _uiStateEventos.value.copy(
+                    mensaje = "La hora de inicio debe ser anterior a la hora de fin."
+                )
+                return
+            }
+        } catch (e: DateTimeParseException) {
+            _uiStateEventos.value = _uiStateEventos.value.copy(
+                mensaje = "Formato de hora inválido. Use el formato HH:mm."
+            )
+            return
+        }
+        val fechaCompuesta:String
+        if(_uiStateEventos.value.diaSeleccionado<10){
+            fechaCompuesta = "0${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
+        }else{
+            fechaCompuesta = "${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
+        }
+        viewModelScope.launch {
+            crearEventoUseCase.invoke(
+                _uiState.value.idCasa,
+                evento,
+                fechaCompuesta
+            ).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiStateEventos.update { currentState ->
+                            currentState.copy(mensaje = "Evento creado correctamente", isLoading = false)
+                        }
+                        cargarEventosDelMes(_uiState.value.idCasa, _uiState.value.mesActual, _uiState.value.anioActual)
+                        getEventosDia(_uiState.value.idCasa,_uiStateEventos.value.diaSeleccionado,_uiState.value.mesActual, _uiState.value.anioActual)
+                    }
+                    is NetworkResult.Error -> {
+                        _uiStateEventos.update { it.copy(mensaje = result.message ?: "Error", isLoading = false) }
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiStateEventos.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
         }
     }
 
@@ -65,7 +127,7 @@ class CalendarioViewModel @Inject constructor(
                         }
                     }
                     is NetworkResult.Error -> {
-                        _uiStateEventos.update { it.copy(error = result.message ?: "Error", isLoading = false) }
+                        _uiStateEventos.update { it.copy(mensaje = result.message ?: "Error", isLoading = false) }
                     }
                     is NetworkResult.Loading -> {
                         _uiStateEventos.update { it.copy(isLoading = true) }
@@ -153,7 +215,7 @@ class CalendarioViewModel @Inject constructor(
             }
             for (i in 1..totalDiasEnMes) {
                 val colorFondo = when {
-                    isToday(anio, mes, i) -> COLOR_HOY
+                    esHoy(anio, mes, i) -> COLOR_HOY
                     else -> COLOR_NORMAL
                 }
                 add(CalendarioContract.DiaCalendario(numero = i, colorFondo = colorFondo))
@@ -165,7 +227,7 @@ class CalendarioViewModel @Inject constructor(
         return dias.chunked(7)
     }
 
-    private fun isToday(anio: Int, mes: Int, dia: Int): Boolean {
+    private fun esHoy(anio: Int, mes: Int, dia: Int): Boolean {
         val today = Calendar.getInstance()
         return anio == today.get(Calendar.YEAR) && mes == today.get(Calendar.MONTH) && dia == today.get(Calendar.DAY_OF_MONTH)
     }

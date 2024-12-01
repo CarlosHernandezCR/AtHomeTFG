@@ -1,6 +1,6 @@
 package com.example.inhometfgandroidcarloshernandez.data.model.response
 
-data class Evento (
+data class EventoDTO (
     val id : Int,
     val tipo: String,
     val nombre: String,

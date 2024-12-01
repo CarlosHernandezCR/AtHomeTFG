@@ -1,5 +1,7 @@
 package com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario
 
+import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,12 +10,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -21,21 +27,27 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas.nombresDias
@@ -48,7 +60,6 @@ fun CalendarioActivity(
     globalViewModel: GlobalViewModel,
     showSnackbar: (String) -> Unit = {},
     viewModel: CalendarioViewModel = hiltViewModel(),
-    innerPadding: PaddingValues,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val uiStateEventos by viewModel.uiStateEventos.collectAsState()
@@ -57,71 +68,136 @@ fun CalendarioActivity(
         viewModel.handleEvent(CalendarioContract.CalendarioEvent.CargarEventos(globalViewModel.idCasa))
     }
 
-    LaunchedEffect(uiState.error) {
+    LaunchedEffect(uiState.error, uiStateEventos.mensaje) {
         uiState.error?.let {
             showSnackbar(it)
             viewModel.handleEvent(CalendarioContract.CalendarioEvent.ErrorMostrado)
         }
-
+        uiStateEventos.mensaje?.let {
+            showSnackbar(it)
+            viewModel.handleEvent(CalendarioContract.CalendarioEvent.ErrorMostrado)
+        }
     }
+
+    CalendarioPantalla(
+        isLoading = uiState.isLoading,
+        anioActual = uiState.anioActual,
+        mesActual = uiState.mesActual,
+        diasEnMes = uiState.diasEnMes,
+        diaSeleccionado = uiStateEventos.diaSeleccionado,
+        listaEventos = uiStateEventos.listaEventos,
+        mostrarDialogo = uiState.mostrarDialogo,
+        onAnioCambio = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarAnio(it)) },
+        onMesCambio = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarMes(it)) },
+        onDiaClicado = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambioDiaSeleccionado(it)) },
+        onCrearEvento = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CrearEvento(it)) },
+        onMostrarDialogoChange = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarDialogo) },
+    )
+}
+@Composable
+fun CalendarioPantalla(
+    isLoading: Boolean,
+    anioActual: Int,
+    mesActual: Int,
+    diasEnMes: List<List<DiaCalendario>>,
+    diaSeleccionado: Int,
+    listaEventos: List<CalendarioContract.EventoCasa>,
+    mostrarDialogo: Boolean,
+    onAnioCambio: (Int) -> Unit,
+    onMesCambio: (Int) -> Unit,
+    onDiaClicado: (Int) -> Unit,
+    onCrearEvento: (CalendarioContract.EventoCasa) -> Unit,
+    onMostrarDialogoChange: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        if (uiState.isLoading) {
-            item {
-                CircularProgressIndicator(
-                )
-            }
-        } else {
-            item {
-                Selector(
-                    valorActual = uiState.anioActual,
-                    opciones = (2024..2100).toList(),
-                    onCambio = { nuevoAnio ->
-                        viewModel.handleEvent(
-                            CalendarioContract.CalendarioEvent.CambiarAnio(nuevoAnio)
-                        )
-                    })
-            }
-            item {
-
-                Selector(
-                    valorActual = uiState.mesActual,
-                    opciones = nombresMeses.indices.toList(),
-                    onCambio = { nuevoMes ->
-                        viewModel.handleEvent(
-                            CalendarioContract.CalendarioEvent.CambiarMes(nuevoMes)
-                        )
-                    },
-                    mostrarOpciones = { nombresMeses[it] })
-            }
-            item {
-                Calendario(
-                    diasDelMes = uiState.diasEnMes,
-                    onDayClick = { dia ->
-                        viewModel.handleEvent(
-                            CalendarioContract.CalendarioEvent.GetEventosDia(globalViewModel.idCasa,dia)
-                        )
-                    }
-                )
-            }
-            item {
-                Text(
-                    text = "Eventos del día",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(16.dp)
-                            .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = Color.Black
-                )
-                DetallesEvento(
-                    listaEventos = uiStateEventos.listaEventos
-                )
+        when {
+            isLoading -> item { Cargando() }
+            else -> {
+                item {
+                    Selector(
+                        valorActual = anioActual,
+                        opciones = (2024..2100).toList(),
+                        onCambio = onAnioCambio
+                    )
+                }
+                item {
+                    Selector(
+                        valorActual = mesActual,
+                        opciones = nombresMeses.indices.toList(),
+                        onCambio = onMesCambio,
+                        mostrarOpciones = { nombresMeses[it] }
+                    )
+                }
+                item {
+                    Calendario(
+                        diasDelMes = diasEnMes,
+                        diaClicado = onDiaClicado
+                    )
+                }
+                item {
+                    CampoEvento(
+                        diaSeleccionado = "$diaSeleccionado-${mesActual + 1}-$anioActual",
+                        listaEventos = listaEventos,
+                        mostrarDialogo = mostrarDialogo,
+                        onCrearEvento = onCrearEvento,
+                        onMostrarDialogoChange = onMostrarDialogoChange
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+fun Cargando() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun CampoEvento(
+    diaSeleccionado: String,
+    listaEventos: List<CalendarioContract.EventoCasa>,
+    mostrarDialogo: Boolean,
+    onCrearEvento: (CalendarioContract.EventoCasa) -> Unit,
+    onMostrarDialogoChange: () -> Unit
+) {
+    Spacer(modifier = Modifier.height(6.dp))
+    if (listaEventos.isEmpty()) {
+        Text(
+            text = "No hay eventos para mostrar.",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+    } else {
+        DetallesEvento(listaEventos)
+    }
+    if (!diaSeleccionado.startsWith("-1")) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            TextButton(onClick = onMostrarDialogoChange) {
+                Text("Crear Evento")
+            }
+        }
+    }
+
+    if (mostrarDialogo) {
+        CrearEventoDialog(
+            fechaSeleccionada = diaSeleccionado,
+            onDismiss = onMostrarDialogoChange,
+            onCrearEvento = onCrearEvento
+        )
     }
 }
 
@@ -158,7 +234,7 @@ fun DetallesEvento(
                 indiceSeleccionado = nuevoIndice
             },
             mostrarOpciones = { it.toString() })
-        val eventoSeleccionado = listaEventos[indiceSeleccionado-1]
+        val eventoSeleccionado = listaEventos[indiceSeleccionado - 1]
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -181,25 +257,27 @@ fun DetallesEvento(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
+                //TODO Boton votar que sí
             }
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
+                    text = "Hora inicio: ${eventoSeleccionado.horaComienzo}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                Text(
+                    text = "Hora fin: ${eventoSeleccionado.horaFin}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                Text(
                     text = "Votación: ${eventoSeleccionado.votacion}",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                Text(
-                    text = "Hora comienzo: ${eventoSeleccionado.horaComienzo}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = "Hora finalización: ${eventoSeleccionado.horaFin}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                //TODO Boton votar que no
             }
         }
     }
@@ -250,7 +328,7 @@ fun <T> Selector(
 @Composable
 fun Calendario(
     diasDelMes: List<List<DiaCalendario>>,
-    onDayClick: (Int) -> Unit = {}
+    diaClicado: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -287,7 +365,9 @@ fun Calendario(
                                 .border(
                                     1.dp, Color.Gray, CircleShape
                                 )
-                                .clickable(enabled = day.colorFondo != "#C4C4C4") { onDayClick(day.numero) },
+                                .clickable(enabled = day.colorFondo != "#C4C4C4") {
+                                    diaClicado(day.numero)
+                                },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -296,6 +376,109 @@ fun Calendario(
                                 color = Color.Black
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@SuppressLint("DefaultLocale")
+@Composable
+fun CrearEventoDialog(
+    fechaSeleccionada: String,
+    onDismiss: () -> Unit,
+    onCrearEvento: (event: CalendarioContract.EventoCasa) -> Unit
+) {
+    var tipo by remember { mutableStateOf("") }
+    var nombre by remember { mutableStateOf("") }
+    var horaInicio by remember { mutableStateOf("") }
+    var horaFin by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = "Crear Evento", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Fecha seleccionada: $fechaSeleccionada")
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = tipo,
+                    onValueChange = { tipo = it },
+                    label = { Text("Tipo") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = nombre,
+                    onValueChange = { nombre = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                val context = LocalContext.current
+                val calendar = Calendar.getInstance()
+
+                val timePickerDialogInicio = TimePickerDialog(
+                    context,
+                    { _, hourOfDay, minute ->
+                        horaInicio = String.format("%02d:%02d", hourOfDay, minute)
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true
+                )
+
+                val timePickerDialogFin = TimePickerDialog(
+                    context,
+                    { _, hourOfDay, minute ->
+                        horaFin = String.format("%02d:%02d", hourOfDay, minute)
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true
+                )
+
+                TextButton(
+                    onClick = { timePickerDialogInicio.show() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Hora Inicio: $horaInicio")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextButton(
+                    onClick = { timePickerDialogFin.show() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Hora Fin: $horaFin")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancelar")
+                    }
+                    TextButton(
+                        onClick = {
+                            val evento = CalendarioContract.EventoCasa(
+                                tipo = tipo,
+                                nombre = nombre,
+                                organizador = "",
+                                horaComienzo = horaInicio,
+                                horaFin = horaFin,
+                                votacion = ""
+                            )
+                            onCrearEvento(evento)
+                        }
+                    ) {
+                        Text("Crear Evento")
                     }
                 }
             }
@@ -323,38 +506,40 @@ fun PreviewCalendarScreen() {
         }
         item {
             Calendario(
-                diasDelMes = generateDummyDaysWithCompleteWeeks()
+                diasDelMes = generateDummyDaysWithCompleteWeeks(),
+                diaClicado = {}
             )
         }
         item {
-        DetallesEvento(
-            listOf(
-                CalendarioContract.EventoCasa(
-                    "Reunión",
-                    "Descripción 1",
-                    "Juan",
-                    "09:00",
-                    "10:00",
-                    "3/3"
-                ),
-                CalendarioContract.EventoCasa(
-                    "Cumpleaños",
-                    "Descripción 2",
-                    "Ana",
-                    "16:00",
-                    "20:00",
-                    "2/3"
-                ),
-                CalendarioContract.EventoCasa(
-                    "Taller",
-                    "Descripción 3",
-                    "Luis",
-                    "12:00",
-                    "16:00",
-                    "1/3"
+            DetallesEvento(
+                listOf(
+                    CalendarioContract.EventoCasa(
+                        "Reunión",
+                        "Descripción 1",
+                        "Juan",
+                        "09:00",
+                        "10:00",
+                        "3/3"
+                    ),
+                    CalendarioContract.EventoCasa(
+                        "Cumpleaños",
+                        "Descripción 2",
+                        "Ana",
+                        "16:00",
+                        "20:00",
+                        "2/3"
+                    ),
+                    CalendarioContract.EventoCasa(
+                        "Taller",
+                        "Descripción 3",
+                        "Luis",
+                        "12:00",
+                        "16:00",
+                        "1/3"
+                    )
                 )
             )
-        )}
+        }
     }
 }
 
@@ -385,7 +570,7 @@ fun generateDummyDaysWithCompleteWeeks(): List<List<DiaCalendario>> {
         }
         for (i in 1..totalDiasEnMes) {
             val colorFondo = when {
-                isToday(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), i) -> COLOR_HOY
+                esHoy(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), i) -> COLOR_HOY
                 else -> COLOR_NORMAL
             }
             add(
@@ -407,7 +592,7 @@ fun generateDummyDaysWithCompleteWeeks(): List<List<DiaCalendario>> {
     return dias.chunked(7)
 }
 
-private fun isToday(anio: Int, mes: Int, dia: Int): Boolean {
+private fun esHoy(anio: Int, mes: Int, dia: Int): Boolean {
     val today = Calendar.getInstance()
     return anio == today.get(Calendar.YEAR) && mes == today.get(Calendar.MONTH) && dia == today.get(
         Calendar.DAY_OF_MONTH

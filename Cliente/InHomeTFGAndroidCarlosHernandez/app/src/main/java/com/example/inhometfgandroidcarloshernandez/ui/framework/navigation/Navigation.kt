@@ -68,7 +68,6 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
             composable(ConstantesPantallas.CALENDARIO) {
                 CalendarioActivity(
                     globalViewModel = globalViewModel,
-                    innerPadding = paddingValues,
                     showSnackbar = showSnackbar,
                 )
             }

@@ -9,12 +9,14 @@ interface CalendarioContract {
         val anioActual: Int = 0,
         val diasEnMes: List<List<DiaCalendario>> = emptyList(),
         val idCasa: Int=0,
+        val mostrarDialogo: Boolean=false,
     )
 
     data class EventosState(
         val isLoading: Boolean = false,
-        val error: String? = null,
-        val listaEventos:List<EventoCasa> = emptyList()
+        val mensaje: String? = null,
+        val listaEventos:List<EventoCasa> = emptyList(),
+        val diaSeleccionado:Int=-1
     )
 
     data class DiaCalendario(
@@ -38,6 +40,9 @@ interface CalendarioContract {
         data class CargarEventos(val idCasa: Int) : CalendarioEvent()
         data object ErrorMostrado:CalendarioEvent()
         data class GetEventosDia(val idCasa: Int,val dia: Int): CalendarioEvent()
+        data class CambioDiaSeleccionado(val dia: Int): CalendarioEvent()
+        data class CrearEvento(val eventoCasa: EventoCasa) : CalendarioEvent()
+        data object CambiarDialogo : CalendarioEvent()
     }
 }
 
