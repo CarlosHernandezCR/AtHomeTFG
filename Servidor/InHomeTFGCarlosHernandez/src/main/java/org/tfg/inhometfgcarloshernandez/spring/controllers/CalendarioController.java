@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.tfg.inhometfgcarloshernandez.domain.model.Evento;
 import org.tfg.inhometfgcarloshernandez.domain.servicios.EventosServicios;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
+import org.tfg.inhometfgcarloshernandez.spring.model.request.CrearEventoRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.DiasEventosRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.EventosEnDiaRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.DiasConEventosResponseDTO;
@@ -36,5 +37,11 @@ public class CalendarioController {
     public ResponseEntity<EventosEnDiaResponseDTO> getEventosDia(@RequestBody EventosEnDiaRequestDTO getEventosEnDiaRequestDTO) {
         List<Evento> eventosDia = eventosServicios.getEventosDia(getEventosEnDiaRequestDTO.getIdCasa(), getEventosEnDiaRequestDTO.getDia(), getEventosEnDiaRequestDTO.getMes(), getEventosEnDiaRequestDTO.getAnio());
         return ResponseEntity.ok(new EventosEnDiaResponseDTO(eventosDia));
+    }
+
+    @PostMapping(ConstantesServer.CREAR_EVENTO)
+    public ResponseEntity<Void> crearEvento(@RequestBody CrearEventoRequestDTO evento) {
+        eventosServicios.crearEvento(evento.getIdCasa(), evento.getEventoCasa(), evento.getFecha());
+        return ResponseEntity.ok().build();
     }
 }
