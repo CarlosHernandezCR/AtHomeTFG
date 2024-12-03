@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.login.LoginUseCase
-import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val login: LoginUseCase
-) : ViewModel() {
+): ViewModel(){
     private val _uiState = MutableStateFlow(PortadaState())
     val uiState: StateFlow<PortadaState> = _uiState.asStateFlow()
 

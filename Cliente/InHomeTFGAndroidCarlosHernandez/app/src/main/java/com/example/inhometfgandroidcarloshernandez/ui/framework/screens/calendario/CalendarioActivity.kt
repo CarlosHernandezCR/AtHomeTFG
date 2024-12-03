@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -49,11 +48,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.inhometfgandroidcarloshernandez.common.Constantes
+import com.example.inhometfgandroidcarloshernandez.common.Constantes.FORMATO_HORA
 import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas.nombresDias
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas.nombresMeses
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.CalendarioContract.DiaCalendario
 import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun CalendarioActivity(
@@ -174,20 +176,20 @@ fun CampoEvento(
     Spacer(modifier = Modifier.height(6.dp))
     if (listaEventos.isEmpty()) {
         Text(
-            text = "No hay eventos para mostrar.",
+            text = Constantes.NO_HAY_EVENTOS,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
     } else {
         DetallesEvento(listaEventos)
     }
-    if (!diaSeleccionado.startsWith("-1")) {
+    if (!diaSeleccionado.startsWith(Constantes.MENOSUNO)) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
             TextButton(onClick = onMostrarDialogoChange) {
-                Text("Crear Evento")
+                Text(Constantes.CREAR_EVENTO.lowercase(Locale.getDefault()))
             }
         }
     }
@@ -204,19 +206,7 @@ fun CampoEvento(
 @Composable
 fun DetallesEvento(
     listaEventos: List<CalendarioContract.EventoCasa>
-) {
-    if (listaEventos.isEmpty()) {
-        Text(
-            text = "No hay eventos para mostrar.",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = Color.Black
-        )
-        return
-    }
+){
 
     var indiceSeleccionado by remember { mutableIntStateOf(1) }
 
@@ -243,17 +233,17 @@ fun DetallesEvento(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "Título: ${eventoSeleccionado.tipo}",
+                    text = Constantes.TIPO + eventoSeleccionado.tipo,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 Text(
-                    text = "Descripción: ${eventoSeleccionado.nombre}",
+                    text =Constantes.NOMBRE + eventoSeleccionado.nombre,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
-                    text = "Pedido por: ${eventoSeleccionado.organizador}",
+                    text = Constantes.ORGANIZADOR + eventoSeleccionado.organizador,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -263,17 +253,17 @@ fun DetallesEvento(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "Hora inicio: ${eventoSeleccionado.horaComienzo}",
+                    text = Constantes.HORA_INICIO + eventoSeleccionado.horaComienzo,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
-                    text = "Hora fin: ${eventoSeleccionado.horaFin}",
+                    text = Constantes.HORA_FIN + eventoSeleccionado.horaFin,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
-                    text = "Votación: ${eventoSeleccionado.votacion}",
+                    text = Constantes.VOTACION+ eventoSeleccionado.votacion,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -305,7 +295,7 @@ fun <T> Selector(
                     if (index > 0) onCambio(opciones[index - 1])
                 }, enabled = opciones.indexOf(valorActual) > 0
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Anterior")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = Constantes.ANTERIOR)
             }
             Text(
                 text = mostrarOpciones(valorActual),
@@ -318,7 +308,7 @@ fun <T> Selector(
                     if (index < opciones.size - 1) onCambio(opciones[index + 1])
                 }, enabled = opciones.indexOf(valorActual) < opciones.size - 1
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Siguiente")
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = Constantes.SIGUIENTE)
             }
         }
     }
@@ -383,6 +373,7 @@ fun Calendario(
     }
 }
 
+
 @SuppressLint("DefaultLocale")
 @Composable
 fun CrearEventoDialog(
@@ -401,21 +392,21 @@ fun CrearEventoDialog(
             modifier = Modifier.padding(16.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Crear Evento", style = MaterialTheme.typography.titleMedium)
+                Text(text = Constantes.CREAR_EVENTO.lowercase(Locale.getDefault()), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Fecha seleccionada: $fechaSeleccionada")
+                Text(text =  Constantes.FECHA_SELECCIONADA + fechaSeleccionada)
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = tipo,
                     onValueChange = { tipo = it },
-                    label = { Text("Tipo") },
+                    label = { Text(Constantes.TIPO) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = nombre,
                     onValueChange = { nombre = it },
-                    label = { Text("Nombre") },
+                    label = { Text(Constantes.NOMBRE) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -425,7 +416,7 @@ fun CrearEventoDialog(
                 val timePickerDialogInicio = TimePickerDialog(
                     context,
                     { _, hourOfDay, minute ->
-                        horaInicio = String.format("%02d:%02d", hourOfDay, minute)
+                        horaInicio = String.format(FORMATO_HORA, hourOfDay, minute)
                     },
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
@@ -435,7 +426,7 @@ fun CrearEventoDialog(
                 val timePickerDialogFin = TimePickerDialog(
                     context,
                     { _, hourOfDay, minute ->
-                        horaFin = String.format("%02d:%02d", hourOfDay, minute)
+                        horaFin = String.format(FORMATO_HORA, hourOfDay, minute)
                     },
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
@@ -446,7 +437,7 @@ fun CrearEventoDialog(
                     onClick = { timePickerDialogInicio.show() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Hora Inicio: $horaInicio")
+                    Text(text = Constantes.HORA_INICIO+horaInicio)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -455,7 +446,7 @@ fun CrearEventoDialog(
                     onClick = { timePickerDialogFin.show() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Hora Fin: $horaFin")
+                    Text(text = Constantes.HORA_FIN +horaFin)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -463,7 +454,7 @@ fun CrearEventoDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancelar")
+                        Text(Constantes.CANCELAR)
                     }
                     TextButton(
                         onClick = {
@@ -478,7 +469,7 @@ fun CrearEventoDialog(
                             onCrearEvento(evento)
                         }
                     ) {
-                        Text("Crear Evento")
+                        Text(Constantes.CREAR_EVENTO)
                     }
                 }
             }
@@ -501,7 +492,7 @@ fun PreviewCalendarScreen() {
         }
         item {
 
-            Selector(valorActual = "Noviembre", opciones = (2024..2100).toList(),
+            Selector(valorActual = "Diciembre", opciones = nombresMeses,
                 onCambio = {})
         }
         item {

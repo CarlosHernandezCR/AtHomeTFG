@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
+import com.example.inhometfgandroidcarloshernandez.common.Constantes
 
 @Composable
 fun LoginActivity(
@@ -67,7 +67,7 @@ fun Portada(
             TextField(
                 value = correo,
                 onValueChange = { correo = it },
-                label = { Text("Correo") },
+                label = { Text(Constantes.CORREO) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -75,7 +75,7 @@ fun Portada(
                 onClick = { onCorreoChange(correo) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Enviar")
+                Text(Constantes.INICIAR_SESION)
             }
         }
         if (isLoading) {

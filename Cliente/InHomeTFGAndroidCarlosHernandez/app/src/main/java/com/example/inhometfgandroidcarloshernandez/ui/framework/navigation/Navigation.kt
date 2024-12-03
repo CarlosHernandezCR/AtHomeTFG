@@ -16,6 +16,7 @@ import com.example.inhometfgandroidcarloshernandez.ui.common.BottomBar
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.CalendarioActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados.EstadosActivity
+import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.login.LoginActivity
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,6 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
 
     val onLogout: () -> Unit = {
         globalViewModel.updateIdUsuario(0)
-//        globalViewModel.updateIdCasa(0)
     }
 
     Scaffold(
@@ -68,6 +68,13 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
             composable(ConstantesPantallas.CALENDARIO) {
                 CalendarioActivity(
                     globalViewModel = globalViewModel,
+                    showSnackbar = showSnackbar,
+                )
+            }
+
+            composable(ConstantesPantallas.INMUEBLES) {
+                InmueblesActivity(
+                    globalViewModel=globalViewModel,
                     showSnackbar = showSnackbar,
                 )
             }

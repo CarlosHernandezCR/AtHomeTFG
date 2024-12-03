@@ -8,7 +8,6 @@ import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServe
 import org.tfg.inhometfgcarloshernandez.spring.model.request.CambiarEstadoRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 
 @RestController
@@ -21,8 +20,8 @@ public class CasaController {
         this.casaServicios = casaServicios;
     }
 
-    @GetMapping(ConstantesServer.CASA_PRIMERA_PANTALLA + ConstantesServer.IDVARIABLE)
-    public ResponseEntity<PantallaEstadosResponseDTO> getPrimerPantalla(@PathVariable int id) {
+    @GetMapping(ConstantesServer.PANTALLA_CASA)
+    public ResponseEntity<PantallaEstadosResponseDTO> getPrimerPantalla(@RequestParam int id) {
         return ResponseEntity.ok(casaServicios.getDatosPrimeraPantalla(id));
     }
 

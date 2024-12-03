@@ -9,7 +9,7 @@ import org.tfg.inhometfgcarloshernandez.data.repositories.EventosRepository;
 import org.tfg.inhometfgcarloshernandez.data.repositories.UsuarioRepository;
 import org.tfg.inhometfgcarloshernandez.domain.model.Evento;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.EventoMappers;
-import org.tfg.inhometfgcarloshernandez.spring.model.request.EventoDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.EventoDTO;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

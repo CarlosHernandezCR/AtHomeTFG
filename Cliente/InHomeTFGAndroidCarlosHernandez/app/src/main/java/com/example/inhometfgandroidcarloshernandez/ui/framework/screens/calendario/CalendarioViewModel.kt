@@ -2,6 +2,8 @@ package com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calenda
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.inhometfgandroidcarloshernandez.common.Constantes
+import com.example.inhometfgandroidcarloshernandez.common.ConstantesError
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.calendario.CargarEventosDelDiaUseCase
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.calendario.CargarEventosDelMesUseCase
@@ -32,16 +34,16 @@ class CalendarioViewModel @Inject constructor(
 
     init {
         val calendar = Calendar.getInstance()
-        updateFullState(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))
+        updateFullState(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),false)
     }
 
     fun handleEvent(event: CalendarioContract.CalendarioEvent) {
         when (event) {
-            is CalendarioContract.CalendarioEvent.CargarCalendario -> updateFullState(event.mes, event.anio)
-            is CalendarioContract.CalendarioEvent.CambiarAnio -> updateFullState(_uiState.value.mesActual, event.anio)
+            is CalendarioContract.CalendarioEvent.CargarCalendario -> updateFullState(event.mes, event.anio,true)
+            is CalendarioContract.CalendarioEvent.CambiarAnio -> updateFullState(_uiState.value.mesActual, event.anio,true)
             is CalendarioContract.CalendarioEvent.CambiarMes -> {
                 val (newMonth, newYear) = ajustarFechas(event.mes, _uiState.value.anioActual)
-                updateFullState(newMonth, newYear)
+                updateFullState(newMonth, newYear,true)
             }
             is CalendarioContract.CalendarioEvent.CargarEventos -> cargarEventosDelMes(event.idCasa, _uiState.value.mesActual, _uiState.value.anioActual)
             is CalendarioContract.CalendarioEvent.ErrorMostrado -> _uiState.update { it.copy(error = null, isLoading = false) }
@@ -57,7 +59,7 @@ class CalendarioViewModel @Inject constructor(
     }
 
     private fun crearEvento(evento: CalendarioContract.EventoCasa) {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val formatter = DateTimeFormatter.ofPattern(Constantes.FORMATER_HORA)
 
         try {
             val horaInicio = LocalTime.parse(evento.horaComienzo, formatter)
@@ -65,21 +67,20 @@ class CalendarioViewModel @Inject constructor(
 
             if (horaInicio.isAfter(horaFin) || horaInicio == horaFin) {
                 _uiStateEventos.value = _uiStateEventos.value.copy(
-                    mensaje = "La hora de inicio debe ser anterior a la hora de fin."
+                    mensaje = ConstantesError.HORA_ANTERIOR_ERROR
                 )
                 return
             }
         } catch (e: DateTimeParseException) {
             _uiStateEventos.value = _uiStateEventos.value.copy(
-                mensaje = "Formato de hora inválido. Use el formato HH:mm."
+                mensaje = ConstantesError.FORMATO_FECHA_ERROR
             )
             return
         }
-        val fechaCompuesta:String
-        if(_uiStateEventos.value.diaSeleccionado<10){
-            fechaCompuesta = "0${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
+        val fechaCompuesta:String = if(_uiStateEventos.value.diaSeleccionado<10){
+            "0${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
         }else{
-            fechaCompuesta = "${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
+            "${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
         }
         viewModelScope.launch {
             crearEventoUseCase.invoke(
@@ -90,13 +91,13 @@ class CalendarioViewModel @Inject constructor(
                 when (result) {
                     is NetworkResult.Success -> {
                         _uiStateEventos.update { currentState ->
-                            currentState.copy(mensaje = "Evento creado correctamente", isLoading = false)
+                            currentState.copy(mensaje = Constantes.EVENTO_CREADO, isLoading = false)
                         }
                         cargarEventosDelMes(_uiState.value.idCasa, _uiState.value.mesActual, _uiState.value.anioActual)
                         getEventosDia(_uiState.value.idCasa,_uiStateEventos.value.diaSeleccionado,_uiState.value.mesActual, _uiState.value.anioActual)
                     }
                     is NetworkResult.Error -> {
-                        _uiStateEventos.update { it.copy(mensaje = result.message ?: "Error", isLoading = false) }
+                        _uiStateEventos.update { it.copy(mensaje = result.message ?: ConstantesError.CREAR_EVENTO_ERROR) }
                     }
                     is NetworkResult.Loading -> {
                         _uiStateEventos.update { it.copy(isLoading = true) }
@@ -117,8 +118,8 @@ class CalendarioViewModel @Inject constructor(
                                 tipo = evento.tipo,
                                 nombre = evento.nombre,
                                 organizador = evento.organizador,
-                                horaComienzo = evento.horaComienzo.toString(),
-                                horaFin = evento.horaFin.toString(),
+                                horaComienzo = evento.horaComienzo,
+                                horaFin = evento.horaFin,
                                 votacion = evento.votacion
                             )
                         }
@@ -127,7 +128,7 @@ class CalendarioViewModel @Inject constructor(
                         }
                     }
                     is NetworkResult.Error -> {
-                        _uiStateEventos.update { it.copy(mensaje = result.message ?: "Error", isLoading = false) }
+                        _uiStateEventos.update { it.copy(mensaje = result.message ?: ConstantesError.GET_EVENTOS_ERROR) }
                     }
                     is NetworkResult.Loading -> {
                         _uiStateEventos.update { it.copy(isLoading = true) }
@@ -157,7 +158,7 @@ class CalendarioViewModel @Inject constructor(
                         }
                     }
                     is NetworkResult.Error -> {
-                        _uiState.update { it.copy(error = result.message ?: "Error", isLoading = false) }
+                        _uiState.update { it.copy(error = result.message ?: ConstantesError.GET_EVENTOS_ERROR) }
                     }
                     is NetworkResult.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
@@ -166,7 +167,7 @@ class CalendarioViewModel @Inject constructor(
             }
         }
     }
-    private fun updateFullState(mes: Int, anio: Int) {
+    private fun updateFullState(mes: Int, anio: Int, actualizar:Boolean) {
         _uiState.update {
             it.copy(
                 mesActual = mes,
@@ -174,7 +175,8 @@ class CalendarioViewModel @Inject constructor(
                 diasEnMes = obtenerDiasDelMes(mes, anio)
             )
         }
-        cargarEventosDelMes(_uiState.value.idCasa, mes, anio)
+        if(actualizar)
+            cargarEventosDelMes(_uiState.value.idCasa, mes, anio)
     }
 
     private fun ajustarFechas(mes: Int, anio: Int): Pair<Int, Int> {

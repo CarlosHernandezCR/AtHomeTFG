@@ -1,10 +1,7 @@
 package com.example.inhometfgandroidcarloshernandez.data.repositories
 
 import com.example.inhometfgandroidcarloshernandez.data.model.request.CrearEventoRequestDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.request.DiasConEventosRequestDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.request.EventosEnDiaRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.DiasConEventosResponseDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.response.EventoDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.EventosEnDiaResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.remote.datasource.EventosRemoteDataSource
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
@@ -25,13 +22,13 @@ class EventosRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
     fun cargarEventosDelMes(idCasa: Int, mes: Int, anio: Int): Flow<NetworkResult<DiasConEventosResponseDTO>> = flow {
         emit(NetworkResult.Loading())
-        val result = remoteDataSource.cargarEventosDelMes(DiasConEventosRequestDTO(idCasa, mes, anio))
+        val result = remoteDataSource.cargarEventosDelMes(idCasa, mes, anio)
         emit(result)
     }.flowOn(Dispatchers.IO)
 
     fun cargarEventosDelDia(idCasa: Int,dia:Int, mes: Int, anio: Int): Flow<NetworkResult<EventosEnDiaResponseDTO>> = flow {
         emit(NetworkResult.Loading())
-        val result = remoteDataSource.cargarEventosDelDia(EventosEnDiaRequestDTO(idCasa,dia, mes, anio))
+        val result = remoteDataSource.cargarEventosDelDia(idCasa,dia, mes, anio)
         emit(result)
     }.flowOn(Dispatchers.IO)
 }

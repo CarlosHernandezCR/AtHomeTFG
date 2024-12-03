@@ -24,11 +24,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
-                            .requestMatchers(GET, ConstantesServer.CASAPATH+ConstantesServer.CASA_PRIMERA_PANTALLA +"/{id}").permitAll()
+                            .requestMatchers(GET, ConstantesServer.CASAPATH+ConstantesServer.PANTALLA_CASA).permitAll()
                             .requestMatchers(POST, ConstantesServer.CASAPATH+ConstantesServer.CAMBIAR_ESTADO).permitAll()
-                            .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_MES).permitAll()
-                            .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_DIA).permitAll()
+                            .requestMatchers(GET, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_MES).permitAll()
+                            .requestMatchers(GET, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_DIA).permitAll()
                             .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.CREAR_EVENTO).permitAll()
+                            .requestMatchers(GET, ConstantesServer.INMUEBLESPATH+ConstantesServer.PANTALLA_INMUEBLES).permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

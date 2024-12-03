@@ -20,10 +20,10 @@ public class CajonEntity {
     @Column(name = CajonConstantes.COLUMN_NOMBRE, nullable = false, length = 100)
     @NotNull
     private String nombre;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = CajonConstantes.COLUMN_PROPIETARIO, nullable = false)
     private UsuarioEntity propietario;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = CajonConstantes.COLUMN_ID_MUEBLE, nullable = false)
     private MuebleEntity muebleEntity;
 }

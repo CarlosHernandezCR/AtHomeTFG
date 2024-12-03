@@ -1,4 +1,4 @@
-package org.tfg.inhometfgcarloshernandez.spring.model.request;
+package org.tfg.inhometfgcarloshernandez.spring.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

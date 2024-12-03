@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.EstadosService
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.EventosService
+import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.InmueblesService
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.UsuarioService
 import dagger.Module
 import dagger.Provides
@@ -78,4 +79,15 @@ object NetworkModule {
     @Provides
     fun provideEventosService(retrofit: Retrofit): EventosService =
         retrofit.create(EventosService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideInmueblesService(retrofit: Retrofit): InmueblesService =
+        retrofit.create(InmueblesService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideDataStore(context: Context): DataStore<Preferences> =
+        context.dataStore
+
 }

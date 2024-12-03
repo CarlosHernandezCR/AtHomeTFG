@@ -23,5 +23,5 @@ public class MuebleEntity {
     private @Size(max = 100) @NotNull String nombre;
 
     @Column(name = MuebleConstantes.COLUMN_NOMBRE_HABITACION, nullable = false, length = 100)
-    private @Size(max = 100) @NotNull String nombre_habitacion;
+    private @Size(max = 100) @NotNull String nombreHabitacion;
 }

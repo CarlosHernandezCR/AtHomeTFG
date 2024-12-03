@@ -6,7 +6,7 @@ import org.tfg.inhometfgcarloshernandez.common.constantes.Constantes;
 import org.tfg.inhometfgcarloshernandez.data.model.EventoEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 import org.tfg.inhometfgcarloshernandez.domain.model.Evento;
-import org.tfg.inhometfgcarloshernandez.spring.model.request.EventoDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.EventoDTO;
 
 @Mapper(componentModel = Constantes.SPRING)
 public interface EventoMappers {

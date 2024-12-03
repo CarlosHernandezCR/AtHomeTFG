@@ -27,15 +27,23 @@ public class CalendarioController {
         this.eventosServicios = eventosServicios;
     }
 
-    @PostMapping(GET_EVENTOS_MES)
-    public ResponseEntity<DiasConEventosResponseDTO> getEventosMes(@RequestBody DiasEventosRequestDTO getEventosMesRequestDTO) {
-        List<Integer> diasConEvento = eventosServicios.getEventosMes(getEventosMesRequestDTO.getIdCasa(), getEventosMesRequestDTO.getMes(), getEventosMesRequestDTO.getAnio());
+    @GetMapping(GET_EVENTOS_MES)
+    public ResponseEntity<DiasConEventosResponseDTO> getEventosMes(
+            @RequestParam int idCasa,
+            @RequestParam int mes,
+            @RequestParam int anio
+    ) {
+        List<Integer> diasConEvento = eventosServicios.getEventosMes(idCasa, mes, anio);
         return ResponseEntity.ok(new DiasConEventosResponseDTO(diasConEvento));
     }
 
-    @PostMapping(ConstantesServer.GET_EVENTOS_DIA)
-    public ResponseEntity<EventosEnDiaResponseDTO> getEventosDia(@RequestBody EventosEnDiaRequestDTO getEventosEnDiaRequestDTO) {
-        List<Evento> eventosDia = eventosServicios.getEventosDia(getEventosEnDiaRequestDTO.getIdCasa(), getEventosEnDiaRequestDTO.getDia(), getEventosEnDiaRequestDTO.getMes(), getEventosEnDiaRequestDTO.getAnio());
+
+    @GetMapping(ConstantesServer.GET_EVENTOS_DIA)
+    public ResponseEntity<EventosEnDiaResponseDTO> getEventosDia(@RequestParam int idCasa,
+                                                                 @RequestParam int dia,
+                                                                 @RequestParam int mes,
+                                                                 @RequestParam int anio) {
+        List<Evento> eventosDia = eventosServicios.getEventosDia(idCasa, dia, mes, anio);
         return ResponseEntity.ok(new EventosEnDiaResponseDTO(eventosDia));
     }
 

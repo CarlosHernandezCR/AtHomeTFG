@@ -14,9 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.R
+import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.data.model.response.UsuarioCasaResponseDTO
 import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 
@@ -182,7 +184,7 @@ fun ComboBox(
             value = selectedItem,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Estado") },
+            label = { Text(Constantes.ESTADO) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
@@ -233,7 +235,7 @@ fun UsuarioItem(nombre: String, estado: String) {
         ) {
             Image(
                 painter = painterResource(id = R.drawable.fotoperfilandroid),
-                contentDescription = "Usuario",
+                contentDescription = Constantes.USUARIO_FOTO,
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(10.dp))
@@ -245,4 +247,25 @@ fun UsuarioItem(nombre: String, estado: String) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewEstadosActivity() {
+    val usuariosCasa = listOf(
+        UsuarioCasaResponseDTO(nombre = "Carlos", estado = "En casa"),
+        UsuarioCasaResponseDTO(nombre = "Ana", estado = "Fuera de casa"),
+        UsuarioCasaResponseDTO(nombre = "Luis", estado = "Durmiendo")
+    )
+    val estadosDisponibles = listOf("En casa", "Fuera de casa", "Durmiendo")
+
+    PantallaEstados(
+        titulo = "Mi Casa",
+        direccion = "Calle Falsa 123",
+        usuariosCasa = usuariosCasa,
+        estadoActual = "En casa",
+        estadosDisponibles = estadosDisponibles,
+        cambioEstado = {},
+        cargandoEstado = false
+    )
 }

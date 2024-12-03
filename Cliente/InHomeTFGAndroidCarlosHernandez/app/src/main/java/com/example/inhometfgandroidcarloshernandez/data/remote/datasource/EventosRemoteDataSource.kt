@@ -1,13 +1,12 @@
 package com.example.inhometfgandroidcarloshernandez.data.remote.datasource
 
+import com.example.inhometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.inhometfgandroidcarloshernandez.data.model.request.CrearEventoRequestDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.request.DiasConEventosRequestDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.request.EventosEnDiaRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.DiasConEventosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.EventosEnDiaResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.EventosService
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
-import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.CalendarioContract
+import retrofit2.http.Query
 import javax.inject.Inject
 
 class EventosRemoteDataSource @Inject constructor(
@@ -16,9 +15,9 @@ class EventosRemoteDataSource @Inject constructor(
     suspend fun crearEvento(crearEventoRequestDTO: CrearEventoRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody{ eventosService.crearEvento(crearEventoRequestDTO) }
 
-    suspend fun cargarEventosDelMes(diasConEventosRequestDTO: DiasConEventosRequestDTO): NetworkResult<DiasConEventosResponseDTO> =
-        safeApiCall{ eventosService.cargarEventosDelMes(diasConEventosRequestDTO) }
+    suspend fun cargarEventosDelMes(idCasa:Int, mes:Int, anio:Int): NetworkResult<DiasConEventosResponseDTO> =
+        safeApiCall{ eventosService.cargarEventosDelMes(idCasa,mes,anio) }
 
-    suspend fun cargarEventosDelDia(eventosEnDiaRequestDTO: EventosEnDiaRequestDTO): NetworkResult<EventosEnDiaResponseDTO> =
-        safeApiCall{ eventosService.cargarEventosDelDia(eventosEnDiaRequestDTO) }
+    suspend fun cargarEventosDelDia(idCasa: Int, dia: Int, mes: Int, anio: Int): NetworkResult<EventosEnDiaResponseDTO> =
+        safeApiCall{ eventosService.cargarEventosDelDia(idCasa,dia,mes,anio) }
 }
