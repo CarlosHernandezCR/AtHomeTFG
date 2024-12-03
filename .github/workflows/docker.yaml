@@ -38,8 +38,8 @@
           name: Login to private registry
           uses: docker/login-action@v3
           with:
-            username: ${{ secrets.DockerHub_USERNAME }}
-            password: ${{ secrets.DockerHub_PASSWORD }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
         -
           name: Build and push
           uses: docker/build-push-action@v5
@@ -53,6 +53,6 @@
             builder: ${{ steps.buildx.outputs.name }}
             push: true
             tags: |
-              ${{ secrets.DockerHub_USERNAME }}/inhometfg:latest
-              ${{ secrets.DockerHub_USERNAME }}/inhometfg:${{ env.VERSION }}
+              ${{ secrets.USERNAME }}/inhometfg:latest
+              ${{ secrets.USERNAME }}/inhometfg:${{ env.VERSION }}
     
