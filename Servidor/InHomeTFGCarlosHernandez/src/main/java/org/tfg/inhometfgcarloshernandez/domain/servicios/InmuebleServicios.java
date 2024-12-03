@@ -23,21 +23,20 @@ public class InmuebleServicios {
     private final CajonMappers cajonMappers;
     private final MuebleMapper muebleMapper;
 
-    public PantallaInmueblesResponseDTO getInmuebles(int idCasa, String nombreHabitacion, Integer idMueble) {
+    public PantallaInmueblesResponseDTO getInmuebles(int idCasa, String nombreHabitacion, String mueble) {
         List<HabitacionEntity> habitaciones = habitacionRepository.findByIdCasaEntityId(idCasa);
-
         List<MuebleEntity> muebles;
         List<CajonEntity> cajones;
 
         if (nombreHabitacion == null) {
             muebles = mueblesRepository.findByNombreHabitacion(habitaciones.get(0).getNombre());
-            cajones = cajonesRepository.findCajonesByMuebleEntityId(muebles.get(0).getId());
-        } else if (idMueble == null) {
+            cajones = cajonesRepository.findCajonesByNombreMueble(muebles.get(0).getNombre());
+        } else if (mueble == null) {
             muebles = mueblesRepository.findByNombreHabitacion(nombreHabitacion);
-            cajones = cajonesRepository.findCajonesByMuebleEntityId(muebles.get(0).getId());
+            cajones = cajonesRepository.findCajonesByNombreMueble(muebles.get(0).getNombre());
         } else {
             muebles = mueblesRepository.findByNombreHabitacion(nombreHabitacion);
-            cajones = cajonesRepository.findCajonesByMuebleEntityId(idMueble);
+            cajones = cajonesRepository.findCajonesByNombreMueble(mueble);
         }
 
         return mapearDatosInmueble(habitaciones, muebles, cajones);

@@ -1,6 +1,8 @@
 package org.tfg.inhometfgcarloshernandez.common.constantes;
 
 public class Constantes {
+    public static final String NOMBREMUEBLE = "nombreMueble";
+
     private Constantes() {
     }
     public static final String SPRING = "spring";

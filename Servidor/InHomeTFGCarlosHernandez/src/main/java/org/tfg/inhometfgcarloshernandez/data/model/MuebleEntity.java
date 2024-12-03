@@ -19,7 +19,7 @@ public class MuebleEntity {
     @Column(name = MuebleConstantes.COLUMN_ID, nullable = false)
     private Integer id;
 
-    @Column(name = MuebleConstantes.COLUMN_NOMBRE, nullable = false, length = 100)
+    @Column(name = MuebleConstantes.COLUMN_NOMBRE, nullable = false, length = 100, unique = true)
     private @Size(max = 100) @NotNull String nombre;
 
     @Column(name = MuebleConstantes.COLUMN_NOMBRE_HABITACION, nullable = false, length = 100)

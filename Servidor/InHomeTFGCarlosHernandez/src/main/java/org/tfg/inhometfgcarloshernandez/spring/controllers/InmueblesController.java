@@ -19,10 +19,10 @@ public class InmueblesController {
     @GetMapping(ConstantesServer.PANTALLA_INMUEBLES)
     public ResponseEntity<PantallaInmueblesResponseDTO> getInmuebles(
             @RequestParam int idCasa,
-            @RequestParam(required = false) String nombreHabitacion,
-            @RequestParam(required = false) Integer idMueble) {
+            @RequestParam(required = false) String mueble,
+            @RequestParam(required = false) String habitacion) {
 
-        PantallaInmueblesResponseDTO response = inmuebleServicios.getInmuebles(idCasa, nombreHabitacion, idMueble);
+        PantallaInmueblesResponseDTO response = inmuebleServicios.getInmuebles(idCasa, habitacion, mueble);
         return ResponseEntity.ok(response);
     }
 
