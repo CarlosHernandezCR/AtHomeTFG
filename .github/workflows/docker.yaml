@@ -53,6 +53,6 @@
             builder: ${{ steps.buildx.outputs.name }}
             push: true
             tags: |
-              ${{ secrets.USERNAME_DOCKERHUB }}/inhometfg:latest
-              ${{ secrets.USERNAME_DOCKERHUB }}/inhometfg:${{ env.VERSION }}
+              ${{ secrets.DockerHub_USERNAME }}/inhometfg:latest
+              ${{ secrets.DockerHub_USERNAME }}/inhometfg:${{ env.VERSION }}
     
