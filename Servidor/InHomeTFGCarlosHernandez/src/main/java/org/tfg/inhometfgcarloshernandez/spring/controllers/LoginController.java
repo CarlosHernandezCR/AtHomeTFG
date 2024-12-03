@@ -32,7 +32,7 @@ public class LoginController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
         Usuario usuario = this.usuarioService.findByEmail(loginRequest.getCorreo());
         LoginResponseDTO responseDTO = new LoginResponseDTO(usuario.getId());
-        
+
         return ResponseEntity.ok(responseDTO);
     }
 
