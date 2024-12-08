@@ -34,38 +34,103 @@ class CalendarioViewModel @Inject constructor(
 
     init {
         val calendar = Calendar.getInstance()
-        updateFullState(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),false)
+        updateFullState(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), false)
     }
 
     fun handleEvent(event: CalendarioContract.CalendarioEvent) {
         when (event) {
-            is CalendarioContract.CalendarioEvent.CargarCalendario -> updateFullState(event.mes, event.anio,true)
-            is CalendarioContract.CalendarioEvent.CambiarAnio -> updateFullState(_uiState.value.mesActual, event.anio,true)
+            is CalendarioContract.CalendarioEvent.CargarCalendario -> updateFullState(
+                event.mes,
+                event.anio,
+                true
+            )
+
+            is CalendarioContract.CalendarioEvent.CambiarAnio -> updateFullState(
+                _uiState.value.mesActual,
+                event.anio,
+                true
+            )
+
             is CalendarioContract.CalendarioEvent.CambiarMes -> {
                 val (newMonth, newYear) = ajustarFechas(event.mes, _uiState.value.anioActual)
-                updateFullState(newMonth, newYear,true)
+                updateFullState(newMonth, newYear, true)
             }
-            is CalendarioContract.CalendarioEvent.CargarEventos -> cargarEventosDelMes(event.idCasa, _uiState.value.mesActual, _uiState.value.anioActual)
-            is CalendarioContract.CalendarioEvent.ErrorMostrado -> _uiState.update { it.copy(error = null, isLoading = false) }
-            is CalendarioContract.CalendarioEvent.GetEventosDia -> getEventosDia(event.idCasa, event.dia,_uiState.value.mesActual, _uiState.value.anioActual)
-            is CalendarioContract.CalendarioEvent.CambioDiaSeleccionado -> cambiarDiaSeleccionado(event.dia)
+
+            is CalendarioContract.CalendarioEvent.CargarEventos -> getEventosMes(
+                event.idCasa,
+                _uiState.value.mesActual,
+                _uiState.value.anioActual
+            )
+
+            is CalendarioContract.CalendarioEvent.ErrorMostrado -> _uiState.update {
+                it.copy(
+                    error = null,
+                    isLoading = false
+                )
+            }
+
+            is CalendarioContract.CalendarioEvent.GetEventosDia -> getEventosDia(
+                event.idCasa,
+                event.dia,
+                _uiState.value.mesActual,
+                _uiState.value.anioActual
+            )
+
+            is CalendarioContract.CalendarioEvent.CambioDiaSeleccionado -> cambiarDiaSeleccionado(
+                event.dia
+            )
+
             is CalendarioContract.CalendarioEvent.CrearEvento -> crearEvento(event.eventoCasa)
-            is CalendarioContract.CalendarioEvent.CambiarDialogo -> _uiState.update { it.copy(mostrarDialogo = !_uiState.value.mostrarDialogo) }
+            is CalendarioContract.CalendarioEvent.CambiarDialogo -> _uiState.update {
+                it.copy(
+                    mostrarDialogo = !_uiState.value.mostrarDialogo
+                )
+            }
+
+            is CalendarioContract.CalendarioEvent.CambiarAnioPorMes -> cambiarAnioPorMes(event.avanza)
         }
     }
-    private fun cambiarDiaSeleccionado(dia:Int){
+
+    private fun limpiarDetalleEvento() {
+        _uiStateEventos.update {
+            it.copy(
+                listaEventos = emptyList(),
+                mensaje = null,
+                isLoading = false
+            )
+        }
+    }
+
+    private fun cambiarAnioPorMes(avanza: Boolean) {
+        if (avanza) {
+            _uiState.update { it.copy(anioActual = _uiState.value.anioActual + 1, mesActual = 0) }
+            limpiarDetalleEvento()
+            getEventosMes(uiState.value.idCasa, 0, uiState.value.anioActual + 1)
+        } else {
+            _uiState.update { it.copy(anioActual = _uiState.value.anioActual - 1, mesActual = 11) }
+            getEventosMes(uiState.value.idCasa, 11, uiState.value.anioActual - 1)
+            limpiarDetalleEvento()
+        }
+    }
+
+    private fun cambiarDiaSeleccionado(dia: Int) {
         _uiStateEventos.update { it.copy(diaSeleccionado = dia) }
-        getEventosDia(_uiState.value.idCasa,_uiStateEventos.value.diaSeleccionado,_uiState.value.mesActual, _uiState.value.anioActual)
+        getEventosDia(
+            _uiState.value.idCasa,
+            _uiStateEventos.value.diaSeleccionado,
+            _uiState.value.mesActual,
+            _uiState.value.anioActual
+        )
     }
 
     private fun crearEvento(evento: CalendarioContract.EventoCasa) {
         val formatter = DateTimeFormatter.ofPattern(Constantes.FORMATER_HORA)
-
         try {
             val horaInicio = LocalTime.parse(evento.horaComienzo, formatter)
             val horaFin = LocalTime.parse(evento.horaFin, formatter)
 
-            if (horaInicio.isAfter(horaFin) || horaInicio == horaFin) {
+            if (horaInicio.isAfter(horaFin) && !horaFin.isBefore(LocalTime.of(6, 0))
+            ) {
                 _uiStateEventos.value = _uiStateEventos.value.copy(
                     mensaje = ConstantesError.HORA_ANTERIOR_ERROR
                 )
@@ -77,9 +142,9 @@ class CalendarioViewModel @Inject constructor(
             )
             return
         }
-        val fechaCompuesta:String = if(_uiStateEventos.value.diaSeleccionado<10){
+        val fechaCompuesta: String = if (_uiStateEventos.value.diaSeleccionado < 10) {
             "0${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
-        }else{
+        } else {
             "${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
         }
         viewModelScope.launch {
@@ -90,15 +155,32 @@ class CalendarioViewModel @Inject constructor(
             ).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        _uiStateEventos.update { currentState ->
-                            currentState.copy(mensaje = Constantes.EVENTO_CREADO, isLoading = false)
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                mostrarDialogo = false
+                            )
                         }
-                        cargarEventosDelMes(_uiState.value.idCasa, _uiState.value.mesActual, _uiState.value.anioActual)
-                        getEventosDia(_uiState.value.idCasa,_uiStateEventos.value.diaSeleccionado,_uiState.value.mesActual, _uiState.value.anioActual)
+                        getEventosMes(
+                            _uiState.value.idCasa,
+                            _uiState.value.mesActual,
+                            _uiState.value.anioActual
+                        )
+                        getEventosDia(
+                            _uiState.value.idCasa,
+                            _uiStateEventos.value.diaSeleccionado,
+                            _uiState.value.mesActual,
+                            _uiState.value.anioActual
+                        )
                     }
+
                     is NetworkResult.Error -> {
-                        _uiStateEventos.update { it.copy(mensaje = result.message ?: ConstantesError.CREAR_EVENTO_ERROR) }
+                        _uiStateEventos.update {
+                            it.copy(
+                                mensaje = result.message ?: ConstantesError.CREAR_EVENTO_ERROR
+                            )
+                        }
                     }
+
                     is NetworkResult.Loading -> {
                         _uiStateEventos.update { it.copy(isLoading = true) }
                     }
@@ -107,9 +189,9 @@ class CalendarioViewModel @Inject constructor(
         }
     }
 
-    private fun getEventosDia(idCasa: Int,dia: Int, mes: Int, anio: Int) {
+    private fun getEventosDia(idCasa: Int, dia: Int, mes: Int, anio: Int) {
         viewModelScope.launch {
-            cargarEventosDelDiaUseCase.invoke(idCasa,dia, mes + 1, anio).collect { result ->
+            cargarEventosDelDiaUseCase.invoke(idCasa, dia, mes + 1, anio).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         val eventos = result.data?.eventosResponseDTO ?: emptyList()
@@ -127,9 +209,15 @@ class CalendarioViewModel @Inject constructor(
                             currentState.copy(listaEventos = eventosCasa, isLoading = false)
                         }
                     }
+
                     is NetworkResult.Error -> {
-                        _uiStateEventos.update { it.copy(mensaje = result.message ?: ConstantesError.GET_EVENTOS_ERROR) }
+                        _uiStateEventos.update {
+                            it.copy(
+                                mensaje = result.message ?: ConstantesError.GET_EVENTOS_ERROR
+                            )
+                        }
                     }
+
                     is NetworkResult.Loading -> {
                         _uiStateEventos.update { it.copy(isLoading = true) }
                     }
@@ -138,7 +226,7 @@ class CalendarioViewModel @Inject constructor(
         }
     }
 
-    private fun cargarEventosDelMes(idCasa: Int, mes: Int, anio: Int) {
+    private fun getEventosMes(idCasa: Int, mes: Int, anio: Int) {
         viewModelScope.launch {
             cargarEventosDelMesUseCase.invoke(idCasa, mes + 1, anio).collect { result ->
                 when (result) {
@@ -154,12 +242,22 @@ class CalendarioViewModel @Inject constructor(
                             }
                         }
                         _uiState.update { currentState ->
-                            currentState.copy(idCasa=idCasa,diasEnMes = updatedDiasEnMes, isLoading = false)
+                            currentState.copy(
+                                idCasa = idCasa,
+                                diasEnMes = updatedDiasEnMes,
+                                isLoading = false
+                            )
                         }
                     }
+
                     is NetworkResult.Error -> {
-                        _uiState.update { it.copy(error = result.message ?: ConstantesError.GET_EVENTOS_ERROR) }
+                        _uiState.update {
+                            it.copy(
+                                error = result.message ?: ConstantesError.GET_EVENTOS_ERROR
+                            )
+                        }
                     }
+
                     is NetworkResult.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
                     }
@@ -167,7 +265,8 @@ class CalendarioViewModel @Inject constructor(
             }
         }
     }
-    private fun updateFullState(mes: Int, anio: Int, actualizar:Boolean) {
+
+    private fun updateFullState(mes: Int, anio: Int, actualizar: Boolean) {
         _uiState.update {
             it.copy(
                 mesActual = mes,
@@ -175,8 +274,9 @@ class CalendarioViewModel @Inject constructor(
                 diasEnMes = obtenerDiasDelMes(mes, anio)
             )
         }
-        if(actualizar)
-            cargarEventosDelMes(_uiState.value.idCasa, mes, anio)
+        limpiarDetalleEvento()
+        if (actualizar)
+            getEventosMes(_uiState.value.idCasa, mes, anio)
     }
 
     private fun ajustarFechas(mes: Int, anio: Int): Pair<Int, Int> {
@@ -192,7 +292,10 @@ class CalendarioViewModel @Inject constructor(
         return Pair(newMonth, newYear)
     }
 
-    private fun obtenerDiasDelMes(mes: Int, anio: Int): List<List<CalendarioContract.DiaCalendario>> {
+    private fun obtenerDiasDelMes(
+        mes: Int,
+        anio: Int
+    ): List<List<CalendarioContract.DiaCalendario>> {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.YEAR, anio)
             set(Calendar.MONTH, mes)
@@ -213,7 +316,12 @@ class CalendarioViewModel @Inject constructor(
 
         val dias = mutableListOf<CalendarioContract.DiaCalendario>().apply {
             for (i in 0 until diasPrevios) {
-                add(CalendarioContract.DiaCalendario(numero = totalDiasMesAnterior - diasPrevios + i + 1, colorFondo = COLOR_OTRO_MES))
+                add(
+                    CalendarioContract.DiaCalendario(
+                        numero = totalDiasMesAnterior - diasPrevios + i + 1,
+                        colorFondo = COLOR_OTRO_MES
+                    )
+                )
             }
             for (i in 1..totalDiasEnMes) {
                 val colorFondo = when {
@@ -231,6 +339,8 @@ class CalendarioViewModel @Inject constructor(
 
     private fun esHoy(anio: Int, mes: Int, dia: Int): Boolean {
         val today = Calendar.getInstance()
-        return anio == today.get(Calendar.YEAR) && mes == today.get(Calendar.MONTH) && dia == today.get(Calendar.DAY_OF_MONTH)
+        return anio == today.get(Calendar.YEAR) && mes == today.get(Calendar.MONTH) && dia == today.get(
+            Calendar.DAY_OF_MONTH
+        )
     }
 }

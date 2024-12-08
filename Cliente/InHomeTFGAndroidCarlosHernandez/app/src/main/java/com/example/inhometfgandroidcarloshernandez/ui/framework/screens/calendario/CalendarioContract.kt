@@ -42,6 +42,7 @@ interface CalendarioContract {
         data class GetEventosDia(val idCasa: Int,val dia: Int): CalendarioEvent()
         data class CambioDiaSeleccionado(val dia: Int): CalendarioEvent()
         data class CrearEvento(val eventoCasa: EventoCasa) : CalendarioEvent()
+        data class CambiarAnioPorMes(val avanza: Boolean) : CalendarioEvent()
         data object CambiarDialogo : CalendarioEvent()
     }
 }

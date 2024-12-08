@@ -30,4 +30,7 @@ public class UsuarioEntity {
     @Column(name = UsuarioConstantes.ESTADO_ACTUAL, nullable = false)
     private String estado;
 
+    public UsuarioEntity(Integer id) {
+        this.id = id;
+    }
 }

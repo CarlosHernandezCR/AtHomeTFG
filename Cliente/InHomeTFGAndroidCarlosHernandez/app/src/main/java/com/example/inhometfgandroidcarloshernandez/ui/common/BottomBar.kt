@@ -5,18 +5,25 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.inhometfgandroidcarloshernandez.common.ConstantesError
 import com.example.inhometfgandroidcarloshernandez.ui.framework.navigation.Screens
+import kotlinx.coroutines.launch
 
 @Composable
 fun BottomBar(
     navController: NavController,
     screens: List<Screens>,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    isLoggedIn: Boolean,
+    showSnackbar: (String) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     NavigationBar {
         val state = navController.currentBackStackEntryAsState()
         val currentDestination = state.value?.destination
@@ -35,11 +42,17 @@ fun BottomBar(
                             launchSingleTop = true
                         }
                     } else {
-                        navController.navigate(screen.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                inclusive = true
+                        if (isLoggedIn) {
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
+                        } else {
+                            scope.launch {
+                                showSnackbar(ConstantesError.NO_ESTA_LOGUEADO)
+                            }
                         }
                     }
                 }

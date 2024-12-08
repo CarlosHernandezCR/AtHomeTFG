@@ -11,6 +11,10 @@ import org.tfg.inhometfgcarloshernandez.data.repositories.UsuarioRepository;
 import org.tfg.inhometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.inhometfgcarloshernandez.domain.model.Usuario;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.UsuarioMappers;
+import org.tfg.inhometfgcarloshernandez.spring.model.UsuarioDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.response.GetUsuariosResponseDTO;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,4 +29,10 @@ public class UsuarioServicios {
     }
 
 
+    public List<UsuarioDTO> getUsuarios(int idCasa) {
+        return  usuarioRepository.findByIdCasaEntityId(idCasa)
+                .stream()
+                .map(usuarioMappers::toUsuarioDTO)
+                .toList();
+    }
 }

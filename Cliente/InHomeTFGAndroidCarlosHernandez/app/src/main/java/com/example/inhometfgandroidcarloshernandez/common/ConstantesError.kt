@@ -1,6 +1,12 @@
 package com.example.inhometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val GET_USUARIOS_ERROR: String = "Error al obtener los usuarios"
+    const val ERROR_AGREGAR_CAJON: String = "Error al añadir el cajón"
+    const val ERROR_AGREGAR_MUEBLE: String = "Error al añadir el mueble"
+    const val ERROR_AGREGAR_HABITACION: String="Error al añadir la habitacion"
+    const val NO_ESTA_LOGUEADO: String = "Debe iniciar sesión para acceder a esta sección"
+    const val NO_CORREO: String = "Por favor ingrese un correo válido"
     const val GET_HABITACIONES_ERROR: String = "Error al obtener los datos de las habitaciones"
     const val GET_EVENTOS_ERROR: String = "Error al obtener los eventos"
     const val CREAR_EVENTO_ERROR: String =  "Error al crear el evento"

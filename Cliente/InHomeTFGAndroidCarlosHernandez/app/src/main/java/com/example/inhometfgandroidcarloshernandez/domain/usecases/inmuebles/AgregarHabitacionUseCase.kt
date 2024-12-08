@@ -1,10 +1,11 @@
 package com.example.inhometfgandroidcarloshernandez.domain.usecases.inmuebles
 
+import com.example.inhometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.inhometfgandroidcarloshernandez.data.repositories.InmueblesRepository
 import javax.inject.Inject
 
-class GetDatosHabitacionesUseCase @Inject constructor(
+class AgregarHabitacionUseCase  @Inject constructor(
     private val inmueblesRepository: InmueblesRepository
-){
-    operator fun invoke(id:Int,mueble:String?,habitacion:String?) = inmueblesRepository.getDatosHabitaciones(id,mueble,habitacion)
+) {
+    operator fun invoke(idCasa:Int,habitacion: String) = inmueblesRepository.agregarHabitacion(idCasa,habitacion)
 }

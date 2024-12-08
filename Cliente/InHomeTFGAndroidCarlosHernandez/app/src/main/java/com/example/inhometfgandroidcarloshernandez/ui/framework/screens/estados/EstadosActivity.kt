@@ -33,13 +33,12 @@ fun EstadosActivity(
     val uiStateEstado by viewModel.uiStateEstado.collectAsState()
 
     LaunchedEffect(globalViewModel.idUsuario) {
-        viewModel.handleEvent(EstadosContract.EstadosEvent.LoadCasa(globalViewModel.idUsuario))
+        if(globalViewModel.idUsuario != 0)
+            viewModel.handleEvent(EstadosContract.EstadosEvent.CargarCasa(globalViewModel.idUsuario))
     }
 
     LaunchedEffect(uiState.pantallaEstados) {
-        if (uiState.pantallaEstados.idCasa != 0) {
-            globalViewModel.updateIdCasa(uiState.pantallaEstados.idCasa)
-        }
+        uiState.pantallaEstados.idCasa?.let { globalViewModel.updateIdCasa(it) }
     }
 
     LaunchedEffect(uiState.mensaje) {
@@ -49,7 +48,7 @@ fun EstadosActivity(
         }
     }
     LaunchedEffect(uiStateEstado.mensaje) {
-        uiState.mensaje?.let {
+        uiStateEstado.mensaje?.let {
             showSnackbar(it)
             viewModel.handleEvent(EstadosContract.EstadosEvent.ErrorMostradoEstado)
         }
@@ -114,6 +113,7 @@ fun PantallaEstados(
             ComboBox(
                 items = estadosDisponibles,
                 selectedItem = estadoSeleccionado,
+                titulo = Constantes.ESTADO,
                 onItemSelected = { nuevoEstado ->
                     if (estadoSeleccionado != nuevoEstado) {
                         estadoSeleccionado = nuevoEstado
@@ -163,6 +163,7 @@ fun UsuariosList(
 fun ComboBox(
     items: List<String>,
     selectedItem: String,
+    titulo:String,
     onItemSelected: (String) -> Unit,
 ) {
     val backgroundColor = when (selectedItem) {
@@ -184,7 +185,7 @@ fun ComboBox(
             value = selectedItem,
             onValueChange = {},
             readOnly = true,
-            label = { Text(Constantes.ESTADO) },
+            label = { Text(titulo) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },

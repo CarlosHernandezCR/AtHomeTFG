@@ -31,14 +31,14 @@ class EstadosViewModel @Inject constructor(
 
     fun handleEvent(event: EstadosContract.EstadosEvent) {
         when (event) {
-            is EstadosContract.EstadosEvent.LoadCasa -> getHomeData(event.id)
+            is EstadosContract.EstadosEvent.CargarCasa -> cargarCasa(event.id)
             is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.ErrorMostradoEstado -> _uiStateEstado.value = _uiStateEstado.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.id)
         }
     }
 
-    private fun getHomeData(id:Int) {
+    private fun cargarCasa(id:Int) {
         viewModelScope.launch {
             getDatosCasaUseCase.invoke(id).collect { result ->
                 when (result) {

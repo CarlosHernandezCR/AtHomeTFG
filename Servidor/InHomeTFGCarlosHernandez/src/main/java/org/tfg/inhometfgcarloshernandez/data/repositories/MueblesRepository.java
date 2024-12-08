@@ -10,4 +10,6 @@ import java.util.List;
 public interface MueblesRepository  extends JpaRepository<MuebleEntity, Integer> {
 
     List<MuebleEntity> findByNombreHabitacion(String nombreHabitacion);
+
+    MuebleEntity findByNombre(String nombreMueble);
 }

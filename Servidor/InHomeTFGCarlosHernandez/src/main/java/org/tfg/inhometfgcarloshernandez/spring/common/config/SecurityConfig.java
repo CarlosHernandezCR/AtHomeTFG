@@ -30,6 +30,10 @@ public class SecurityConfig {
                             .requestMatchers(GET, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_DIA).permitAll()
                             .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.CREAR_EVENTO).permitAll()
                             .requestMatchers(GET, ConstantesServer.INMUEBLESPATH+ConstantesServer.PANTALLA_INMUEBLES).permitAll()
+                            .requestMatchers(GET, ConstantesServer.INMUEBLESPATH+ConstantesServer.GET_USUARIOS).permitAll()
+                            .requestMatchers(POST, ConstantesServer.INMUEBLESPATH+ConstantesServer.AGREGAR_HABITACION).permitAll()
+                            .requestMatchers(POST, ConstantesServer.INMUEBLESPATH+ConstantesServer.AGREGAR_MUEBLE).permitAll()
+                            .requestMatchers(POST, ConstantesServer.INMUEBLESPATH+ConstantesServer.AGREGAR_CAJON).permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

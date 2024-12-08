@@ -1,6 +1,14 @@
 package com.example.inhometfgandroidcarloshernandez.common
 
 object Constantes {
+    const val RESERVA_DE: String = "Habitaciones a reservar:"
+    const val CAJON_AGREGADO: String = "Cajón agregado correctamente"
+    const val MUEBLE_AGREGADO: String = "Mueble agregado correctamente"
+    const val HABITACION_AGREGADO: String = "Habitacion agregada correctamente"
+    const val AGREGAR: String = "Agregar"
+    const val AGREGAR_HABITACION: String = "Añadir habitacion"
+    const val NO_HAY_MUEBLE: String = "No hay muebles"
+    const val NO_HAY_CAJONES: String = "No hay cajones en este mueble"
     const val EVENTO_CREADO: String ="Evento creado correctamente"
     const val FORMATER_HORA: String = "HH:mm"
     const val ESTADO_CAMBIADO: String = "Estado cambiado correctamente"
@@ -22,13 +30,16 @@ object Constantes {
     const val CANCELAR: String ="Cancelar"
     const val CREAR_EVENTO: String ="Crear Evento"
     const val ESTADO: String="Estado: "
+    const val PROPIETARIO: String="Propietario: "
     const val USUARIO_FOTO: String = "Foto de Usuario"
     const val INICIAR_SESION: String = "Iniciar Sesion"
     const val CORREO: String = "Correo:"
     const val DATA_STORE_NAME="data_store"
     const val BASE_URL: String =
-        "http://192.168.1.16:8889/"
+        "http://192.168.1.136:8889/"
     const val TIMEOUT: Long = 10
-    const val id = "id"
-    const val idCasa = "idCasa"
+    const val ID = "id"
+    const val IDCASA = "idCasa"
+    const val MUEBLE = "mueble"
+    const val HABITACION = "habitacion"
 }

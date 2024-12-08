@@ -33,14 +33,14 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
             )
         }
     }
-
+    val logeado: Boolean = globalViewModel.idUsuario != 0
     val onLogout: () -> Unit = {
         globalViewModel.updateIdUsuario(0)
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BottomBar(navController = navController, screens = screensBottomBar, onLogout = onLogout) }
+        bottomBar = { BottomBar(navController = navController, screens = screensBottomBar, isLoggedIn = logeado, onLogout = onLogout, showSnackbar = showSnackbar) }
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -62,7 +62,7 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
                     globalViewModel=globalViewModel,
                     innerPadding = paddingValues,
                     showSnackbar = showSnackbar,
-                    )
+                )
             }
 
             composable(ConstantesPantallas.CALENDARIO) {
