@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
-import org.tfg.inhometfgcarloshernandez.data.model.EstadosUsuarioEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 import org.tfg.inhometfgcarloshernandez.data.repositories.CasaRepository;
 import org.tfg.inhometfgcarloshernandez.data.repositories.EstadosUsuariosRepository;

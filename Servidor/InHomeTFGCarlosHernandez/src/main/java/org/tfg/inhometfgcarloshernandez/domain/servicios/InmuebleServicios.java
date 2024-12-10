@@ -15,7 +15,6 @@ import org.tfg.inhometfgcarloshernandez.domain.model.mappers.MuebleMapper;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarCajonRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarHabitacionRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarMuebleRequestDTO;
-import org.tfg.inhometfgcarloshernandez.spring.model.response.GetUsuariosResponseDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.PantallaInmueblesResponseDTO;
 
 import java.util.Collections;

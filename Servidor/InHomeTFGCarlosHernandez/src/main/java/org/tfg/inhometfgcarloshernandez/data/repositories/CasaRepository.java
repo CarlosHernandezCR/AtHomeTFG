@@ -2,7 +2,6 @@ package org.tfg.inhometfgcarloshernandez.data.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
@@ -18,4 +17,7 @@ public interface CasaRepository extends JpaRepository<CasaEntity, Integer> {
 
     @Query("SELECT c FROM CasaEntity c JOIN ViveEntity v ON c.id = v.casaEntity.id WHERE v.usuarioEntity.id = :idUsuario")
     Optional<CasaEntity> findByIdUsuario(Integer idUsuario);
+
+    @Query("SELECT c FROM CasaEntity c JOIN ViveEntity v ON c.id = v.casaEntity.id WHERE v.usuarioEntity.id = :idUsuario")
+    List<CasaEntity> findCasasPorUsuarioId(Integer idUsuario);
 }

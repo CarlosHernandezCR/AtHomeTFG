@@ -7,8 +7,6 @@ import org.tfg.inhometfgcarloshernandez.domain.model.Evento;
 import org.tfg.inhometfgcarloshernandez.domain.servicios.EventosServicios;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.CrearEventoRequestDTO;
-import org.tfg.inhometfgcarloshernandez.spring.model.request.DiasEventosRequestDTO;
-import org.tfg.inhometfgcarloshernandez.spring.model.request.EventosEnDiaRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.DiasConEventosResponseDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.EventosEnDiaResponseDTO;
 

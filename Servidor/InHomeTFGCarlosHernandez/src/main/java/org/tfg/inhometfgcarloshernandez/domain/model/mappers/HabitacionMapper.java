@@ -2,7 +2,6 @@ package org.tfg.inhometfgcarloshernandez.domain.model.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import org.tfg.inhometfgcarloshernandez.common.constantes.Constantes;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;

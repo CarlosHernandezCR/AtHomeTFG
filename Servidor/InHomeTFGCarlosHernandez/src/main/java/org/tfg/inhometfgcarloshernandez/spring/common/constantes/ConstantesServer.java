@@ -16,6 +16,10 @@ public class ConstantesServer {
     public static final String AGREGAR_HABITACION = "/agregarHabitacion";
     public static final String AGREGAR_MUEBLE = "/agregarMueble";
     public static final String AGREGAR_CAJON = "/agregarCajon";
+    public static final String REGISTER = "/register";
+    public static final String VALIDAR_USUARIO = "/validarUsuario";
+    public static final String REFRESH_TOKEN_PATH = "/refreshToken";
+    public static final String OLVIDAR_CONTRASENA = "/olvidarContrasena";
 
     private ConstantesServer() {
     }

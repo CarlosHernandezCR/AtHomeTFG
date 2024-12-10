@@ -8,5 +8,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class LoginResponseDTO {
-    private int id;
+    private String accessToken;
+    private String refreshToken;
 }

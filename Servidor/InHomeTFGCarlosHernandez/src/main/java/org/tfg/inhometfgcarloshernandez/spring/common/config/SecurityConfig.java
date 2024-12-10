@@ -8,7 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
+import org.tfg.inhometfgcarloshernandez.spring.security.JwtTokenFilter;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -18,24 +20,20 @@ import static org.springframework.http.HttpMethod.POST;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtTokenFilter jwtTokenFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
-                            .requestMatchers(GET, ConstantesServer.CASAPATH+ConstantesServer.PANTALLA_CASA).permitAll()
-                            .requestMatchers(POST, ConstantesServer.CASAPATH+ConstantesServer.CAMBIAR_ESTADO).permitAll()
-                            .requestMatchers(GET, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_MES).permitAll()
-                            .requestMatchers(GET, ConstantesServer.CALENDARIOPATH+ConstantesServer.GET_EVENTOS_DIA).permitAll()
-                            .requestMatchers(POST, ConstantesServer.CALENDARIOPATH+ConstantesServer.CREAR_EVENTO).permitAll()
-                            .requestMatchers(GET, ConstantesServer.INMUEBLESPATH+ConstantesServer.PANTALLA_INMUEBLES).permitAll()
-                            .requestMatchers(GET, ConstantesServer.INMUEBLESPATH+ConstantesServer.GET_USUARIOS).permitAll()
-                            .requestMatchers(POST, ConstantesServer.INMUEBLESPATH+ConstantesServer.AGREGAR_HABITACION).permitAll()
-                            .requestMatchers(POST, ConstantesServer.INMUEBLESPATH+ConstantesServer.AGREGAR_MUEBLE).permitAll()
-                            .requestMatchers(POST, ConstantesServer.INMUEBLESPATH+ConstantesServer.AGREGAR_CAJON).permitAll()
+                            .requestMatchers(POST, ConstantesServer.REGISTER).permitAll()
+                            .requestMatchers(GET, ConstantesServer.REGISTER+ConstantesServer.VALIDAR_USUARIO).permitAll()
+                            .requestMatchers(POST, ConstantesServer.LOGINPATH+ConstantesServer.REFRESH_TOKEN_PATH).permitAll()
+                            .requestMatchers(POST, ConstantesServer.OLVIDAR_CONTRASENA).permitAll()
                         .anyRequest().authenticated()
-                );
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

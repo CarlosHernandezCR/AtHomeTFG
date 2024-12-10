@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequestDTO {
-    private String identificador;
-    private String password;
+public class RefreshTokenRequestDTO {
+    private String refreshToken;
 }
