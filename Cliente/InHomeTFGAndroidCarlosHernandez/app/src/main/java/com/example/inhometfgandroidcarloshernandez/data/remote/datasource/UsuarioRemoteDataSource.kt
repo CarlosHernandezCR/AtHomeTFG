@@ -3,6 +3,7 @@ package com.example.inhometfgandroidcarloshernandez.data.remote.datasource
 import com.example.inhometfgandroidcarloshernandez.common.ConstantesError
 import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
@@ -25,7 +26,8 @@ class UsuarioRemoteDataSource @Inject constructor(
                     tokenManager.saveAccessToken(body.accessToken)
                     tokenManager.saveRefreshToken(body.refreshToken)
                     return NetworkResult.Success(body)
-                } else {
+                }
+                else {
                     return NetworkResult.Error(ConstantesError.ERROR_INICIO_SESION)
                 }
             } else {
@@ -44,4 +46,7 @@ class UsuarioRemoteDataSource @Inject constructor(
 
     suspend fun refreshToken(token: String): NetworkResult<AccessTokenResponseDTO> =
         safeApiCall { usuarioService.refreshToken(token) }
+
+    suspend fun registro(registroRequestDTO: RegistroRequestDTO): NetworkResult<Boolean> =
+        safeApiCallNoBody{ usuarioService.registro(registroRequestDTO) }
 }

@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,6 +36,7 @@ import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendar
 fun LoginActivity(
     viewModel: LoginViewModel = hiltViewModel(),
     onNavigateLogin: (idUsuario: String) -> Unit = {},
+    onNavigateRegistro: () -> Unit = {},
     showSnackbar: (String) -> Unit = {},
     innerPadding: PaddingValues,
 ) {
@@ -65,6 +65,7 @@ fun LoginActivity(
             onIdentificadorChange = { viewModel.handleEvent(LoginContract.PortadaEvent.IdentificadorChange(it)) },
             onPasswordChange = { viewModel.handleEvent(LoginContract.PortadaEvent.PasswordChange(it)) },
             login = { viewModel.handleEvent(LoginContract.PortadaEvent.Login) },
+            registro = onNavigateRegistro,
             modifier = Modifier.align(Alignment.Center),
             isLoading = uiState.isLoading
         )
@@ -78,6 +79,7 @@ fun Portada(
     onIdentificadorChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     login: () -> Unit,
+    registro: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean
 ) {
@@ -133,7 +135,7 @@ fun Portada(
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
-                            onClick = { /* TODO: Handle register action */ },
+                            onClick = registro,
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(Constantes.REGISTRARSE)
@@ -154,6 +156,7 @@ fun PortadaPreview() {
         onIdentificadorChange = {},
         onPasswordChange = {},
         login = {},
+        registro = {},
         isLoading = false
     )
 }

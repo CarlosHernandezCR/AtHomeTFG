@@ -4,6 +4,7 @@ import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
@@ -25,4 +26,7 @@ interface UsuarioService {
 
     @POST(ConstantesPaths.REFRESH_TOKEN)
     suspend fun refreshToken(@Body refreshToken: String): Response<AccessTokenResponseDTO>
+
+    @POST(ConstantesPaths.REGISTRO)
+    suspend fun registro(@Body registroRequestDTO: RegistroRequestDTO) : Response<Void>
 }

@@ -38,8 +38,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     FilterChain chain)
             throws ServletException, IOException {
         if (request.getRequestURI().equals(ConstantesServer.LOGINPATH) ||
-                request.getRequestURI().equals(ConstantesServer.REGISTER) ||
-                request.getRequestURI().equals(ConstantesServer.REGISTER + ConstantesServer.VALIDAR_USUARIO) ||
+                request.getRequestURI().equals(ConstantesServer.REGISTERPATH) ||
+                request.getRequestURI().equals(ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO) ||
                 request.getRequestURI().equals(ConstantesServer.LOGINPATH + ConstantesServer.REFRESH_TOKEN_PATH) ||
                 request.getRequestURI().equals(ConstantesServer.OLVIDAR_CONTRASENA)) {
             chain.doFilter(request, response);

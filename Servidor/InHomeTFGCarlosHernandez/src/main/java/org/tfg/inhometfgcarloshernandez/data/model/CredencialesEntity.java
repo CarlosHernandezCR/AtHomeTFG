@@ -3,9 +3,10 @@ package org.tfg.inhometfgcarloshernandez.data.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.tfg.inhometfgcarloshernandez.common.constantes.CredencialesConstantes;
 
 import java.time.Instant;
@@ -13,6 +14,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = CredencialesConstantes.TABLE_NAME)
 public class CredencialesEntity {
     @Id
@@ -31,9 +34,9 @@ public class CredencialesEntity {
     private String password;
 
     @NotNull
-    @ColumnDefault("0")
+    @Basic
     @Column(name = CredencialesConstantes.COLUMN_ACTIVADO, nullable = false)
-    private Boolean activado = false;
+    private boolean activado;
 
     @Size(max = 255)
     @Column(name = CredencialesConstantes.COLUMN_CODIGO_ACTIVACION)

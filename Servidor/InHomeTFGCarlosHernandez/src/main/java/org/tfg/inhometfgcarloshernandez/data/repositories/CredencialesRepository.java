@@ -8,4 +8,6 @@ import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 @Repository
 public interface CredencialesRepository extends JpaRepository<CredencialesEntity, Integer> {
     CredencialesEntity findByIdUsuario(UsuarioEntity idUsuario);
+
+    CredencialesEntity findByCodigoActivacion(String codigoActivacion);
 }

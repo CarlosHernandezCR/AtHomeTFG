@@ -20,4 +20,5 @@ object ConstantesPaths {
     const val GET_USUARIOS="inmuebles/getUsuarios"
     const val REFRESH_TOKEN="login/refreshToken"
     const val GET_CASAS="casa/getCasas"
+    const val REGISTRO= "registro"
 }

@@ -1,6 +1,8 @@
 package com.example.inhometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val TELEFONO_NO_VALIDO: String = "Escriba un número de teléfono válido"
+    const val CORREO_NO_VALIDO: String = "Escriba un correo válido"
     const val CASA_NO_SELECCIONADA: String = "Debe seleccionar una casa para continuar"
     const val NO_HAY_CASA: String= "No hay casa existente"
     const val ERROR_REFRESCAR_TOKEN: String = "Error al refrescar el token"

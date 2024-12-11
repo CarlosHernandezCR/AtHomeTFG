@@ -2,6 +2,7 @@ package com.example.inhometfgandroidcarloshernandez.data.repositories
 
 import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
@@ -37,6 +38,12 @@ class UsuarioRepository @Inject constructor(
     fun refreshToken(token: String): Flow<NetworkResult<AccessTokenResponseDTO>> = flow {
         emit(NetworkResult.Loading())
         val result = remoteDataSource.refreshToken(token)
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    fun registro(nombre: String, password: String, correo: String, telefono: String): Flow<NetworkResult<Boolean>> = flow {
+        emit(NetworkResult.Loading())
+        val result = remoteDataSource.registro(RegistroRequestDTO(nombre, password, correo, telefono))
         emit(result)
     }.flowOn(Dispatchers.IO)
 }

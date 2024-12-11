@@ -1,6 +1,7 @@
 package com.example.inhometfgandroidcarloshernandez.ui.common
 
 object ConstantesPantallas{
+    val REGISTRO: String = "registro"
     val INMUEBLES: String = "inmuebles"
     val CALENDARIO: String = "calendario"
     val idUsuario: String = "idUsuario"

@@ -62,14 +62,14 @@ public class Security {
         }
     }
 
-    public String generateSecurePassword() {
+    public String generarCodigoSeguro() {
         SecureRandom sr = new SecureRandom();
         byte[] bits = new byte[32];
         sr.nextBytes(bits);
         return Base64.getUrlEncoder().encodeToString(bits);
     }
 
-    public String hashearContra(String contra) {
+    public String encriptarContra(String contra) {
         return encoder.encode(contra);
     }
 

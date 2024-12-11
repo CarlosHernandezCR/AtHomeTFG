@@ -302,7 +302,6 @@ fun DetallesEvento(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                //TODO Boton votar que sí
             }
             Column(
                 modifier = Modifier.weight(1f)
@@ -322,7 +321,6 @@ fun DetallesEvento(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                //TODO Boton votar que no
             }
         }
     }

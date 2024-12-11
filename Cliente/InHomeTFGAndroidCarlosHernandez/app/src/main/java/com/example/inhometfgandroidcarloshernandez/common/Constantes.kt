@@ -1,6 +1,9 @@
 package com.example.inhometfgandroidcarloshernandez.common
 
 object Constantes {
+    const val REGISTRO: String = "REGISTRO"
+    const val TELEFONO: String = "Telefono: "
+    const val CONFIRMAR_REGISTRO: String = "Confirme el registro con el correo que le acabamos de enviar."
     const val ANADE_HABITACION: String ="Añade una Habitacion"
     const val SIN_USUARIOS: String = "No hay usuarios en esta casa"
     const val NO_HAY_CASAS: String = "No hay casas registradas"

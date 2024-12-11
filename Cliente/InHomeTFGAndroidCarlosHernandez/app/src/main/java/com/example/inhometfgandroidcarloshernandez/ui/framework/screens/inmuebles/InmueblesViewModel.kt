@@ -79,7 +79,7 @@ class InmueblesViewModel @Inject constructor(
 
     private fun agregarHabitacion(habitacion: String) {
         viewModelScope.launch {
-            _uiState.value.idCasa?.let { it ->
+            _uiState.value.idCasa.let { it ->
                 agregarHabitacionUseCase.invoke(it, habitacion).collect { result ->
                     when (result) {
                         is NetworkResult.Success -> {
@@ -113,7 +113,7 @@ class InmueblesViewModel @Inject constructor(
 
     private fun agregarMueble(mueble: String) {
         viewModelScope.launch {
-            _uiState.value.idCasa?.let {
+            _uiState.value.idCasa.let {
                 agregarMuebleUseCase.invoke(it, _uiState.value.habitacionActual, mueble)
                     .collect { result ->
                         when (result) {
@@ -195,7 +195,7 @@ class InmueblesViewModel @Inject constructor(
 
     private fun cambiarMueble(mueble: String) {
         _uiState.update { it.copy(muebleActual = mueble) }
-        _uiState.value.idCasa?.let { cargarDatos(it, _uiState.value.habitacionActual, mueble) }
+        _uiState.value.idCasa.let { cargarDatos(it, _uiState.value.habitacionActual, mueble) }
     }
 
     private fun cambiarHabitacion(habitacion: String) {

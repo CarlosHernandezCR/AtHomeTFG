@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package org.tfg.inhometfgcarloshernandez.spring.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +30,5 @@ public class LoginController {
         String accessTokenResult = usuarioServicios.refreshTokens(refreshToken.getRefreshToken());
         return ResponseEntity.ok(new AccessTokenResponseDTO(accessTokenResult));
     }
-//
-//    @GetMapping(ConstantesServer.FORGOTPASSWORDPATH)
-//    public ResponseEntity<Boolean> forgotPassword(@RequestParam(Constantes.USERNAME) String username) {
-//        usuarioServicios.contraOlvidada(username);
-//        return ResponseEntity.ok().build();
-//    }
-
 
 }

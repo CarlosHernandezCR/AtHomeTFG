@@ -27,8 +27,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
-                            .requestMatchers(POST, ConstantesServer.REGISTER).permitAll()
-                            .requestMatchers(GET, ConstantesServer.REGISTER+ConstantesServer.VALIDAR_USUARIO).permitAll()
+                            .requestMatchers(POST, ConstantesServer.REGISTERPATH).permitAll()
+                            .requestMatchers(GET, ConstantesServer.REGISTERPATH +ConstantesServer.VALIDAR_USUARIO).permitAll()
                             .requestMatchers(POST, ConstantesServer.LOGINPATH+ConstantesServer.REFRESH_TOKEN_PATH).permitAll()
                             .requestMatchers(POST, ConstantesServer.OLVIDAR_CONTRASENA).permitAll()
                         .anyRequest().authenticated()

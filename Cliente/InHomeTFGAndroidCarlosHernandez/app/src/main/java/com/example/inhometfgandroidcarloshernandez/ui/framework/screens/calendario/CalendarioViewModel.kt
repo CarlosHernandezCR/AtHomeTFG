@@ -150,7 +150,7 @@ class CalendarioViewModel @Inject constructor(
             "${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
         }
         viewModelScope.launch {
-            _uiState.value.idCasa?.let { it ->
+            _uiState.value.idCasa?.let {
                 crearEventoUseCase.invoke(
                     it,
                     evento,

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SonarLintProjectSettings">
+    <option name="fileExclusions">
+      <list>
+        <option value="DIRECTORY:InHomeTFGCarlosHernandez/src/main/java/org/tfg/inhometfgcarloshernandez" />
+      </list>
+    </option>
     <option name="moduleMapping">
       <map>
         <entry key="InHomeTFGCarlosHernandez" value="InHomeTFGCarlosHernandez" />

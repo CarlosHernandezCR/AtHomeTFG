@@ -1,4 +1,4 @@
-package org.tfg.inhometfgcarloshernandez.spring.common.config;
+package org.tfg.inhometfgcarloshernandez.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

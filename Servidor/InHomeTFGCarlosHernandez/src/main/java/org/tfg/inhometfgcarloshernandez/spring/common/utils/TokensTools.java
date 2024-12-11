@@ -31,7 +31,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class TokensTools {
     private final Security security;
 
-    public String generateAccessToken(String subject, int idUsuario, List<Integer> idCasas) {
+    public String generateAccessToken(String subject, int idUsuario) {
         try {
             Date now = new Date();
             return Jwts.builder()
@@ -42,7 +42,6 @@ public class TokensTools {
                             .from(LocalDateTime.now().plusSeconds(ConstantesSpring.CADUCIDAD_CODIGO).atZone(ZoneId.systemDefault())
                                     .toInstant()))
                     .claim(ConstantesSpring.IDUSUARIO, idUsuario)
-                    .claim(ConstantesSpring.IDCASAS, idCasas)
                     .signWith(security.readPrivateKeyFromKeyStoreServer())
                     .compact();
 
@@ -52,7 +51,7 @@ public class TokensTools {
         }
     }
 
-    public String generateRefreshToken(String subject, int idUsuario, List<Integer> idCasas) {
+    public String generateRefreshToken(String subject, int idUsuario) {
         try {
             Date now = new Date();
             return Jwts.builder()
@@ -84,8 +83,7 @@ public class TokensTools {
         Jws<Claims> claimsJws = parseToken(refreshToken);
         String subject = claimsJws.getBody().getSubject();
         int idUsuario = claimsJws.getBody().get(ConstantesSpring.IDUSUARIO, Integer.class);
-        List<Integer> idCasas = claimsJws.getBody().get(ConstantesSpring.IDCASAS, List.class);
-        return generateAccessToken(subject, idUsuario, idCasas);
+        return generateAccessToken(subject, idUsuario);
     }
 
     public Jws<Claims> parseToken(String token) {

@@ -17,7 +17,10 @@ public class ConstantesError {
     public static final String TELEFONO_NO_ENCONTRADO = "Teléfono no encontrado: ";
     public static final String NOMBRE_NO_ENCONTRADO = "Nombre no encontrado: ";
     public static final String ERROR_USUARIO_NO_ENCONTRADO = "No encontrado el usuario con ID ";
-
+    public static final String USUARIO_NO_VALIDADO = "Usuario no validado";
+    public static final String ERROR_EMAIL = "Error al enviar el email";
+    public static final String CODIGO_NO_VALIDO = "Código no válido";
+    public static final String CODIGO_EXPIRADO = "Código expirado";
 
 
     private ConstantesError() {

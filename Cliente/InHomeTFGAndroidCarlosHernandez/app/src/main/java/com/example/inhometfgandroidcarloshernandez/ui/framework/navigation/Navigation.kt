@@ -21,6 +21,7 @@ import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.inmueble
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.login.LoginActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.seleccionarcasa.SeleccionarCasaActivity
 import com.example.inhometfgandroidcarloshernandez.data.remote.di.TokenManager
+import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.registro.RegistroActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -58,6 +59,18 @@ fun Navigation(
                 LoginActivity(
                     onNavigateLogin = { idUsuario ->
                         navController.navigate("${ConstantesPantallas.SELECCIONAR_CASA}/$idUsuario")
+                    },
+                    onNavigateRegistro = {
+                        navController.navigate(ConstantesPantallas.REGISTRO)
+                    },
+                    showSnackbar = showSnackbar,
+                    innerPadding = paddingValues
+                )
+            }
+            composable(ConstantesPantallas.REGISTRO) {
+                RegistroActivity(
+                    onRegisterSuccess = {
+                        navController.navigate(ConstantesPantallas.LOGIN)
                     },
                     showSnackbar = showSnackbar,
                     innerPadding = paddingValues
