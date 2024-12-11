@@ -12,9 +12,9 @@ import javax.inject.Inject
 class EstadosRepository @Inject constructor(
     private val remoteDataSource: EstadosRemoteDataSource
 ){
-    fun getHomeData(id:Int): Flow<NetworkResult<PantallaEstadosResponseDTO>> = flow {
+    fun getDatosCasa(idUsuario:String,idCasa:String): Flow<NetworkResult<PantallaEstadosResponseDTO>> = flow {
         emit(NetworkResult.Loading())
-        val result = remoteDataSource.getHomeData(id)
+        val result = remoteDataSource.getDatosCasa(idUsuario,idCasa)
         emit(result)
     }.flowOn(Dispatchers.IO)
 }

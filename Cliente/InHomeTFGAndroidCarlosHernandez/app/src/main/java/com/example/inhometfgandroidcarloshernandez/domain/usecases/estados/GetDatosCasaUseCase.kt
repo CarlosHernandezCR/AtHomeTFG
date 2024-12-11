@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetDatosCasaUseCase @Inject constructor(
     private val estadosRepository: EstadosRepository
 ){
-    operator fun invoke(id:Int) = estadosRepository.getHomeData(id)
+    operator fun invoke(idUsuario:String,idCasa:String) = estadosRepository.getDatosCasa(idUsuario,idCasa)
 }

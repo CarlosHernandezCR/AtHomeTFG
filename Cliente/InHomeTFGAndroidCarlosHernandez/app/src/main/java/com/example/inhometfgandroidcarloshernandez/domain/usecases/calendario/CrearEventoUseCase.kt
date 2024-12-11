@@ -7,5 +7,5 @@ import javax.inject.Inject
 class CrearEventoUseCase @Inject constructor(
     private val eventosRepository: EventosRepository
 ){
-    operator fun invoke(idCasa: Int, eventoCasa: CalendarioContract.EventoCasa, fecha:String) = eventosRepository.crearEvento(idCasa, eventoCasa, fecha)
+    operator fun invoke(idCasa: String, eventoCasa: CalendarioContract.EventoCasa, fecha:String) = eventosRepository.crearEvento(idCasa, eventoCasa, fecha)
 }

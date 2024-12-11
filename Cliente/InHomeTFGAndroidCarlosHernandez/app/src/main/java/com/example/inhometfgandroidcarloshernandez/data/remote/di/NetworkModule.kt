@@ -1,4 +1,3 @@
-// NetworkModule.kt
 package com.example.inhometfgandroidcarloshernandez.data.remote.di
 
 import android.content.Context
@@ -6,13 +5,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
-import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.EstadosService
+import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.CasaService
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.EventosService
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.InmueblesService
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.UsuarioService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,6 +37,8 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideHttpClient(
+        authenticatorInterceptor: AuthInterceptor,
+        authAuthenticator: AuthAuthenticator,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient
@@ -44,6 +46,8 @@ object NetworkModule {
             .readTimeout(Constantes.TIMEOUT, TimeUnit.SECONDS)
             .connectTimeout(Constantes.TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(authenticatorInterceptor)
+            .authenticator(authAuthenticator)
             .build()
     }
 
@@ -67,13 +71,19 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideUsuarioService(retrofit: Retrofit): UsuarioService =
-        retrofit.create(UsuarioService::class.java)
+    fun provideTokenManager(
+        @ApplicationContext context: Context,
+    ): TokenManager = TokenManager(context)
 
     @Singleton
     @Provides
-    fun provideEstadosService(retrofit: Retrofit): EstadosService =
-        retrofit.create(EstadosService::class.java)
+    fun provideServiceInterceptor(tokenManager: TokenManager): AuthInterceptor =
+        AuthInterceptor(tokenManager)
+
+    @Singleton
+    @Provides
+    fun provideUsuarioService(retrofit: Retrofit): UsuarioService =
+        retrofit.create(UsuarioService::class.java)
 
     @Singleton
     @Provides
@@ -84,6 +94,10 @@ object NetworkModule {
     @Provides
     fun provideInmueblesService(retrofit: Retrofit): InmueblesService =
         retrofit.create(InmueblesService::class.java)
+    @Singleton
+    @Provides
+    fun provideCasaService(retrofit: Retrofit): CasaService =
+        retrofit.create(CasaService::class.java)
 
     @Singleton
     @Provides

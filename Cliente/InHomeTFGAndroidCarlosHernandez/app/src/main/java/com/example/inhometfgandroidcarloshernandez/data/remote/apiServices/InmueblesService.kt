@@ -15,7 +15,7 @@ import retrofit2.http.Query
 
 interface InmueblesService {
     @GET(ConstantesPaths.INMUEBLES)
-    suspend fun getDatosHabitaciones(@Query(Constantes.IDCASA) id: Int, @Query(Constantes.HABITACION) mueble: String?, @Query(Constantes.MUEBLE) habitacion: String?): Response<PantallaInmueblesResponseDTO>
+    suspend fun getDatosHabitaciones(@Query(Constantes.IDCASA) id: String, @Query(Constantes.HABITACION) mueble: String?, @Query(Constantes.MUEBLE) habitacion: String?): Response<PantallaInmueblesResponseDTO>
     @POST(ConstantesPaths.AGREGAR_HABITACION)
     suspend fun agregarHabitacion(@Body agregarHabitacionRequestDTO: AgregarHabitacionRequestDTO): Response<Void>
     @POST(ConstantesPaths.AGREGAR_MUEBLE)

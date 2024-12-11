@@ -8,5 +8,5 @@ import javax.inject.Inject
 class AgregarCajonUseCase @Inject constructor(
     private val inmueblesRepository: InmueblesRepository
 ) {
-    operator fun invoke(idCasa:Int,nombreHabitacion:String,nombreMueble:String,nombre:String,idPropietario:Int) = inmueblesRepository.agregarCajon(idCasa, nombreHabitacion, nombreMueble, nombre, idPropietario)
+    operator fun invoke(idCasa:String,nombreHabitacion:String,nombreMueble:String,nombre:String,idPropietario:String) = inmueblesRepository.agregarCajon(idCasa, nombreHabitacion, nombreMueble, nombre, idPropietario)
 }

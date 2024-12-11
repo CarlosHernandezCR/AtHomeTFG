@@ -63,7 +63,6 @@ public class TokensTools {
                             .from(LocalDateTime.now().plusSeconds(ConstantesSpring.CADUCIDAD_CODIGO_REFRESH).atZone(ZoneId.systemDefault())
                                     .toInstant()))
                     .claim(ConstantesSpring.IDUSUARIO, idUsuario)
-                    .claim(ConstantesSpring.IDCASAS, idCasas)
                     .signWith(security.readPrivateKeyFromKeyStoreServer())
                     .compact();
         } catch (UnrecoverableEntryException | CertificateException | KeyStoreException | IOException |

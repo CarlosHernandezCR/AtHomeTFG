@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

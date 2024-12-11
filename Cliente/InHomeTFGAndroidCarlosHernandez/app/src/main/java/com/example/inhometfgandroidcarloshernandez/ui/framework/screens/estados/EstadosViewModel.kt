@@ -31,16 +31,16 @@ class EstadosViewModel @Inject constructor(
 
     fun handleEvent(event: EstadosContract.EstadosEvent) {
         when (event) {
-            is EstadosContract.EstadosEvent.CargarCasa -> cargarCasa(event.id)
+            is EstadosContract.EstadosEvent.CargarCasa -> cargarCasa(event.idUsuario,event.idCasa)
             is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.ErrorMostradoEstado -> _uiStateEstado.value = _uiStateEstado.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.id)
         }
     }
 
-    private fun cargarCasa(id:Int) {
+    private fun cargarCasa(idUsuario:String,idCasa:String) {
         viewModelScope.launch {
-            getDatosCasaUseCase.invoke(id).collect { result ->
+            getDatosCasaUseCase.invoke(idUsuario,idCasa).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         val datosCasa = result.data ?: PantallaEstadosResponseDTO()
@@ -59,14 +59,13 @@ class EstadosViewModel @Inject constructor(
             }
         }
     }
-    private fun cambiarEstado(estado:String, id:Int){
+    private fun cambiarEstado(estado:String, id:String){
         viewModelScope.launch {
             changeStateUseCase.invoke(estado,id).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         _uiStateEstado.value = EstadosContract.CambiarEstadoState(
                             isLoading = false,
-                            mensaje = Constantes.ESTADO_CAMBIADO
                         )
                     }
                     is NetworkResult.Error -> {

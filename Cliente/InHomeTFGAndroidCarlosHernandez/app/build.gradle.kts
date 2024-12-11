@@ -84,7 +84,9 @@ dependencies {
     implementation(libs.datastore)
     //jwt
     implementation(libs.jwt)
-
+    //iconos
     implementation (libs.androidx.material.icons.extended)
     implementation (libs.material3)
+    //fuentes
+    implementation(libs.androidx.ui.text.google.fonts)
 }

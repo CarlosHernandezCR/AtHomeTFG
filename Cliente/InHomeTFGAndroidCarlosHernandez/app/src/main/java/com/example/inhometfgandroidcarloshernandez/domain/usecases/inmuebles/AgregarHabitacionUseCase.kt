@@ -7,5 +7,5 @@ import javax.inject.Inject
 class AgregarHabitacionUseCase  @Inject constructor(
     private val inmueblesRepository: InmueblesRepository
 ) {
-    operator fun invoke(idCasa:Int,habitacion: String) = inmueblesRepository.agregarHabitacion(idCasa,habitacion)
+    operator fun invoke(idCasa:String,habitacion: String) = inmueblesRepository.agregarHabitacion(idCasa,habitacion)
 }

@@ -9,7 +9,9 @@ import org.tfg.inhometfgcarloshernandez.data.repositories.CasaRepository;
 import org.tfg.inhometfgcarloshernandez.data.repositories.EstadosUsuariosRepository;
 import org.tfg.inhometfgcarloshernandez.data.repositories.UsuarioRepository;
 import org.tfg.inhometfgcarloshernandez.domain.errores.NotFoundException;
+import org.tfg.inhometfgcarloshernandez.domain.model.mappers.CasaMapper;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError;
+import org.tfg.inhometfgcarloshernandez.spring.model.CasaDetallesDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.UsuarioCasaDTO;
 
@@ -22,17 +24,18 @@ public class CasaServicios {
     private final UsuarioRepository usuarioRepository;
     private final CasaRepository casaRepository;
     private final EstadosUsuariosRepository estadosUsuariosRepository;
+    private final CasaMapper casaMapper;
 
-    public PantallaEstadosResponseDTO getDatosPrimeraPantalla(Integer id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + id));
+    public PantallaEstadosResponseDTO getDatosPantallaEstados(String idUsuario, String idCasa) {
+        UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
 
-        CasaEntity casa = casaRepository.findByIdUsuario(usuario.getId())
+        CasaEntity casa = casaRepository.findById(Integer.parseInt(idCasa))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_CASA_NO_ENCONTRADA + usuario.getId()));
 
         List<UsuarioEntity> usuariosCasa = casaRepository.findUsuariosPorCasaId(casa.getId());
 
-        List<String> estadosDisponibles = estadosUsuariosRepository.findEstadosUsuarioPorIdUsuario(id);
+        List<String> estadosDisponibles = estadosUsuariosRepository.findEstadosUsuarioPorIdUsuario(Integer.parseInt(idUsuario));
         return mapearDatosUsuario(usuario, casa, usuariosCasa, estadosDisponibles);
     }
 
@@ -57,5 +60,12 @@ public class CasaServicios {
         usuario.setEstado(estado);
         usuarioRepository.save(usuario);
         return ResponseEntity.ok().build();
+    }
+
+    public List<CasaDetallesDTO> getCasas(String idUsuario) {
+        return casaRepository.findCasasPorUsuarioId(Integer.parseInt(idUsuario))
+                .stream()
+                .map(casaMapper::casaEntityToCasaDetallesDTO)
+                .toList();
     }
 }

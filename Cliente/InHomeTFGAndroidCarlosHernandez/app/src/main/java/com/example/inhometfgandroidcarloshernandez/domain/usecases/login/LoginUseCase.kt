@@ -6,5 +6,5 @@ import javax.inject.Inject
 class LoginUseCase @Inject constructor(
     private val usuarioRepository: UsuarioRepository
 ){
-    operator fun invoke(correo: String) = usuarioRepository.login(correo)
+    operator fun invoke(identificador: String, password: String) = usuarioRepository.login(identificador,password)
 }

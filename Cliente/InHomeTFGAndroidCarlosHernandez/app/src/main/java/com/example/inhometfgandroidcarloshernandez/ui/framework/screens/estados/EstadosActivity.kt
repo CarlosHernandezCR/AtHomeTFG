@@ -24,7 +24,8 @@ import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 
 @Composable
 fun EstadosActivity(
-    globalViewModel: GlobalViewModel,
+    idUsuario: String,
+    idCasa: String,
     showSnackbar: (String) -> Unit = {},
     viewModel: EstadosViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
@@ -32,13 +33,12 @@ fun EstadosActivity(
     val uiState by viewModel.uiState.collectAsState()
     val uiStateEstado by viewModel.uiStateEstado.collectAsState()
 
-    LaunchedEffect(globalViewModel.idUsuario) {
-        if(globalViewModel.idUsuario != 0)
-            viewModel.handleEvent(EstadosContract.EstadosEvent.CargarCasa(globalViewModel.idUsuario))
-    }
-
-    LaunchedEffect(uiState.pantallaEstados) {
-        uiState.pantallaEstados.idCasa?.let { globalViewModel.updateIdCasa(it) }
+    LaunchedEffect(idUsuario, idCasa) {
+        idUsuario.let {
+            idCasa.let {
+                viewModel.handleEvent(EstadosContract.EstadosEvent.CargarCasa(idUsuario, idCasa))
+            }
+        }
     }
 
     LaunchedEffect(uiState.mensaje) {
@@ -72,7 +72,7 @@ fun EstadosActivity(
                 estadosDisponibles = uiState.pantallaEstados.estadosDisponibles,
                 cambioEstado = { nuevoEstado ->
                     viewModel.handleEvent(
-                        EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, globalViewModel.idUsuario)
+                        EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, idUsuario)
                     )
                 },
                 cargandoEstado = uiStateEstado.isLoading,
@@ -100,16 +100,26 @@ fun PantallaEstados(
     ) {
         CasaInfo(titulo = titulo, direccion = direccion)
         Spacer(modifier = Modifier.height(16.dp))
-        UsuariosList(
-            usuariosCasa = usuariosCasa,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
+        if (usuariosCasa.isEmpty())
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = Constantes.SIN_USUARIOS)
+            }
+        else
+            UsuariosList(
+                usuariosCasa = usuariosCasa,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
         Spacer(modifier = Modifier.height(16.dp))
         if (cargandoEstado) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        } else{
+        } else {
             ComboBox(
                 items = estadosDisponibles,
                 selectedItem = estadoSeleccionado,
@@ -163,7 +173,7 @@ fun UsuariosList(
 fun ComboBox(
     items: List<String>,
     selectedItem: String,
-    titulo:String,
+    titulo: String,
     onItemSelected: (String) -> Unit,
 ) {
     val backgroundColor = when (selectedItem) {

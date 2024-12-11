@@ -39,63 +39,74 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
+import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.Selector
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados.ComboBox
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.Usuario
 
 @Composable
 fun InmueblesActivity(
-    globalViewModel: GlobalViewModel,
+    idUsuario: String,
+    idCasa: String,
     showSnackbar: (String) -> Unit = {},
     viewModel: InmueblesViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(globalViewModel.idCasa) {
-        viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarDatos(globalViewModel.idCasa))
-        viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarUsuarios(globalViewModel.idCasa))
+    LaunchedEffect(idCasa) {
+        viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarDatos(idCasa))
+        viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarUsuarios(idCasa))
     }
     LaunchedEffect(uiState.mensaje) {
         uiState.mensaje?.let { showSnackbar.invoke(it) }
         viewModel.handleEvent(InmueblesContract.InmueblesEvent.MensajeMostrado)
     }
-    InmueblesPantalla(
-        habitacionActual = uiState.habitacionActual,
-        habitaciones = uiState.habitaciones,
-        muebleActual = uiState.muebleActual,
-        muebles = uiState.muebles.map { it.nombre },
-        cajones = uiState.cajones,
-        usuarios = uiState.usuarios,
-        cambioHabitacion = {
-            viewModel.handleEvent(
-                InmueblesContract.InmueblesEvent.CambioHabitacion(
-                    it
+    if (uiState.isLoading)
+        Cargando()
+    else
+        InmueblesPantalla(
+            habitacionActual = uiState.habitacionActual,
+            habitaciones = uiState.habitaciones,
+            muebleActual = uiState.muebleActual,
+            muebles = uiState.muebles.map { it.nombre },
+            cajones = uiState.cajones,
+            usuarios = uiState.usuarios,
+            cambioHabitacion = {
+                viewModel.handleEvent(
+                    InmueblesContract.InmueblesEvent.CambioHabitacion(
+                        it
+                    )
                 )
-            )
-        },
-        cambioMueble = { viewModel.handleEvent(InmueblesContract.InmueblesEvent.CambioMueble(it)) },
-        cajonClicado = { viewModel.handleEvent(InmueblesContract.InmueblesEvent.CajonSeleccionado(it)) },
-        agregarCajon = { nombre, idPropietario ->
-            viewModel.handleEvent(
-                InmueblesContract.InmueblesEvent.AgregarCajon(
-                    nombre, idPropietario
+            },
+            cambioMueble = { viewModel.handleEvent(InmueblesContract.InmueblesEvent.CambioMueble(it)) },
+            cajonClicado = {
+                viewModel.handleEvent(
+                    InmueblesContract.InmueblesEvent.CajonSeleccionado(
+                        it
+                    )
                 )
-            )
-        },
-        agregarMueble = { nombre ->
-            viewModel.handleEvent(
-                InmueblesContract.InmueblesEvent.AgregarMueble(
-                    nombre
+            },
+            agregarCajon = { nombre, idPropietario ->
+                viewModel.handleEvent(
+                    InmueblesContract.InmueblesEvent.AgregarCajon(
+                        nombre, idPropietario
+                    )
                 )
-            )
-        },
-        agregarHabitacion = {nombre ->
-            viewModel.handleEvent(
-                InmueblesContract.InmueblesEvent.AgregarHabitacion(
-                    nombre
+            },
+            agregarMueble = { nombre ->
+                viewModel.handleEvent(
+                    InmueblesContract.InmueblesEvent.AgregarMueble(
+                        nombre
+                    )
                 )
-            )
-        },
-    )
+            },
+            agregarHabitacion = { nombre ->
+                viewModel.handleEvent(
+                    InmueblesContract.InmueblesEvent.AgregarHabitacion(
+                        nombre
+                    )
+                )
+            },
+        )
 }
 
 @Composable
@@ -109,13 +120,15 @@ fun InmueblesPantalla(
     cambioHabitacion: (String) -> Unit = {},
     cambioMueble: (String) -> Unit = {},
     cajonClicado: (String) -> Unit = {},
-    agregarCajon: (String,Int) -> Unit,
+    agregarCajon: (String, String) -> Unit,
     agregarMueble: (String) -> Unit = {},
     agregarHabitacion: (String) -> Unit = {},
-    ) {
+) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
     var isCajon by remember { mutableStateOf(false) }
+    val areHabitacionesEmpty = habitaciones.isEmpty()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -187,7 +200,8 @@ fun InmueblesPantalla(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 6.dp)
+                        .padding(horizontal = 6.dp),
+                    enabled = !areHabitacionesEmpty
                 ) {
                     Text(
                         text = Constantes.AGREGAR_MUEBLE,
@@ -205,7 +219,8 @@ fun InmueblesPantalla(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 6.dp)
+                        .padding(start = 6.dp),
+                    enabled = !areHabitacionesEmpty
                 ) {
                     Text(
                         text = Constantes.AGREGAR_CAJON,
@@ -224,9 +239,11 @@ fun InmueblesPantalla(
                 usuarios = usuarios,
                 onConfirm = { name, idPropietario ->
                     if (isCajon) {
-                        agregarCajon(name, idPropietario?.toInt() ?: 0)
+                        if (idPropietario != null) {
+                            agregarCajon(name, idPropietario)
+                        }
                     } else {
-                        if (dialogTitle ==Constantes.AGREGAR_HABITACION) {
+                        if (dialogTitle == Constantes.AGREGAR_HABITACION) {
                             agregarHabitacion(name)
                         } else {
                             agregarMueble(name)
@@ -319,6 +336,7 @@ fun DialogNuevoElemento(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewInmueblesActivity() {

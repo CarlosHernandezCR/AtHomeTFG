@@ -20,6 +20,7 @@ public class ConstantesServer {
     public static final String VALIDAR_USUARIO = "/validarUsuario";
     public static final String REFRESH_TOKEN_PATH = "/refreshToken";
     public static final String OLVIDAR_CONTRASENA = "/olvidarContrasena";
+    public static final String GET_CASAS = "/getCasas";
 
     private ConstantesServer() {
     }

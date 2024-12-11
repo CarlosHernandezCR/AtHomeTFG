@@ -61,15 +61,16 @@ import java.util.Locale
 
 @Composable
 fun CalendarioActivity(
-    globalViewModel: GlobalViewModel,
+    idUsuario: String,
+    idCasa: String,
     showSnackbar: (String) -> Unit = {},
     viewModel: CalendarioViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val uiStateEventos by viewModel.uiStateEventos.collectAsState()
 
-    LaunchedEffect(globalViewModel.idCasa) {
-        viewModel.handleEvent(CalendarioContract.CalendarioEvent.CargarEventos(globalViewModel.idCasa))
+    LaunchedEffect(idCasa) {
+        viewModel.handleEvent(CalendarioContract.CalendarioEvent.CargarEventos(idCasa))
     }
 
     LaunchedEffect(uiState.error, uiStateEventos.mensaje) {
@@ -82,35 +83,48 @@ fun CalendarioActivity(
             viewModel.handleEvent(CalendarioContract.CalendarioEvent.ErrorMostrado)
         }
     }
-
-    CalendarioPantalla(
-        isLoading = uiState.isLoading,
-        anioActual = uiState.anioActual,
-        mesActual = uiState.mesActual,
-        diasEnMes = uiState.diasEnMes,
-        diaSeleccionado = uiStateEventos.diaSeleccionado,
-        listaEventos = uiStateEventos.listaEventos,
-        idUsuario = globalViewModel.idUsuario.toString(),
-        mostrarDialogo = uiState.mostrarDialogo,
-        onAnioCambio = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarAnio(it)) },
-        onCambioAnioPorMes = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarAnioPorMes(it)) },
-        onMesCambio = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarMes(it)) },
-        onDiaClicado = {
-            viewModel.handleEvent(
-                CalendarioContract.CalendarioEvent.CambioDiaSeleccionado(
-                    it
+    if (uiState.isLoading)
+        Cargando()
+    else
+        CalendarioPantalla(
+            anioActual = uiState.anioActual,
+            mesActual = uiState.mesActual,
+            diasEnMes = uiState.diasEnMes,
+            diaSeleccionado = uiStateEventos.diaSeleccionado,
+            listaEventos = uiStateEventos.listaEventos,
+            idUsuario = idUsuario,
+            mostrarDialogo = uiState.mostrarDialogo,
+            loadingEvento = uiStateEventos.isLoading,
+            onAnioCambio = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarAnio(it)) },
+            onCambioAnioPorMes = {
+                viewModel.handleEvent(
+                    CalendarioContract.CalendarioEvent.CambiarAnioPorMes(
+                        it
+                    )
                 )
-            )
-        },
-        onCrearEvento = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CrearEvento(it)) },
-        onMostrarDialogoChange = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarDialogo) },
-    )
+            },
+            onMesCambio = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarMes(it)) },
+            onDiaClicado = {
+                viewModel.handleEvent(
+                    CalendarioContract.CalendarioEvent.CambioDiaSeleccionado(
+                        it
+                    )
+                )
+            },
+            onCrearEvento = {
+                viewModel.handleEvent(
+                    CalendarioContract.CalendarioEvent.CrearEvento(
+                        it
+                    )
+                )
+            },
+            onMostrarDialogoChange = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarDialogo) },
+        )
 }
 
 
 @Composable
 fun CalendarioPantalla(
-    isLoading: Boolean,
     anioActual: Int,
     mesActual: Int,
     diasEnMes: List<List<DiaCalendario>>,
@@ -118,6 +132,7 @@ fun CalendarioPantalla(
     diaSeleccionado: Int,
     listaEventos: List<CalendarioContract.EventoCasa>,
     mostrarDialogo: Boolean,
+    loadingEvento: Boolean,
     onAnioCambio: (Int) -> Unit,
     onCambioAnioPorMes: (Boolean) -> Unit = {},
     onMesCambio: (Int) -> Unit,
@@ -130,65 +145,65 @@ fun CalendarioPantalla(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        when {
-            isLoading -> item { Cargando() }
-            else -> {
-                item {
-                    Selector(
-                        valorActual = anioActual,
-                        opciones = (2024..2100).toList(),
-                        onCambio = onAnioCambio
-                    )
-                }
-                item {
-                    Column {
-                        Selector(
-                            valorActual = mesActual,
-                            opciones = nombresMeses.indices.toList(),
-                            onCambio = onMesCambio,
-                            mostrarOpciones = { nombresMeses[it] }
-                        )
-                        if (mesActual == 0 || mesActual == 11) {
+        item {
+            Selector(
+                valorActual = anioActual,
+                opciones = (2024..2100).toList(),
+                onCambio = onAnioCambio
+            )
+        }
+        item {
+            Column {
+                Selector(
+                    valorActual = mesActual,
+                    opciones = nombresMeses.indices.toList(),
+                    onCambio = onMesCambio,
+                    mostrarOpciones = { nombresMeses[it] }
+                )
+                if (mesActual == 0 || mesActual == 11) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        if (mesActual == 0) {
+                            TextButton(onClick = { onCambioAnioPorMes(false) }) {
+                                Text(ANIO_ANTERIOR)
+                            }
+                        }
+                        if (mesActual == 11) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
                             ) {
-                                if (mesActual == 0) {
-                                    TextButton(onClick = { onCambioAnioPorMes(false) }) {
-                                        Text(ANIO_ANTERIOR)
-                                    }
-                                }
-                                if (mesActual == 11) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
-                                        TextButton(onClick = { onCambioAnioPorMes(true) }) {
-                                            Text(ANIO_SIGUIENTE)
-                                        }
-                                    }
+                                TextButton(onClick = { onCambioAnioPorMes(true) }) {
+                                    Text(ANIO_SIGUIENTE)
                                 }
                             }
                         }
                     }
                 }
-                item {
-                    Calendario(
-                        diasDelMes = diasEnMes,
-                        diaClicado = onDiaClicado
-                    )
-                }
-                item {
-                    CampoEvento(
-                        diaSeleccionado = "$diaSeleccionado-${mesActual + 1}-$anioActual",
-                        listaEventos = listaEventos,
-                        idUsuario = idUsuario,
-                        mostrarDialogo = mostrarDialogo,
-                        onCrearEvento = onCrearEvento,
-                        onMostrarDialogoChange = onMostrarDialogoChange
-                    )
-                }
             }
         }
+        item {
+            Calendario(
+                diasDelMes = diasEnMes,
+                diaClicado = onDiaClicado
+            )
+        }
+        item {
+            if (loadingEvento)
+                Cargando()
+            else
+                CampoEvento(
+                    diaSeleccionado = "$diaSeleccionado-${mesActual + 1}-$anioActual",
+                    listaEventos = listaEventos,
+                    idUsuario = idUsuario,
+                    mostrarDialogo = mostrarDialogo,
+                    onCrearEvento = onCrearEvento,
+                    onMostrarDialogoChange = onMostrarDialogoChange
+                )
+        }
+
+
     }
 }
 
@@ -553,7 +568,6 @@ fun PreviewCalendarioScreen() {
     )
 
     CalendarioPantalla(
-        isLoading = false,
         anioActual = 2024,
         mesActual = 0,
         diasEnMes = diasEnMes,
@@ -564,7 +578,8 @@ fun PreviewCalendarioScreen() {
         onMesCambio = {},
         onDiaClicado = {},
         onCrearEvento = {},
-        idUsuario = "1" ,
+        idUsuario = "1",
+        loadingEvento = false,
         onMostrarDialogoChange = {}
     )
 }

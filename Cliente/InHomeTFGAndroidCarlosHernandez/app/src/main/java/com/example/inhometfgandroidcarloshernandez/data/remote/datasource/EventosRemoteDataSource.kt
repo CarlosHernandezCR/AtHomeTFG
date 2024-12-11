@@ -15,9 +15,9 @@ class EventosRemoteDataSource @Inject constructor(
     suspend fun crearEvento(crearEventoRequestDTO: CrearEventoRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody{ eventosService.crearEvento(crearEventoRequestDTO) }
 
-    suspend fun cargarEventosDelMes(idCasa:Int, mes:Int, anio:Int): NetworkResult<DiasConEventosResponseDTO> =
+    suspend fun cargarEventosDelMes(idCasa:String, mes:Int, anio:Int): NetworkResult<DiasConEventosResponseDTO> =
         safeApiCall{ eventosService.cargarEventosDelMes(idCasa,mes,anio) }
 
-    suspend fun cargarEventosDelDia(idCasa: Int, dia: Int, mes: Int, anio: Int): NetworkResult<EventosEnDiaResponseDTO> =
+    suspend fun cargarEventosDelDia(idCasa: String, dia: Int, mes: Int, anio: Int): NetworkResult<EventosEnDiaResponseDTO> =
         safeApiCall{ eventosService.cargarEventosDelDia(idCasa,dia,mes,anio) }
 }

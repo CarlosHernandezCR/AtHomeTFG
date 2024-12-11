@@ -3,6 +3,7 @@ package com.example.inhometfgandroidcarloshernandez.ui.framework.screens.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inhometfgandroidcarloshernandez.common.ConstantesError
+import com.example.inhometfgandroidcarloshernandez.data.remote.di.TokenManager
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.inhometfgandroidcarloshernandez.domain.usecases.login.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,33 +19,37 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val login: LoginUseCase
-): ViewModel(){
+    private val login: LoginUseCase,
+    private val tokenManager: TokenManager,
+
+    ): ViewModel(){
     private val _uiState = MutableStateFlow(PortadaState())
     val uiState: StateFlow<PortadaState> = _uiState.asStateFlow()
 
     fun handleEvent(event: PortadaEvent) {
         when (event) {
             is PortadaEvent.Login -> login()
-            is PortadaEvent.ErrorMostrado -> errorMostrado()
-            is PortadaEvent.CorreoChange -> _uiState.update { it.copy(correo = event.correo) }
+            is PortadaEvent.ErrorMostrado -> _uiState.update { it.copy(error = null)}
+            is PortadaEvent.IdentificadorChange -> _uiState.update { it.copy(identificador = event.identificador) }
+            is PortadaEvent.PasswordChange -> _uiState.update { it.copy(password = event.password) }
         }
     }
 
     private fun login() {
-        if(_uiState.value.correo.isEmpty()){
-            _uiState.update { it.copy(error = ConstantesError.NO_CORREO) }
+        if(_uiState.value.identificador.isEmpty() && _uiState.value.password.isEmpty()){
+            _uiState.update { it.copy(error = ConstantesError.CAMPO_VACIO_ERROR) }
             return
         }
         viewModelScope.launch {
-            login.invoke(_uiState.value.correo).collect { result ->
+            login.invoke(_uiState.value.identificador, _uiState.value.password).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        val loginResponse = result.data
-                        _uiState.update { it.copy(id = loginResponse?.id) }
+                        val tokens = result.data
+                        val idUsuario = tokens?.let { tokenManager.extractIdUsuarioFromToken(tokens.accessToken) }
+                        _uiState.update { it.copy(idUsuario = idUsuario, isLoading = false) }
                     }
                     is NetworkResult.Error -> {
-                        _uiState.update { it.copy(error = result.message) }
+                        _uiState.update { it.copy(error = result.message, isLoading = false) }
                     }
                     is NetworkResult.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
@@ -52,10 +57,6 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun errorMostrado() {
-        _uiState.update { it.copy(error = null, isLoading = false) }
     }
 }
 

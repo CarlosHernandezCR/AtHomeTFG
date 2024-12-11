@@ -7,7 +7,7 @@ import com.example.inhometfgandroidcarloshernandez.data.model.MuebleDTO
 interface InmueblesContract {
 
     data class InmueblesState(
-        val idCasa: Int = 0,
+        val idCasa: String = "",
         val habitaciones: List<String> = emptyList(),
         val muebles: List<MuebleDTO> = emptyList(),
         val cajones: List<CajonDTO> = emptyList(),
@@ -21,14 +21,14 @@ interface InmueblesContract {
     data class Usuario(val id: String, val nombre: String)
 
     sealed class InmueblesEvent{
-        data class CargarDatos(val idCasa:Int) : InmueblesEvent()
-        data class CargarUsuarios(val idCasa:Int) : InmueblesEvent()
+        data class CargarDatos(val idCasa:String) : InmueblesEvent()
+        data class CargarUsuarios(val idCasa:String) : InmueblesEvent()
         data object MensajeMostrado: InmueblesEvent()
         data class CambioHabitacion(val habitacion:String) : InmueblesEvent()
         data class CambioMueble(val mueble:String) : InmueblesEvent()
         data class CajonSeleccionado(val cajon:String) : InmueblesEvent()
         data class AgregarHabitacion(val habitacion: String) : InmueblesEvent()
         data class AgregarMueble(val mueble: String) : InmueblesEvent()
-        data class AgregarCajon(val cajon: String, val idUsuario:Int) : InmueblesEvent()
+        data class AgregarCajon(val cajon: String, val idUsuario:String) : InmueblesEvent()
     }
 }

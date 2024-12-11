@@ -10,18 +10,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
+import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.ui.common.BottomBar
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.CalendarioActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados.EstadosActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.login.LoginActivity
+import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.seleccionarcasa.SeleccionarCasaActivity
+import com.example.inhometfgandroidcarloshernandez.data.remote.di.TokenManager
 import kotlinx.coroutines.launch
 
 @Composable
-fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
+fun Navigation(
+    tokenManager: TokenManager
+) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -33,14 +38,17 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
             )
         }
     }
-    val logeado: Boolean = globalViewModel.idUsuario != 0
-    val onLogout: () -> Unit = {
-        globalViewModel.updateIdUsuario(0)
-    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BottomBar(navController = navController, screens = screensBottomBar, isLoggedIn = logeado, onLogout = onLogout, showSnackbar = showSnackbar) }
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                screens = screensBottomBar,
+                showSnackbar = showSnackbar,
+                tokenManager = tokenManager
+            )
+        }
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -49,33 +57,52 @@ fun Navigation(globalViewModel: GlobalViewModel = hiltViewModel()) {
             composable(ConstantesPantallas.LOGIN) {
                 LoginActivity(
                     onNavigateLogin = { idUsuario ->
-                        globalViewModel.updateIdUsuario(idUsuario)
-                        navController.navigate(ConstantesPantallas.CASA)
+                        navController.navigate("${ConstantesPantallas.SELECCIONAR_CASA}/$idUsuario")
                     },
                     showSnackbar = showSnackbar,
                     innerPadding = paddingValues
                 )
             }
 
-            composable(ConstantesPantallas.CASA) {
+            composable("${ConstantesPantallas.SELECCIONAR_CASA}/{idUsuario}") { backStackEntry ->
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+                SeleccionarCasaActivity(
+                    idUsuario = idUsuario,
+                    onCasaSelected = { idCasa ->
+                        navController.navigate("casa/$idUsuario/$idCasa")
+                    },
+                    showSnackbar = showSnackbar
+                )
+            }
+
+            composable("${ConstantesPantallas.CASA}/{idUsuario}/{idCasa}") { backStackEntry ->
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+                val idCasa = backStackEntry.arguments?.getString("idCasa") ?: "0"
                 EstadosActivity(
-                    globalViewModel=globalViewModel,
+                    idUsuario = idUsuario,
+                    idCasa = idCasa,
                     innerPadding = paddingValues,
-                    showSnackbar = showSnackbar,
+                    showSnackbar = showSnackbar
                 )
             }
 
-            composable(ConstantesPantallas.CALENDARIO) {
+            composable("${ConstantesPantallas.CALENDARIO}/{idUsuario}/{idCasa}") { backStackEntry ->
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+                val idCasa = backStackEntry.arguments?.getString("idCasa") ?: "0"
                 CalendarioActivity(
-                    globalViewModel = globalViewModel,
-                    showSnackbar = showSnackbar,
+                    idUsuario = idUsuario,
+                    idCasa = idCasa,
+                    showSnackbar = showSnackbar
                 )
             }
 
-            composable(ConstantesPantallas.INMUEBLES) {
+            composable("${ConstantesPantallas.INMUEBLES}/{idUsuario}/{idCasa}") { backStackEntry ->
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+                val idCasa = backStackEntry.arguments?.getString("idCasa") ?: "0"
                 InmueblesActivity(
-                    globalViewModel=globalViewModel,
-                    showSnackbar = showSnackbar,
+                    idUsuario = idUsuario,
+                    idCasa = idCasa,
+                    showSnackbar = showSnackbar
                 )
             }
         }

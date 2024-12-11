@@ -1,6 +1,10 @@
 package com.example.inhometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val CASA_NO_SELECCIONADA: String = "Debe seleccionar una casa para continuar"
+    const val NO_HAY_CASA: String= "No hay casa existente"
+    const val ERROR_REFRESCAR_TOKEN: String = "Error al refrescar el token"
+    const val ERROR_INICIO_SESION: String = "Error al iniciar sesión"
     const val GET_USUARIOS_ERROR: String = "Error al obtener los usuarios"
     const val ERROR_AGREGAR_CAJON: String = "Error al añadir el cajón"
     const val ERROR_AGREGAR_MUEBLE: String = "Error al añadir el mueble"

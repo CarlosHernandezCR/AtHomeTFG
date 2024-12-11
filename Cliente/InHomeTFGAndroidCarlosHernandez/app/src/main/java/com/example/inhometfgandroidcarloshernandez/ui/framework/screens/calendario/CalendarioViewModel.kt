@@ -105,22 +105,24 @@ class CalendarioViewModel @Inject constructor(
         if (avanza) {
             _uiState.update { it.copy(anioActual = _uiState.value.anioActual + 1, mesActual = 0) }
             limpiarDetalleEvento()
-            getEventosMes(uiState.value.idCasa, 0, uiState.value.anioActual + 1)
+            uiState.value.idCasa?.let { getEventosMes(it, 0, uiState.value.anioActual + 1) }
         } else {
             _uiState.update { it.copy(anioActual = _uiState.value.anioActual - 1, mesActual = 11) }
-            getEventosMes(uiState.value.idCasa, 11, uiState.value.anioActual - 1)
+            uiState.value.idCasa?.let { getEventosMes(it, 11, uiState.value.anioActual - 1) }
             limpiarDetalleEvento()
         }
     }
 
     private fun cambiarDiaSeleccionado(dia: Int) {
         _uiStateEventos.update { it.copy(diaSeleccionado = dia) }
-        getEventosDia(
-            _uiState.value.idCasa,
-            _uiStateEventos.value.diaSeleccionado,
-            _uiState.value.mesActual,
-            _uiState.value.anioActual
-        )
+        _uiState.value.idCasa?.let {
+            getEventosDia(
+                it,
+                _uiStateEventos.value.diaSeleccionado,
+                _uiState.value.mesActual,
+                _uiState.value.anioActual
+            )
+        }
     }
 
     private fun crearEvento(evento: CalendarioContract.EventoCasa) {
@@ -148,121 +150,128 @@ class CalendarioViewModel @Inject constructor(
             "${_uiStateEventos.value.diaSeleccionado}-${_uiState.value.mesActual + 1}-${_uiState.value.anioActual}"
         }
         viewModelScope.launch {
-            crearEventoUseCase.invoke(
-                _uiState.value.idCasa,
-                evento,
-                fechaCompuesta
-            ).collect { result ->
-                when (result) {
-                    is NetworkResult.Success -> {
-                        _uiState.update { currentState ->
-                            currentState.copy(
-                                mostrarDialogo = false
+            _uiState.value.idCasa?.let { it ->
+                crearEventoUseCase.invoke(
+                    it,
+                    evento,
+                    fechaCompuesta
+                ).collect { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            _uiState.update { currentState ->
+                                currentState.copy(
+                                    mostrarDialogo = false
+                                )
+                            }
+                            getEventosMes(
+                                _uiState.value.idCasa,
+                                _uiState.value.mesActual,
+                                _uiState.value.anioActual
+                            )
+                            getEventosDia(
+                                _uiState.value.idCasa,
+                                _uiStateEventos.value.diaSeleccionado,
+                                _uiState.value.mesActual,
+                                _uiState.value.anioActual
                             )
                         }
-                        getEventosMes(
-                            _uiState.value.idCasa,
-                            _uiState.value.mesActual,
-                            _uiState.value.anioActual
-                        )
-                        getEventosDia(
-                            _uiState.value.idCasa,
-                            _uiStateEventos.value.diaSeleccionado,
-                            _uiState.value.mesActual,
-                            _uiState.value.anioActual
-                        )
-                    }
 
-                    is NetworkResult.Error -> {
-                        _uiStateEventos.update {
-                            it.copy(
-                                mensaje = result.message ?: ConstantesError.CREAR_EVENTO_ERROR
-                            )
-                        }
-                    }
-
-                    is NetworkResult.Loading -> {
-                        _uiStateEventos.update { it.copy(isLoading = true) }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getEventosDia(idCasa: Int, dia: Int, mes: Int, anio: Int) {
-        viewModelScope.launch {
-            cargarEventosDelDiaUseCase.invoke(idCasa, dia, mes + 1, anio).collect { result ->
-                when (result) {
-                    is NetworkResult.Success -> {
-                        val eventos = result.data?.eventosResponseDTO ?: emptyList()
-                        val eventosCasa = eventos.map { evento ->
-                            CalendarioContract.EventoCasa(
-                                tipo = evento.tipo,
-                                nombre = evento.nombre,
-                                organizador = evento.organizador,
-                                horaComienzo = evento.horaComienzo,
-                                horaFin = evento.horaFin,
-                                votacion = evento.votacion
-                            )
-                        }
-                        _uiStateEventos.update { currentState ->
-                            currentState.copy(listaEventos = eventosCasa, isLoading = false)
-                        }
-                    }
-
-                    is NetworkResult.Error -> {
-                        _uiStateEventos.update {
-                            it.copy(
-                                mensaje = result.message ?: ConstantesError.GET_EVENTOS_ERROR
-                            )
-                        }
-                    }
-
-                    is NetworkResult.Loading -> {
-                        _uiStateEventos.update { it.copy(isLoading = true) }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getEventosMes(idCasa: Int, mes: Int, anio: Int) {
-        viewModelScope.launch {
-            cargarEventosDelMesUseCase.invoke(idCasa, mes + 1, anio).collect { result ->
-                when (result) {
-                    is NetworkResult.Success -> {
-                        val diasConEvento = result.data?.diasConEvento ?: emptyList()
-                        val updatedDiasEnMes = _uiState.value.diasEnMes.map { semana ->
-                            semana.map { dia ->
-                                if (diasConEvento.contains(dia.numero) && dia.colorFondo != "#C4C4C4") {
-                                    dia.copy(colorFondo = "#FF0000")
-                                } else {
-                                    dia
-                                }
+                        is NetworkResult.Error -> {
+                            _uiStateEventos.update {
+                                it.copy(
+                                    mensaje = result.message ?: ConstantesError.CREAR_EVENTO_ERROR
+                                )
                             }
                         }
-                        _uiState.update { currentState ->
-                            currentState.copy(
-                                idCasa = idCasa,
-                                diasEnMes = updatedDiasEnMes,
-                                isLoading = false
-                            )
-                        }
-                    }
 
-                    is NetworkResult.Error -> {
-                        _uiState.update {
-                            it.copy(
-                                error = result.message ?: ConstantesError.GET_EVENTOS_ERROR
-                            )
+                        is NetworkResult.Loading -> {
+                            _uiStateEventos.update { it.copy(isLoading = true) }
                         }
-                    }
-
-                    is NetworkResult.Loading -> {
-                        _uiState.update { it.copy(isLoading = true) }
                     }
                 }
             }
+        }
+    }
+
+    private fun getEventosDia(idCasa: String?, dia: Int, mes: Int, anio: Int) {
+        viewModelScope.launch {
+            if (idCasa != null) {
+                cargarEventosDelDiaUseCase.invoke(idCasa, dia, mes + 1, anio).collect { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            val eventos = result.data?.eventosResponseDTO ?: emptyList()
+                            val eventosCasa = eventos.map { evento ->
+                                CalendarioContract.EventoCasa(
+                                    tipo = evento.tipo,
+                                    nombre = evento.nombre,
+                                    organizador = evento.organizador,
+                                    horaComienzo = evento.horaComienzo,
+                                    horaFin = evento.horaFin,
+                                    votacion = evento.votacion
+                                )
+                            }
+                            _uiStateEventos.update { currentState ->
+                                currentState.copy(listaEventos = eventosCasa, isLoading = false)
+                            }
+                        }
+
+                        is NetworkResult.Error -> {
+                            _uiStateEventos.update {
+                                it.copy(
+                                    mensaje = result.message ?: ConstantesError.GET_EVENTOS_ERROR
+                                )
+                            }
+                        }
+
+                        is NetworkResult.Loading -> {
+                            _uiStateEventos.update { it.copy(isLoading = true) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getEventosMes(idCasa: String?, mes: Int, anio: Int) {
+        viewModelScope.launch {
+            if (idCasa != null) {
+                cargarEventosDelMesUseCase.invoke(idCasa, mes + 1, anio).collect { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            val diasConEvento = result.data?.diasConEvento ?: emptyList()
+                            val updatedDiasEnMes = _uiState.value.diasEnMes.map { semana ->
+                                semana.map { dia ->
+                                    if (diasConEvento.contains(dia.numero) && dia.colorFondo != "#C4C4C4") {
+                                        dia.copy(colorFondo = "#FF0000")
+                                    } else {
+                                        dia
+                                    }
+                                }
+                            }
+                            _uiState.update { currentState ->
+                                currentState.copy(
+                                    idCasa = idCasa,
+                                    diasEnMes = updatedDiasEnMes,
+                                    isLoading = false
+                                )
+                            }
+                        }
+
+                        is NetworkResult.Error -> {
+                            _uiState.update {
+                                it.copy(
+                                    error = result.message ?: ConstantesError.GET_EVENTOS_ERROR
+                                )
+                            }
+                        }
+
+                        is NetworkResult.Loading -> {
+                            _uiState.update { it.copy(isLoading = true) }
+                        }
+                    }
+                }
+            } else
+                _uiState.update { it.copy(error = ConstantesError.NO_HAY_CASA)}
         }
     }
 
@@ -276,7 +285,7 @@ class CalendarioViewModel @Inject constructor(
         }
         limpiarDetalleEvento()
         if (actualizar)
-            getEventosMes(_uiState.value.idCasa, mes, anio)
+            _uiState.value.idCasa?.let { getEventosMes(it, mes, anio) }
     }
 
     private fun ajustarFechas(mes: Int, anio: Int): Pair<Int, Int> {

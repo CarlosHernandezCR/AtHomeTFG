@@ -6,5 +6,5 @@ import javax.inject.Inject
 class CargarEventosDelDiaUseCase @Inject constructor(
     private val eventosRepository: EventosRepository
 ){
-    operator fun invoke(idCasa:Int,dia:Int,mes:Int,anio:Int) = eventosRepository.cargarEventosDelDia(idCasa,dia,mes,anio)
+    operator fun invoke(idCasa:String,dia:Int,mes:Int,anio:Int) = eventosRepository.cargarEventosDelDia(idCasa,dia,mes,anio)
 }
