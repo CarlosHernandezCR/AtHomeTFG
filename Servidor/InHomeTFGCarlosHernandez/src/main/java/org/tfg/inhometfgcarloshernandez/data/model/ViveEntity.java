@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.common.constantes.UsuarioConstantes;
 import org.tfg.inhometfgcarloshernandez.common.constantes.ViveConstantes;
 
 @Data
@@ -25,10 +26,12 @@ public class ViveEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = ViveConstantes.COLUMN_ID, nullable = false)
     private Integer id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ViveConstantes.COLUMN_ID_USUARIO, nullable = false)
     private UsuarioEntity usuarioEntity;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = ViveConstantes.ESTADO_ACTUAL, nullable = false)
+    private String estado;
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ViveConstantes.COLUMN_ID_CASA, nullable = false)
     private CasaEntity casaEntity;
 }

@@ -2,16 +2,13 @@ package org.tfg.inhometfgcarloshernandez.domain.servicios;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.tfg.inhometfgcarloshernandez.data.model.CajonEntity;
-import org.tfg.inhometfgcarloshernandez.data.model.HabitacionEntity;
-import org.tfg.inhometfgcarloshernandez.data.model.MuebleEntity;
-import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
-import org.tfg.inhometfgcarloshernandez.data.repositories.CajonesRepository;
-import org.tfg.inhometfgcarloshernandez.data.repositories.HabitacionRepository;
-import org.tfg.inhometfgcarloshernandez.data.repositories.MueblesRepository;
+import org.tfg.inhometfgcarloshernandez.data.model.*;
+import org.tfg.inhometfgcarloshernandez.data.repositories.*;
+import org.tfg.inhometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.CajonMappers;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.HabitacionMapper;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.MuebleMapper;
+import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarCajonRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarHabitacionRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarMuebleRequestDTO;
@@ -26,65 +23,75 @@ public class InmuebleServicios {
     private final HabitacionRepository habitacionRepository;
     private final MueblesRepository mueblesRepository;
     private final CajonesRepository cajonesRepository;
+    private final UsuarioRepository usuarioRepository;
     private final CajonMappers cajonMappers;
     private final MuebleMapper muebleMapper;
     private final HabitacionMapper habitacionMapper;
+    private final CasaRepository casaRepository;
 
-    public PantallaInmueblesResponseDTO getInmuebles(int idCasa, String nombreHabitacion, String mueble) {
-        List<HabitacionEntity> habitaciones = habitacionRepository.findByIdCasaEntityId(idCasa);
+    public PantallaInmueblesResponseDTO getInmuebles(int idCasa, String idHabitacion, String idMueble) {
+        CasaEntity casaEntity = casaRepository.findById(idCasa).orElseThrow(() -> new NotFoundException(ConstantesError.CASA_NO_ENCONTRADA));
+        List<HabitacionEntity> habitaciones = habitacionRepository.findByIdCasaEntity(casaEntity);
         List<MuebleEntity> muebles = Collections.emptyList();
         List<CajonEntity> cajones = Collections.emptyList();
-
+        HabitacionEntity habitacion;
+        MuebleEntity mueble;
         if (!habitaciones.isEmpty()) {
-            if (nombreHabitacion == null) {
-                muebles = mueblesRepository.findByNombreHabitacion(habitaciones.get(0).getNombre());
-                if (!muebles.isEmpty()) {
-                    cajones = cajonesRepository.findCajonesByNombreMueble(muebles.get(0).getNombre());
-                }
-            } else if (mueble == null) {
-                muebles = mueblesRepository.findByNombreHabitacion(nombreHabitacion);
-                if (!muebles.isEmpty()) {
-                    cajones = cajonesRepository.findCajonesByNombreMueble(muebles.get(0).getNombre());
-                }
+            if (idHabitacion != null) {
+                habitacion = habitaciones.stream().filter(h -> h.getId().equals(Integer.parseInt(idHabitacion))).findFirst().orElse(null);
             } else {
-                muebles = mueblesRepository.findByNombreHabitacion(nombreHabitacion);
-                cajones = cajonesRepository.findCajonesByNombreMueble(mueble);
+                habitacion = habitaciones.get(0);
+            }
+            muebles = mueblesRepository.findByIdHabitacionEntity(habitacion);
+            if (!muebles.isEmpty()){
+                if (idMueble != null) {
+                    mueble = muebles.stream().filter(m -> m.getId().equals(Integer.parseInt(idMueble))).findFirst().orElse(null);
+                } else {
+                    mueble = muebles.get(0);
+                }
+            cajones = cajonesRepository.findByMuebleEntity(mueble);
             }
         }
-
         return mapearDatosInmueble(habitaciones, muebles, cajones);
     }
 
-    public PantallaInmueblesResponseDTO mapearDatosInmueble(List<HabitacionEntity> habitaciones, List<MuebleEntity> muebles, List<CajonEntity> cajones){
+    public PantallaInmueblesResponseDTO mapearDatosInmueble(List<HabitacionEntity> habitaciones, List<MuebleEntity> muebles, List<CajonEntity> cajones) {
         return new PantallaInmueblesResponseDTO(
-                habitaciones.stream().map(HabitacionEntity::getNombre).toList(),
+                habitaciones.stream().map(habitacionMapper::toHabitacionDTO).toList(),
                 muebles.stream().map(muebleMapper::toMuebleDTO).toList(),
                 cajones.stream().map(cajonMappers::cajonEntityToCajonDTO).toList()
         );
     }
 
     public void agregarHabitacion(AgregarHabitacionRequestDTO agregarHabitacionRequestDTO) {
-        habitacionRepository.save(habitacionMapper.toHabitacionEntity(agregarHabitacionRequestDTO));
+        CasaEntity casa = casaRepository.findById(agregarHabitacionRequestDTO.getIdCasa())
+                .orElseThrow(() -> new NotFoundException(ConstantesError.CASA_NO_ENCONTRADA));
+        HabitacionEntity habitacionEntity = new HabitacionEntity();
+        habitacionEntity.setNombre(agregarHabitacionRequestDTO.getNombre());
+        habitacionEntity.setIdCasaEntity(casa);
+        habitacionRepository.save(habitacionEntity);
     }
 
     public void agregarMueble(AgregarMuebleRequestDTO agregarMuebleRequestDTO) {
-        mueblesRepository.save(muebleMapper.toMuebleEntity(agregarMuebleRequestDTO));
+        HabitacionEntity habitacion = habitacionRepository.findById(agregarMuebleRequestDTO.getIdHabitacion())
+                .orElseThrow(() -> new NotFoundException(ConstantesError.HABITACION_NO_ENCONTRADA));
+        MuebleEntity muebleEntity = new MuebleEntity();
+        muebleEntity.setNombre(agregarMuebleRequestDTO.getNombre());
+        muebleEntity.setIdHabitacionEntity(habitacion);
+        mueblesRepository.save(muebleEntity);
     }
 
 
     public void agregarCajon(AgregarCajonRequestDTO request) {
-        MuebleEntity muebleEntity = mueblesRepository.findByNombre(request.getNombreMueble());
-        if (muebleEntity == null) {
-            muebleEntity = new MuebleEntity();
-            muebleEntity.setNombre(request.getNombreMueble());
-            muebleEntity.setNombreHabitacion(request.getNombreHabitacion());
-            muebleEntity = mueblesRepository.save(muebleEntity);
-        }
+        UsuarioEntity usuario = usuarioRepository.findById(request.getIdPropietario())
+                .orElseThrow(() -> new NotFoundException(ConstantesError.USUARIO_NO_ENCONTRADO));
+        MuebleEntity mueble = mueblesRepository.findById(request.getIdMueble())
+                .orElseThrow(() -> new NotFoundException(ConstantesError.MUEBLE_NO_ENCONTRADO));
 
         CajonEntity cajonEntity = new CajonEntity();
         cajonEntity.setNombre(request.getNombre());
-        cajonEntity.setPropietario(new UsuarioEntity(request.getIdPropietario()));
-        cajonEntity.setMuebleEntity(muebleEntity);
+        cajonEntity.setPropietario(usuario);
+        cajonEntity.setMuebleEntity(mueble);
 
         cajonesRepository.save(cajonEntity);
     }

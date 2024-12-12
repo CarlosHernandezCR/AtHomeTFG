@@ -1,4 +1,4 @@
-package org.tfg.inhometfgcarloshernandez.spring.security;
+package org.tfg.inhometfgcarloshernandez.spring.common.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

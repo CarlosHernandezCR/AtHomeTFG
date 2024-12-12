@@ -22,13 +22,13 @@ public class CasaController {
     }
 
     @GetMapping(ConstantesServer.PANTALLA_CASA)
-    public ResponseEntity<PantallaEstadosResponseDTO> getPantallaEstados(@RequestParam String idUsuario,@RequestParam String idCasa) {
-        return ResponseEntity.ok(casaServicios.getDatosPantallaEstados(idUsuario, idCasa));
+    public ResponseEntity<PantallaEstadosResponseDTO> getPantallaEstados(@RequestParam String idUsuario,@RequestParam String idCasa, @RequestParam String token) {
+        return ResponseEntity.ok( casaServicios.getDatosPantallaEstados(idUsuario, idCasa,token));
     }
 
     @PostMapping(ConstantesServer.CAMBIAR_ESTADO)
     public ResponseEntity<Void> cambiarEstado(@RequestBody CambiarEstadoRequestDTO cambiarEstadoRequestDTO) {
-        return casaServicios.cambiarEstado(cambiarEstadoRequestDTO.getEstado(), cambiarEstadoRequestDTO.getId());
+        return casaServicios.cambiarEstado(cambiarEstadoRequestDTO.getEstado(), cambiarEstadoRequestDTO.getIdUsuario(), cambiarEstadoRequestDTO.getIdCasa());
     }
 
     @GetMapping(ConstantesServer.GET_CASAS)

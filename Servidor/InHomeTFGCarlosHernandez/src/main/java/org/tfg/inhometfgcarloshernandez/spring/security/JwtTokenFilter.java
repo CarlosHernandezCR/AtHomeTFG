@@ -53,11 +53,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         final String token = header.split(" ")[1].trim();
         try {
-            if (!jwtTokenUtil.validateToken(token)) {
+            if (!jwtTokenUtil.validarToken(token)) {
                 chain.doFilter(request, response);
                 return;
             }
-            UserDetails userDetails = userRepo.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(token));
+            UserDetails userDetails = userRepo.loadUserByUsername(jwtTokenUtil.getSubjectDesdeToken(token));
             UsernamePasswordAuthenticationToken
                     authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null,

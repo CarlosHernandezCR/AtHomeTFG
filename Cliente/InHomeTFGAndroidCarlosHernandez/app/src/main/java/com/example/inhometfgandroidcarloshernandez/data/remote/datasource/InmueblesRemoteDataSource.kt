@@ -1,12 +1,8 @@
 package com.example.inhometfgandroidcarloshernandez.data.remote.datasource
 
-import com.example.inhometfgandroidcarloshernandez.data.model.CajonDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.AgregarCajonRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.AgregarHabitacionRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.AgregarMuebleRequestDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
-import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.PantallaInmueblesResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.InmueblesService
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult

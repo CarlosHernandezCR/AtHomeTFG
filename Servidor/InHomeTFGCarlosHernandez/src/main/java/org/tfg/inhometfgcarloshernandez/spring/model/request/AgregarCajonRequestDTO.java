@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AgregarCajonRequestDTO {
     private int idCasa;
-    private String nombreHabitacion;
-    private String nombreMueble;
+    private int idHabitacion;
+    private int idMueble;
     private String nombre;
     private int idPropietario;
 }

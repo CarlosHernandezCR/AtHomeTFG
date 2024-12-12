@@ -13,6 +13,9 @@ import org.tfg.inhometfgcarloshernandez.common.constantes.HabitacionConstantes;
 @Table(name = HabitacionConstantes.TABLE_NAME)
 public class HabitacionEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = HabitacionConstantes.COLUMN_ID, nullable = false)
+    private Integer id;
     @Column(name = HabitacionConstantes.COLUMN_NOMBRE)
     private String nombre;
 

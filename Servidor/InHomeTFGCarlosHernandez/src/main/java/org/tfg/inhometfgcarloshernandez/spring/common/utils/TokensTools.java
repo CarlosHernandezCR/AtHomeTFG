@@ -16,13 +16,11 @@ import java.security.cert.CertificateException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 
 import org.tfg.inhometfgcarloshernandez.domain.errores.CustomedException;
 import org.tfg.inhometfgcarloshernandez.domain.errores.TokenException;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesSpring;
-import org.tfg.inhometfgcarloshernandez.spring.security.Security;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -31,7 +29,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class TokensTools {
     private final Security security;
 
-    public String generateAccessToken(String subject, int idUsuario) {
+    public String generarAccessToken(String subject, int idUsuario) {
         try {
             Date now = new Date();
             return Jwts.builder()
@@ -42,6 +40,26 @@ public class TokensTools {
                             .from(LocalDateTime.now().plusSeconds(ConstantesSpring.CADUCIDAD_CODIGO).atZone(ZoneId.systemDefault())
                                     .toInstant()))
                     .claim(ConstantesSpring.IDUSUARIO, idUsuario)
+                    .signWith(security.readPrivateKeyFromKeyStoreServer())
+                    .compact();
+
+        } catch (UnrecoverableEntryException | CertificateException | KeyStoreException | IOException |
+                 NoSuchAlgorithmException e) {
+            throw new CustomedException(ConstantesError.ERROR_GERERATE_ACCESS_TOKEN);
+        }
+    }
+    public String generarAccessTokenConCasa(String subject, int idUsuario, int idCasa) {
+        try {
+            Date now = new Date();
+            return Jwts.builder()
+                    .setSubject(subject)
+                    .setIssuer(ConstantesSpring.ME)
+                    .setIssuedAt(now)
+                    .setExpiration(Date
+                            .from(LocalDateTime.now().plusSeconds(ConstantesSpring.CADUCIDAD_CODIGO).atZone(ZoneId.systemDefault())
+                                    .toInstant()))
+                    .claim(ConstantesSpring.IDUSUARIO, idUsuario)
+                    .claim(ConstantesSpring.IDCASA, idCasa)
                     .signWith(security.readPrivateKeyFromKeyStoreServer())
                     .compact();
 
@@ -70,8 +88,27 @@ public class TokensTools {
         }
     }
 
+    public String generarRefreshTokenConCasa(String subject, int idUsuario, int idCasa) {
+        try {
+            Date now = new Date();
+            return Jwts.builder()
+                    .setSubject(subject)
+                    .setIssuer(ConstantesSpring.ME)
+                    .setIssuedAt(now)
+                    .setExpiration(Date
+                            .from(LocalDateTime.now().plusSeconds(ConstantesSpring.CADUCIDAD_CODIGO_REFRESH).atZone(ZoneId.systemDefault())
+                                    .toInstant()))
+                    .claim(ConstantesSpring.IDUSUARIO, idUsuario)
+                    .claim(ConstantesSpring.IDCASA, idCasa)
+                    .signWith(security.readPrivateKeyFromKeyStoreServer())
+                    .compact();
+        } catch (UnrecoverableEntryException | CertificateException | KeyStoreException | IOException |
+                 NoSuchAlgorithmException e) {
+            throw new CustomedException(ConstantesError.ERROR_GERERATE_REFRESH_TOKEN);
+        }
+    }
 
-    public boolean validateToken(String token) {
+    public boolean validarToken(String token) {
         Jws<Claims> claimsJws = parseToken(token);
         long expirationMillis = claimsJws.getBody().getExpiration().getTime();
         if (System.currentTimeMillis() <= expirationMillis) return true;
@@ -83,7 +120,7 @@ public class TokensTools {
         Jws<Claims> claimsJws = parseToken(refreshToken);
         String subject = claimsJws.getBody().getSubject();
         int idUsuario = claimsJws.getBody().get(ConstantesSpring.IDUSUARIO, Integer.class);
-        return generateAccessToken(subject, idUsuario);
+        return generarAccessToken(subject, idUsuario);
     }
 
     public Jws<Claims> parseToken(String token) {
@@ -105,7 +142,7 @@ public class TokensTools {
         }
     }
 
-    public String getUsernameFromToken(String token) {
+    public String getSubjectDesdeToken(String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parserBuilder()
                     .setSigningKey(security.readCertificateFromKeyStoreServer().getPublicKey())
@@ -124,5 +161,17 @@ public class TokensTools {
             throw new TokenException(ConstantesError.TOKEN_INVALIDO);
         }
         return header.split(" ")[1].trim();
+    }
+    public String actualizarAccessTokenConCasa(String token, int idCasa) {
+        Jws<Claims> claimsJws = parseToken(token);
+        String subject = claimsJws.getBody().getSubject();
+        int idUsuario = claimsJws.getBody().get(ConstantesSpring.IDUSUARIO, Integer.class);
+        return generarAccessTokenConCasa(subject, idUsuario, idCasa);
+    }
+    public String actualizarRefreshTokenConCasa(String token, int idCasa) {
+        Jws<Claims> claimsJws = parseToken(token);
+        String subject = claimsJws.getBody().getSubject();
+        int idUsuario = claimsJws.getBody().get(ConstantesSpring.IDUSUARIO, Integer.class);
+        return generarRefreshTokenConCasa(subject, idUsuario, idCasa);
     }
 }

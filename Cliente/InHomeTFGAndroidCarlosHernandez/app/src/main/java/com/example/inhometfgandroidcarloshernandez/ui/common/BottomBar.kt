@@ -48,32 +48,35 @@ fun BottomBar(
                     if (screen.route == ConstantesPantallas.LOGIN) {
                         onLogout()
                     } else {
-                        val idUsuario = state.value?.arguments?.getString(ConstantesPantallas.idUsuario)
-                        val idCasa = state.value?.arguments?.getString(ConstantesPantallas.idCasa)
-                        if (idUsuario == null ) {
-                            showSnackbar(ConstantesError.NO_ESTA_LOGUEADO)
-                            return@NavigationBarItem
-                        }
-                        if(idCasa == null){
-                            showSnackbar(ConstantesError.CASA_NO_SELECCIONADA)
-                            return@NavigationBarItem
-                        }
-
-                        val route = if (screen.route in listOf(
-                                ConstantesPantallas.CASA,
-                                ConstantesPantallas.CALENDARIO,
-                                ConstantesPantallas.INMUEBLES
-                            )) {
-                            "${screen.route}/$idUsuario/$idCasa"
-                        } else {
-                            "${screen.route}/$idUsuario"
-                        }
-
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                inclusive = true
+                        scope.launch {
+                            val idUsuario = tokenManager.obtenerIdUsuario()
+                            val idCasa = tokenManager.obtenerIdCasa()
+                            if (idUsuario == null) {
+                                showSnackbar(ConstantesError.NO_ESTA_LOGUEADO)
+                                return@launch
                             }
-                            launchSingleTop = true
+                            if (idCasa == null) {
+                                showSnackbar(ConstantesError.CASA_NO_SELECCIONADA)
+                                return@launch
+                            }
+
+                            val route = if (screen.route in listOf(
+                                    ConstantesPantallas.CASA,
+                                    ConstantesPantallas.CALENDARIO,
+                                )) {
+                                "${screen.route}/$idUsuario/$idCasa"
+                            } else if (screen.route == ConstantesPantallas.INMUEBLES) {
+                                "${screen.route}/$idCasa"
+                            } else {
+                                "${screen.route}/$idUsuario"
+                            }
+
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
                 }

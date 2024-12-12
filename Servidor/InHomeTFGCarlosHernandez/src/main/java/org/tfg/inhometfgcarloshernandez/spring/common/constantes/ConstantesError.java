@@ -21,6 +21,11 @@ public class ConstantesError {
     public static final String ERROR_EMAIL = "Error al enviar el email";
     public static final String CODIGO_NO_VALIDO = "Código no válido";
     public static final String CODIGO_EXPIRADO = "Código expirado";
+    public static final String MUEBLE_NO_ENCONTRADO = "Mueble no encontrado";
+    public static final String USUARIO_NO_ENCONTRADO = "Usuario no encontrado";
+    public static final String HABITACION_NO_ENCONTRADA = "Habitación no encontrada";
+    public static final String CASA_NO_ENCONTRADA = "Casa no encontrada";
+    public static final String ERROR_VIVE_NO_ENCONTRADO = "No encontrado el usuario con ID y casa con ID ";
 
 
     private ConstantesError() {

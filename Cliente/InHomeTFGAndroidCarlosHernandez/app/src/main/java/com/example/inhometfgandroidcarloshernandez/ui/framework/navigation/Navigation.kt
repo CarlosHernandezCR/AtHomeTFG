@@ -109,11 +109,9 @@ fun Navigation(
                 )
             }
 
-            composable("${ConstantesPantallas.INMUEBLES}/{idUsuario}/{idCasa}") { backStackEntry ->
-                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+            composable("${ConstantesPantallas.INMUEBLES}/{idCasa}") { backStackEntry ->
                 val idCasa = backStackEntry.arguments?.getString("idCasa") ?: "0"
                 InmueblesActivity(
-                    idUsuario = idUsuario,
                     idCasa = idCasa,
                     showSnackbar = showSnackbar
                 )

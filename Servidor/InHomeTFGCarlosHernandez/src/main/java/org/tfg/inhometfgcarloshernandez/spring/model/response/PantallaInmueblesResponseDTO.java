@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tfg.inhometfgcarloshernandez.spring.model.CajonDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.HabitacionDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.MuebleDTO;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PantallaInmueblesResponseDTO {
-    private List<String> habitaciones;
+    private List<HabitacionDTO> habitaciones;
     private List<MuebleDTO> muebles;
     private List<CajonDTO> cajones;
 }

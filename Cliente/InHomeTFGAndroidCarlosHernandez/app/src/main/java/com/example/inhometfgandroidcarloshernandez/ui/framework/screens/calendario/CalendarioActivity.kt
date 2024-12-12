@@ -50,7 +50,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.common.Constantes.FORMATO_HORA
-import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas.ANIO_ANTERIOR
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas.ANIO_SIGUIENTE
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas.nombresDias
@@ -282,7 +281,7 @@ fun DetallesEvento(
         val eventoSeleccionado = listaEventos[indiceSeleccionado - 1]
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             Column(
                 modifier = Modifier.weight(1f)
@@ -293,7 +292,7 @@ fun DetallesEvento(
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 Text(
-                    text = Constantes.NOMBRE + eventoSeleccionado.nombre,
+                    text = Constantes.RESERVA_DE + eventoSeleccionado.nombre,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )

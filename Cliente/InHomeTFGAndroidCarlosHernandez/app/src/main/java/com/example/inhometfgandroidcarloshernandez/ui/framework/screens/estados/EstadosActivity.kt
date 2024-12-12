@@ -20,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.R
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.data.model.response.UsuarioCasaResponseDTO
-import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
 
 @Composable
 fun EstadosActivity(
@@ -72,7 +71,7 @@ fun EstadosActivity(
                 estadosDisponibles = uiState.pantallaEstados.estadosDisponibles,
                 cambioEstado = { nuevoEstado ->
                     viewModel.handleEvent(
-                        EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, idUsuario)
+                        EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, idCasa, idUsuario)
                     )
                 },
                 cargandoEstado = uiStateEstado.isLoading,
@@ -228,8 +227,8 @@ fun ComboBox(
 fun UsuarioItem(nombre: String, estado: String) {
     val backgroundColor = when (estado) {
         "En casa" -> Color.Green
-        "Fuera de casa" -> Color.Red
-        "Durmiendo" -> Color.Yellow
+        "Fuera de casa" -> Color.Yellow
+        "Durmiendo" -> Color.Red
         else -> Color.Gray
     }
 
@@ -253,8 +252,8 @@ fun UsuarioItem(nombre: String, estado: String) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(text = nombre, color = Color.White)
-                Text(text = estado, color = Color.White)
+                Text(text = nombre, color = Color.Black)
+                Text(text = estado, color = Color.Black)
             }
         }
     }

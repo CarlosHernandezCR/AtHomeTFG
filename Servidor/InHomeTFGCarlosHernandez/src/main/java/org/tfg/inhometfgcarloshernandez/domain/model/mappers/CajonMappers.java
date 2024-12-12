@@ -21,22 +21,4 @@ public interface CajonMappers {
         return usuarioEntity != null ? usuarioEntity.getNombre() : null;
     }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "propietario", source = "idPropietario", qualifiedByName = "mapIdToUsuarioEntity")
-    @Mapping(target = "muebleEntity", source = "nombreMueble", qualifiedByName = "mapNombreToMuebleEntity")
-    CajonEntity toCajonEntity(AgregarCajonRequestDTO agregarCajonRequestDTO);
-
-    @Named("mapIdToUsuarioEntity")
-    default UsuarioEntity mapIdToUsuarioEntity(int idPropietario) {
-        UsuarioEntity usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setId(idPropietario);
-        return usuarioEntity;
-    }
-
-    @Named("mapNombreToMuebleEntity")
-    default MuebleEntity mapNombreToMuebleEntity(String nombreMueble) {
-        MuebleEntity muebleEntity = new MuebleEntity();
-        muebleEntity.setNombre(nombreMueble);
-        return muebleEntity;
-    }
 }

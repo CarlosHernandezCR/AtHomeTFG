@@ -20,10 +20,10 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
     @Query(value = "SELECT COUNT(*) FROM usuario u JOIN vive v ON u.id = v.id_usuario WHERE v.id_casa = :idCasa", nativeQuery = true)
     int findNumeroResidentes(int idCasa);
 
-    @Query(value = "SELECT u.id , u.nombre, u.correo, u.telefono, u.estado_actual " +
+    @Query(value = "SELECT u.id , u.nombre, u.correo, u.telefono " +
             "FROM usuario u " +
             "JOIN vive v ON u.id = v.id_usuario " +
             "WHERE v.id_casa = :idCasa", nativeQuery = true)
-    List<UsuarioEntity> findByIdCasaEntityId(@Param(Constantes.IDCASA) int idCasa);
+    List<UsuarioEntity> findByIdCasaEntityId(int idCasa);
 
 }

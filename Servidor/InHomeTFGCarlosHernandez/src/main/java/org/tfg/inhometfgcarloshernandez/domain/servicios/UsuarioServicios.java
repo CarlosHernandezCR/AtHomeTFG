@@ -1,4 +1,3 @@
-// UsuarioServicios.java
 package org.tfg.inhometfgcarloshernandez.domain.servicios;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError
 import org.tfg.inhometfgcarloshernandez.spring.common.utils.TokensTools;
 import org.tfg.inhometfgcarloshernandez.spring.model.UsuarioDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.LoginResponseDTO;
-import org.tfg.inhometfgcarloshernandez.spring.security.Security;
+import org.tfg.inhometfgcarloshernandez.spring.common.utils.Security;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -53,7 +52,7 @@ public class UsuarioServicios {
             throw new CustomedException(ConstantesError.ERROR_INICIAR_SESION);
         }
         UsuarioEntity usuarioEntity = userTools.getUsuarioEntityByIdentificador(identificador);
-        String accessToken = tokensTools.generateAccessToken(auth.getName(), usuarioEntity.getId() );
+        String accessToken = tokensTools.generarAccessToken(auth.getName(), usuarioEntity.getId() );
         String refreshToken = tokensTools.generateRefreshToken(auth.getName(), usuarioEntity.getId());
         return new LoginResponseDTO(accessToken, refreshToken);
     }
@@ -70,7 +69,7 @@ public class UsuarioServicios {
     }
 
     public void registro(String nombre, String password, String correo, String telefono) {
-        UsuarioEntity usuario = new UsuarioEntity(0, nombre, correo, telefono, "En Casa");
+        UsuarioEntity usuario = new UsuarioEntity(0, nombre, correo, telefono);
         usuario = usuarioRepository.save(usuario);
         String contraCodificada = security.encriptarContra(password);
         String codigoActivacion = security.generarCodigoSeguro();

@@ -20,8 +20,11 @@ public class MuebleEntity {
     private Integer id;
 
     @Column(name = MuebleConstantes.COLUMN_NOMBRE, nullable = false, length = 100, unique = true)
-    private @Size(max = 100) @NotNull String nombre;
+    private @Size(max = 100)
+    @NotNull String nombre;
 
-    @Column(name = MuebleConstantes.COLUMN_NOMBRE_HABITACION, nullable = false, length = 100)
-    private @Size(max = 100) @NotNull String nombreHabitacion;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = MuebleConstantes.ID_HABITACION, nullable = false)
+    private HabitacionEntity idHabitacionEntity;
+
 }

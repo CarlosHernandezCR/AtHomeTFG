@@ -29,7 +29,7 @@ public class ConstantesSpring {
     public static final String CONTRA_TEMPORAL = "Contra temporal";
     public static final String CLOSE_HTML = ". Úsela para loguearse y cambie la contraseña desde la app.</html>";
     public static final String IDUSUARIO= "idUsuario";
-    public static final String IDCASAS = "idCasas";
+    public static final String IDCASA = "idCasa";
 
     private ConstantesSpring() {
     }

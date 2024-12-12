@@ -6,5 +6,5 @@ import javax.inject.Inject
 class ChangeStateUseCase @Inject constructor(
     private val usuarioRepository: UsuarioRepository
 ){
-    operator fun invoke(estado:String,id:String) = usuarioRepository.cambiarEstado(estado,id)
+    operator fun invoke(estado: String, idCasa:String, idUsuario: String) = usuarioRepository.cambiarEstado(estado,idCasa,idUsuario)
 }

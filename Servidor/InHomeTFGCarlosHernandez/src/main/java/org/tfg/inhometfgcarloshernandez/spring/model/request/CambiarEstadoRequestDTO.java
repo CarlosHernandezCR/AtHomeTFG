@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CambiarEstadoRequestDTO {
     private String estado;
-    private int id;
+    private int idCasa;
+    private int idUsuario;
 }

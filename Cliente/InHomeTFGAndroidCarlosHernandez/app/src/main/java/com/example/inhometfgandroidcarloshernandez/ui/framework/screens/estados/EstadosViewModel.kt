@@ -34,7 +34,7 @@ class EstadosViewModel @Inject constructor(
             is EstadosContract.EstadosEvent.CargarCasa -> cargarCasa(event.idUsuario,event.idCasa)
             is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.ErrorMostradoEstado -> _uiStateEstado.value = _uiStateEstado.value.copy(mensaje = null)
-            is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.id)
+            is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.idCasa, event.idUsuario)
         }
     }
 
@@ -59,9 +59,9 @@ class EstadosViewModel @Inject constructor(
             }
         }
     }
-    private fun cambiarEstado(estado:String, id:String){
+    private fun cambiarEstado(estado: String, idCasa:String, idUsuario: String){
         viewModelScope.launch {
-            changeStateUseCase.invoke(estado,id).collect { result ->
+            changeStateUseCase.invoke(estado,idCasa,idUsuario).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         _uiStateEstado.value = EstadosContract.CambiarEstadoState(

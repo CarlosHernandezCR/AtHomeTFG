@@ -6,6 +6,7 @@ import org.mapstruct.Named;
 import org.tfg.inhometfgcarloshernandez.common.constantes.Constantes;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.HabitacionEntity;
+import org.tfg.inhometfgcarloshernandez.spring.model.HabitacionDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarHabitacionRequestDTO;
 
 @Mapper(componentModel = Constantes.SPRING)
@@ -19,4 +20,7 @@ public interface HabitacionMapper {
         casaEntity.setId(idCasa);
         return casaEntity;
     }
+
+    @Mapping(target = "id", source = "id")
+    HabitacionDTO toHabitacionDTO(HabitacionEntity habitacionEntity);
 }

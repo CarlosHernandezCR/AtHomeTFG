@@ -62,7 +62,7 @@ class RegistroViewModel @Inject constructor(
             registroUseCase.invoke(_uiState.value.nombre, _uiState.value.password, _uiState.value.correo, _uiState.value.telefono).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        _uiState.update { it.copy(mensaje = Constantes.CONFIRMAR_REGISTRO, isLoading = false) }
+                        _uiState.update { it.copy(mensaje = Constantes.CONFIRMAR_REGISTRO, isRegistered = true, isLoading = false) }
                     }
                     is NetworkResult.Error -> {
                         _uiState.update { it.copy(mensaje = result.message, isLoading = false) }

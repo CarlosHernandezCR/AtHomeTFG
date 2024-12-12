@@ -23,9 +23,9 @@ class UsuarioRepository @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    fun cambiarEstado(estado: String, id:String): Flow<NetworkResult<Boolean>> = flow {
+    fun cambiarEstado(estado: String, idCasa:String, idUsuario: String): Flow<NetworkResult<Boolean>> = flow {
         emit(NetworkResult.Loading())
-        val result = remoteDataSource.cambiarEstado(CambiarEstadoRequestDTO(estado, id))
+        val result = remoteDataSource.cambiarEstado(CambiarEstadoRequestDTO(estado, idCasa, idUsuario))
         emit(result)
     }.flowOn(Dispatchers.IO)
 

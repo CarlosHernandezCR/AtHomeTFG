@@ -38,7 +38,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.data.model.CajonDTO
-import com.example.inhometfgandroidcarloshernandez.ui.GlobalViewModel
+import com.example.inhometfgandroidcarloshernandez.data.model.HabitacionDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.Selector
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados.ComboBox
@@ -46,7 +47,6 @@ import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.inmueble
 
 @Composable
 fun InmueblesActivity(
-    idUsuario: String,
     idCasa: String,
     showSnackbar: (String) -> Unit = {},
     viewModel: InmueblesViewModel = hiltViewModel(),
@@ -62,12 +62,12 @@ fun InmueblesActivity(
     }
     if (uiState.isLoading)
         Cargando()
-    else
+    else{
         InmueblesPantalla(
-            habitacionActual = uiState.habitacionActual,
+            habitacionActual = uiState.idHabitacionActual,
             habitaciones = uiState.habitaciones,
             muebleActual = uiState.muebleActual,
-            muebles = uiState.muebles.map { it.nombre },
+            muebles = uiState.muebles,
             cajones = uiState.cajones,
             usuarios = uiState.usuarios,
             cambioHabitacion = {
@@ -88,7 +88,8 @@ fun InmueblesActivity(
             agregarCajon = { nombre, idPropietario ->
                 viewModel.handleEvent(
                     InmueblesContract.InmueblesEvent.AgregarCajon(
-                        nombre, idPropietario
+                        nombre,
+                        idPropietario
                     )
                 )
             },
@@ -107,14 +108,15 @@ fun InmueblesActivity(
                 )
             },
         )
+    }
 }
 
 @Composable
 fun InmueblesPantalla(
     habitacionActual: String,
-    habitaciones: List<String>,
+    habitaciones: List<HabitacionDTO>,
     muebleActual: String,
-    muebles: List<String>,
+    muebles: List<MuebleDTO>,
     cajones: List<CajonDTO>,
     usuarios: List<Usuario> = emptyList(),
     cambioHabitacion: (String) -> Unit = {},
@@ -135,19 +137,24 @@ fun InmueblesPantalla(
             .padding(16.dp)
     ) {
         Selector(
-            valorActual = habitacionActual,
+            valorActual = habitaciones.find { it.id == habitacionActual } ?: HabitacionDTO(id = "", nombre = Constantes.ANADE_HABITACION),
             opciones = habitaciones,
-            onCambio = cambioHabitacion,
+            onCambio = { habitacion ->
+                cambioHabitacion(habitacion.id)
+            },
+            mostrarOpciones = { it.nombre }
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         Selector(
-            valorActual = muebleActual,
+            valorActual = muebles.find { it.id == muebleActual } ?: MuebleDTO(id = "", nombre = Constantes.NO_HAY_MUEBLE),
             opciones = muebles,
-            onCambio = cambioMueble,
+            onCambio = { mueble ->
+                cambioMueble(mueble.id)
+            },
+            mostrarOpciones = { it.nombre }
         )
-        Spacer(modifier = Modifier.height(16.dp))
-
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -340,8 +347,12 @@ fun DialogNuevoElemento(
 @Preview(showBackground = true)
 @Composable
 fun PreviewInmueblesActivity() {
-    val habitaciones = listOf("Sala", "Cocina", "Dormitorio")
-    val muebles = listOf("Armario", "Mesa", "Silla")
+    val habitaciones = listOf(
+        HabitacionDTO(id = "1", nombre = "Habitación 1"),
+        HabitacionDTO(id = "2", nombre = "Habitación 2"),
+        HabitacionDTO(id = "3", nombre = "Habitación 3")
+    )
+    val muebles = listOf(MuebleDTO(id = "1", nombre = "Mesa"), MuebleDTO(id = "2", nombre = "Silla"))
     val cajones = listOf(
         CajonDTO(nombre = "Cajón 1", propietario = "Carlos"),
         CajonDTO(nombre = "Cajón 2", propietario = "Ana"),

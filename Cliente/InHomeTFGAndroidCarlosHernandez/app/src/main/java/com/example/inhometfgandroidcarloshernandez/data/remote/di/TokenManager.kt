@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.auth0.jwt.JWT
+import com.auth0.jwt.exceptions.JWTDecodeException
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.common.ConstantesError
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
@@ -12,6 +13,7 @@ import com.example.inhometfgandroidcarloshernandez.data.remote.di.NetworkModule.
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -56,14 +58,22 @@ class TokenManager @Inject constructor(
 
     fun extractIdUsuarioFromToken(token: String): String? {
         val decodedJWT = JWT.decode(token)
-        val idUsuario = decodedJWT.getClaim(Constantes.IDUSUARIO).asInt()
-        return idUsuario?.toString()
+        return decodedJWT.getClaim(Constantes.IDUSUARIO).asInt()?.toString()
     }
 
-    fun extractIdCasasFromToken(token: String): String? {
+    fun extractIdCasaFromToken(token: String): String? {
         val decodedJWT = JWT.decode(token)
-        val idCasas = decodedJWT.getClaim(Constantes.IDCASAS).asList(String::class.java)
-        return idCasas?.firstOrNull()
+        return decodedJWT.getClaim(Constantes.IDCASA).asInt()?.toString()
+    }
+
+    suspend fun obtenerIdUsuario(): String? {
+        val token = getAccessToken().firstOrNull()
+        return token?.let { extractIdUsuarioFromToken(it) }
+    }
+
+    suspend fun obtenerIdCasa(): String? {
+        val token = getAccessToken().firstOrNull()
+        return token?.let { extractIdCasaFromToken(it) }
     }
 
     suspend fun refreshToken(refreshToken: String): NetworkResult<AccessTokenResponseDTO> {
@@ -89,7 +99,7 @@ class TokenManager @Inject constructor(
                 NetworkResult.Error(ConstantesError.ERROR_REFRESCAR_TOKEN)
             }
         } else {
-            return NetworkResult.Error("${response.code()} ${response.message()}")
+            NetworkResult.Error("${response.code()} ${response.message()}")
         }
     }
 

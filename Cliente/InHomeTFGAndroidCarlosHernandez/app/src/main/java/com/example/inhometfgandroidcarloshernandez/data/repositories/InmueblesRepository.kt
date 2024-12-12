@@ -25,9 +25,9 @@ class InmueblesRepository @Inject constructor(
         val result = remoteDataSource.agregarHabitacion(AgregarHabitacionRequestDTO(idCasa,habitacion))
         emit(result)
     }.flowOn(Dispatchers.IO)
-    fun agregarMueble(idCasa:String,nombreHabitacion:String,nombre:String): Flow<NetworkResult<Boolean>> = flow {
+    fun agregarMueble(idCasa:String,idHabitacion:String,nombre:String): Flow<NetworkResult<Boolean>> = flow {
         emit(NetworkResult.Loading())
-        val result = remoteDataSource.agregarMueble(AgregarMuebleRequestDTO(idCasa, nombreHabitacion, nombre))
+        val result = remoteDataSource.agregarMueble(AgregarMuebleRequestDTO(idCasa, idHabitacion, nombre))
         emit(result)
     }.flowOn(Dispatchers.IO)
     fun agregarCajon(idCasa:String,nombreHabitacion:String,nombreMueble:String,nombre:String,idPropietario:String): Flow<NetworkResult<Boolean>> = flow {
