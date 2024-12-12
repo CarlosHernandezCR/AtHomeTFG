@@ -6,13 +6,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,11 +74,15 @@ fun EstadosActivity(
                 direccion = uiState.pantallaEstados.direccion,
                 usuariosCasa = uiState.pantallaEstados.usuariosCasa,
                 estadoActual = uiState.pantallaEstados.estado,
+                codigoInvitacion = uiState.pantallaEstados.codigoInvitacion,
                 estadosDisponibles = uiState.pantallaEstados.estadosDisponibles,
                 cambioEstado = { nuevoEstado ->
                     viewModel.handleEvent(
                         EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, idCasa, idUsuario)
                     )
+                },
+                codigoCopiado = {
+                    viewModel.handleEvent(EstadosContract.EstadosEvent.CodigoCopiado)
                 },
                 cargandoEstado = uiStateEstado.isLoading,
             )
@@ -86,8 +96,10 @@ fun PantallaEstados(
     direccion: String,
     usuariosCasa: List<UsuarioCasaResponseDTO>,
     estadoActual: String,
+    codigoInvitacion: String,
     estadosDisponibles: List<String>,
     cambioEstado: (String) -> Unit,
+    codigoCopiado: (Unit) -> Unit,
     cargandoEstado: Boolean,
 ) {
     var estadoSeleccionado by remember { mutableStateOf(estadoActual) }
@@ -97,7 +109,7 @@ fun PantallaEstados(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        CasaInfo(titulo = titulo, direccion = direccion)
+        CasaInfo(titulo = titulo, direccion = direccion, codigoInvitacion = codigoInvitacion, codigoCopiado = codigoCopiado)
         Spacer(modifier = Modifier.height(16.dp))
         if (usuariosCasa.isEmpty())
             Box(
@@ -135,16 +147,38 @@ fun PantallaEstados(
 }
 
 @Composable
-fun CasaInfo(titulo: String, direccion: String) {
+fun CasaInfo(titulo: String, direccion: String, codigoInvitacion: String,
+             codigoCopiado: (Unit)-> Unit
+) {
+    val clipboardManager = LocalClipboardManager.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = titulo,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = titulo,
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+            IconButton(onClick = {
+                clipboardManager.setText(AnnotatedString(codigoInvitacion))
+                codigoCopiado(Unit)
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ContentCopy,
+                    contentDescription = Constantes.INVITACION_COPIAR,
+                )
+            }
+        }
         Text(
             text = direccion,
             style = MaterialTheme.typography.bodyMedium,
@@ -274,8 +308,10 @@ fun PreviewEstadosActivity() {
         direccion = "Calle Falsa 123",
         usuariosCasa = usuariosCasa,
         estadoActual = "En casa",
+        codigoInvitacion = "ABC123",
         estadosDisponibles = estadosDisponibles,
         cambioEstado = {},
+        codigoCopiado = {},
         cargandoEstado = false
     )
 }

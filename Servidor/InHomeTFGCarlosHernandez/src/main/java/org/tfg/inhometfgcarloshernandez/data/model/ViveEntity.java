@@ -26,11 +26,11 @@ public class ViveEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = ViveConstantes.COLUMN_ID, nullable = false)
     private Integer id;
+    @Column(name = ViveConstantes.ESTADO_ACTUAL, nullable = false)
+    private String estado;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ViveConstantes.COLUMN_ID_USUARIO, nullable = false)
     private UsuarioEntity usuarioEntity;
-    @Column(name = ViveConstantes.ESTADO_ACTUAL, nullable = false)
-    private String estado;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ViveConstantes.COLUMN_ID_CASA, nullable = false)
     private CasaEntity casaEntity;

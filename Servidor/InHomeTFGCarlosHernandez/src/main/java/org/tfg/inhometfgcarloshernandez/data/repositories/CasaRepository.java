@@ -7,6 +7,7 @@ import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CasaRepository extends JpaRepository<CasaEntity, Integer> {
@@ -16,4 +17,6 @@ public interface CasaRepository extends JpaRepository<CasaEntity, Integer> {
 
     @Query("SELECT c FROM CasaEntity c JOIN ViveEntity v ON c.id = v.casaEntity.id WHERE v.usuarioEntity.id = :idUsuario")
     List<CasaEntity> findCasasPorUsuarioId(Integer idUsuario);
+
+    Optional<CasaEntity> findByCodigoInvitacion(String codigoInvitacion);
 }

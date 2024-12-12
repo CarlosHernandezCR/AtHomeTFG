@@ -2,6 +2,7 @@
 package org.tfg.inhometfgcarloshernandez.spring.common.constantes;
 
 public class ConstantesServer {
+    
     public static final String CODIGO = "codigo";
     public static final String LOGINPATH = "/login";
     public static final String CASAPATH = "/casa";
@@ -22,6 +23,8 @@ public class ConstantesServer {
     public static final String REFRESH_TOKEN_PATH = "/refreshToken";
     public static final String OLVIDAR_CONTRASENA = "/olvidarContrasena";
     public static final String GET_CASAS = "/getCasas";
+    public static final String AGREGAR_CASA = "/agregarCasa";
+    public static final String UNIRSE_CASA = "/unirseCasa";
 
     private ConstantesServer() {
     }

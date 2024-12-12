@@ -35,6 +35,7 @@ class EstadosViewModel @Inject constructor(
             is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.ErrorMostradoEstado -> _uiStateEstado.value = _uiStateEstado.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.idCasa, event.idUsuario)
+            EstadosContract.EstadosEvent.CodigoCopiado -> _uiState.value = _uiState.value.copy(mensaje = Constantes.CODIGO_COPIADO)
         }
     }
 

@@ -13,6 +13,7 @@ import org.tfg.inhometfgcarloshernandez.data.repositories.ViveRepository;
 import org.tfg.inhometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.CasaMapper;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError;
+import org.tfg.inhometfgcarloshernandez.spring.common.utils.Security;
 import org.tfg.inhometfgcarloshernandez.spring.common.utils.TokensTools;
 import org.tfg.inhometfgcarloshernandez.spring.model.CasaDetallesDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
@@ -31,6 +32,7 @@ public class CasaServicios {
     private final ViveRepository viveRepository;
     private final CasaMapper casaMapper;
     private final TokensTools tokensTools;
+    private final Security security;
 
     public PantallaEstadosResponseDTO getDatosPantallaEstados(String idUsuario, String idCasa, String token) {
         UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
@@ -62,6 +64,7 @@ public class CasaServicios {
                 .idCasa(casa.getId())
                 .nombreCasa(casa.getNombre())
                 .direccion(casa.getDireccion())
+                .codigoInvitacion(casa.getCodigoInvitacion())
                 .usuariosCasa(convertirAUsuariosCasa(usuariosCasa, viveRepository.findByCasaEntity(casa)))
                 .estadosDisponibles(estadosDisponibles)
                 .accessToken(tokensTools.actualizarAccessTokenConCasa(token, casa.getId()))
@@ -76,7 +79,7 @@ public class CasaServicios {
                             .filter(viveEntity -> viveEntity.getUsuarioEntity().getId().equals(usuario.getId()))
                             .findFirst()
                             .map(ViveEntity::getEstado)
-                            .orElse("Estado no encontrado");
+                            .orElse(ConstantesError.ERROR_ESTADO_NO_ENCONTRADO);
                     return new UsuarioCasaDTO(usuario.getNombre(), estado);
                 })
                 .toList();
@@ -99,5 +102,22 @@ public class CasaServicios {
                 .stream()
                 .map(casaMapper::casaEntityToCasaDetallesDTO)
                 .toList();
+    }
+
+    public void agregarCasa(String idUsuario, String nombre, String direccion, String codigoPostal) {
+        String codigoInvitacion = security.generarCodigoSeguro();
+        CasaEntity casaEntity = new CasaEntity(0, nombre, direccion, codigoPostal,codigoInvitacion);
+        casaEntity=casaRepository.save(casaEntity);
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(Integer.parseInt(idUsuario))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
+        viveRepository.save(new ViveEntity(0,null,usuarioEntity, casaEntity));
+    }
+
+    public void unirseCasa(String idUsuario, String codigoInvitacion) {
+        CasaEntity casa = casaRepository.findByCodigoInvitacion(codigoInvitacion)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_CASA_NO_ENCONTRADA + codigoInvitacion));
+        UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
+        viveRepository.save(new ViveEntity(0,null,usuario,casa));
     }
 }

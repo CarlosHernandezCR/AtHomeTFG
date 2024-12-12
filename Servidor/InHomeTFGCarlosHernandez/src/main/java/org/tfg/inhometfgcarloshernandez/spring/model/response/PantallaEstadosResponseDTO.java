@@ -16,6 +16,7 @@ public class PantallaEstadosResponseDTO {
     private Integer idCasa;
     private String nombreCasa;
     private String direccion;
+    private String codigoInvitacion;
     private List<UsuarioCasaDTO> usuariosCasa;
     private List<String> estadosDisponibles;
     private String accessToken;

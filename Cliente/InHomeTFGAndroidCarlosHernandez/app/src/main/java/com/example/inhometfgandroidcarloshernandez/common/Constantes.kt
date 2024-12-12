@@ -1,11 +1,19 @@
 package com.example.inhometfgandroidcarloshernandez.common
 
 object Constantes {
+    const val INVITACION_COPIAR: String = "Copiar código de invitación"
+    const val CODIGO_COPIADO: String = "Código copiado al portapapeles"
+    const val CREAR_CASA = "Crear Casa"
+    const val UNIRME_A_CASA = "Unirme a Casa"
+    const val CODIGO_DE_INVITACION = "Código de Invitación"
+    const val UNIRSE = "Unirse"
+    const val DIRECCION = "Dirección"
+    const val CODIGO_POSTAL = "Código Postal"
     const val TOKEN: String = "token"
     const val REGISTRO: String = "REGISTRO"
     const val TELEFONO: String = "Telefono"
     const val CONFIRMAR_REGISTRO: String = "Confirme el registro con el correo que le acabamos de enviar."
-    const val ANADE_HABITACION: String ="Añade una Habitacion"
+    const val ANADE_HABITACION: String = "Añade una Habitacion"
     const val SIN_USUARIOS: String = "No hay usuarios en esta casa"
     const val NO_HAY_CASAS: String = "No hay casas registradas"
     const val CERO_STRING: String = "0"
@@ -55,8 +63,7 @@ object Constantes {
     const val INICIAR_SESION: String = "Iniciar Sesion"
     const val CORREO: String = "Correo"
     const val DATA_STORE_NAME = "data_store"
-    const val BASE_URL: String =
-        "http://192.168.1.16:8889/"
+    const val BASE_URL: String = "http://192.168.1.16:8889/"
     const val TIMEOUT: Long = 1000
     const val ID = "id"
     const val IDCASA = "idCasa"

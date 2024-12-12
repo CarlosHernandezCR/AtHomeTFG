@@ -16,10 +16,12 @@ public class CasaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = CasaConstantes.COLUMN_ID, nullable = false)
     private Integer id;
+    @Column(name = CasaConstantes.COLUMN_NOMBRE, nullable = false)
+    private String nombre;
     @Column(name = CasaConstantes.COLUMN_DIRECCION, nullable = false)
     private String direccion;
     @Column(name = CasaConstantes.COLUMN_CODIGO, nullable = false)
     private String codigo;
-    @Column(name = CasaConstantes.COLUMN_NOMBRE, nullable = false)
-    private String nombre;
+    @Column(name = CasaConstantes.COLUMN_CODIGO_INVITACION, nullable = false)
+    private String codigoInvitacion;
 }

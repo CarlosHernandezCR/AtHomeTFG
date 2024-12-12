@@ -6,6 +6,7 @@ public class CasaConstantes {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_DIRECCION = "direccion";
     public static final String COLUMN_CODIGO = "codigo";
+    public static final String COLUMN_CODIGO_INVITACION = "codigo_invitacion";
 
     private CasaConstantes() {
     }

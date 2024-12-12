@@ -59,7 +59,6 @@ fun BottomBar(
                                 showSnackbar(ConstantesError.CASA_NO_SELECCIONADA)
                                 return@launch
                             }
-
                             val route = if (screen.route in listOf(
                                     ConstantesPantallas.CASA,
                                     ConstantesPantallas.CALENDARIO,

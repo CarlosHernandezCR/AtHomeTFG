@@ -6,6 +6,7 @@ data class PantallaEstadosResponseDTO(
     val idCasa: Int = 0,
     val nombreCasa: String = "",
     val direccion: String = "",
+    val codigoInvitacion: String = "",
     val usuariosCasa: List<UsuarioCasaResponseDTO> = emptyList(),
     val estadosDisponibles: List<String> = emptyList(),
     val accessToken: String = "",

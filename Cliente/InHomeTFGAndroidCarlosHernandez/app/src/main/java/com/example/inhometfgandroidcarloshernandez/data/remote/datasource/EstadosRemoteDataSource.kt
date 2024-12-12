@@ -24,8 +24,6 @@ class EstadosRemoteDataSource @Inject constructor(
                 val body = response.body()
                 if (body != null) {
                     tokenManager.saveAccessToken(body.accessToken)
-                    Timber.e("access" + body.accessToken)
-                    Timber.e("refresh"+body.refreshToken)
                     tokenManager.saveRefreshToken(body.refreshToken)
                     return NetworkResult.Success(body)
                 }
