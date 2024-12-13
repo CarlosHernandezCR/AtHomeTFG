@@ -36,10 +36,10 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(POST, ConstantesServer.BASE_API + ConstantesServer.LOGINPATH).permitAll()
-                        .requestMatchers(POST, ConstantesServer.BASE_API + ConstantesServer.REGISTERPATH).permitAll()
-                        .requestMatchers(GET, ConstantesServer.BASE_API + ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
-                        .requestMatchers(GET, ConstantesServer.BASE_API + ConstantesServer.DESCARGAR + ConstantesServer.APK).permitAll()
+                        .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
+                        .requestMatchers(POST,  ConstantesServer.REGISTERPATH).permitAll()
+                        .requestMatchers(GET, ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
+                        .requestMatchers(GET,  ConstantesServer.DESCARGAR + ConstantesServer.APK).permitAll()
                         .requestMatchers("/static/**", "/", "/descargar", "/descargar/apk", "/index.html", "/js/**", "/css/**").permitAll()
                         .anyRequest().authenticated()
                 )
