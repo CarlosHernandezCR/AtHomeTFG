@@ -4,8 +4,7 @@ package org.tfg.athometfgcarloshernandez.spring.common.constantes;
 public class ConstantesServer {
     
     public static final String CODIGO = "codigo";
-    public static final String LOGINPATH = "/login";
-    public static final String LOGIN_SERVIDOR = "https://informatica.iesquevedo.es/inhome/login";
+    public static final String LOGINPATH = "/api/login";
     public static final String CASAPATH = "/casa";
     public static final String CALENDARIOPATH = "/calendario";
     public static final String INMUEBLESPATH = "/inmuebles";

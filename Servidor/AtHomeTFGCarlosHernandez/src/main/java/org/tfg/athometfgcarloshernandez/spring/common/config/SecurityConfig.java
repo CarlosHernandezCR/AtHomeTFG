@@ -36,7 +36,7 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(POST, ConstantesServer.LOGIN_SERVIDOR).permitAll()
+                        .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
                         .requestMatchers(POST,  ConstantesServer.REGISTERPATH).permitAll()
                         .requestMatchers(GET, ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
                         .requestMatchers(GET,  ConstantesServer.DESCARGAR + ConstantesServer.APK).permitAll()
