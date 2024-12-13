@@ -6,5 +6,5 @@ import javax.inject.Inject
 class RegistroUseCase @Inject constructor(
     private val usuarioRepository: UsuarioRepository
 ){
-    operator fun invoke(nombre:String,password:String,correo:String,telefono:String) = usuarioRepository.registro(nombre,password,correo,telefono)
+    operator fun invoke(nombre:String,password:String,correo:String,telefono:String,color:String) = usuarioRepository.registro(nombre,password,correo,telefono,color)
 }

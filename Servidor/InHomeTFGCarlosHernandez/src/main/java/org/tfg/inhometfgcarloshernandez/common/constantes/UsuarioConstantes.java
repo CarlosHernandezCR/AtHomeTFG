@@ -6,6 +6,7 @@ public class UsuarioConstantes {
     public static final String COLUMN_NOMBRE = "nombre";
     public static final String COLUMN_CORREO = "correo";
     public static final String COLUMN_TELEFONO = "telefono";
+    public static final String COLUMN_COLOR = "color";
 
     private UsuarioConstantes() {
     }

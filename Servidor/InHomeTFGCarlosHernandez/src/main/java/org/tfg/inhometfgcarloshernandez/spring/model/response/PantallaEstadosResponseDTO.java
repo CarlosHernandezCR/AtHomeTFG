@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.tfg.inhometfgcarloshernandez.spring.model.UsuarioCasaDTO;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ import java.util.List;
 @Builder
 public class PantallaEstadosResponseDTO {
     private String estado;
+    private String colorEstado;
+    private String colorUsuario;
     private Integer idCasa;
     private String nombreCasa;
     private String direccion;

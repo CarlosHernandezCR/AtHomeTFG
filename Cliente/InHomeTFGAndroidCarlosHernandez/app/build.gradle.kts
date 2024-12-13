@@ -89,4 +89,6 @@ dependencies {
     implementation (libs.material3)
     //fuentes
     implementation(libs.androidx.ui.text.google.fonts)
+    //ColorPicker
+    implementation(libs.colorpicker.compose);
 }

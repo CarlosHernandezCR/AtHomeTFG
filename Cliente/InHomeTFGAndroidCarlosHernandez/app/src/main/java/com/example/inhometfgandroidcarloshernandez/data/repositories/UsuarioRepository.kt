@@ -4,6 +4,7 @@ import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEst
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.response.CambiarEstadoResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.remote.datasource.UsuarioRemoteDataSource
@@ -23,7 +24,7 @@ class UsuarioRepository @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    fun cambiarEstado(estado: String, idCasa:String, idUsuario: String): Flow<NetworkResult<Boolean>> = flow {
+    fun cambiarEstado(estado: String, idCasa:String, idUsuario: String): Flow<NetworkResult<CambiarEstadoResponseDTO>> = flow {
         emit(NetworkResult.Loading())
         val result = remoteDataSource.cambiarEstado(CambiarEstadoRequestDTO(estado, idCasa, idUsuario))
         emit(result)
@@ -41,9 +42,9 @@ class UsuarioRepository @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    fun registro(nombre: String, password: String, correo: String, telefono: String): Flow<NetworkResult<Boolean>> = flow {
+    fun registro(nombre: String, password: String, correo: String, telefono: String, color: String): Flow<NetworkResult<Boolean>> = flow {
         emit(NetworkResult.Loading())
-        val result = remoteDataSource.registro(RegistroRequestDTO(nombre, password, correo, telefono))
+        val result = remoteDataSource.registro(RegistroRequestDTO(nombre, password, correo, telefono,color))
         emit(result)
     }.flowOn(Dispatchers.IO)
 }

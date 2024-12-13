@@ -27,7 +27,8 @@ public class UsuarioEntity {
     private String correo;
     @Column(name = UsuarioConstantes.COLUMN_TELEFONO)
     private String telefono;
-
+    @Column(name = UsuarioConstantes.COLUMN_COLOR, nullable = false)
+    private String color;
 
     public UsuarioEntity(Integer id) {
         this.id = id;

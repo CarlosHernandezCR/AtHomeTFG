@@ -18,6 +18,7 @@ import org.tfg.inhometfgcarloshernandez.data.repositories.UsuarioRepository;
 import org.tfg.inhometfgcarloshernandez.domain.errores.CustomedException;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.UsuarioMappers;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError;
+import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.inhometfgcarloshernandez.spring.common.utils.TokensTools;
 import org.tfg.inhometfgcarloshernandez.spring.model.UsuarioDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.LoginResponseDTO;
@@ -68,13 +69,13 @@ public class UsuarioServicios {
                 .toList();
     }
 
-    public void registro(String nombre, String password, String correo, String telefono) {
-        UsuarioEntity usuario = new UsuarioEntity(0, nombre, correo, telefono);
+    public void registro(String nombre, String password, String correo, String telefono, String color) {
+        UsuarioEntity usuario = new UsuarioEntity(0, nombre, correo, telefono,color);
         usuario = usuarioRepository.save(usuario);
         String contraCodificada = security.encriptarContra(password);
         String codigoActivacion = security.generarCodigoSeguro();
         Instant ahora = Instant.now();
-        Instant fechaCaducidad = ahora.plus(Duration.ofMinutes(5));
+        Instant fechaCaducidad = ahora.plus(Duration.ofMinutes(ConstantesServer.CADUCIDAD_CODIGO_REGISTRO));
         CredencialesEntity credenciales = new CredencialesEntity(
                 0, usuario, contraCodificada, false, codigoActivacion, fechaCaducidad
         );
@@ -84,9 +85,9 @@ public class UsuarioServicios {
                 Constantes.ACTIVACION_CODIGO + codigoActivacion + Constantes.ACTIVAR_SU_CUENTA_HTML,
                 codigoActivacion
         );
-        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity("Durmiendo", "#FF0000")));
-        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity("En casa", "#00FF00")));
-        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity("Fuera de casa", "#FFFF00")));
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO1, ConstantesServer.COLOR_ESTADO_PREDETERMINADO1)));
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO2, ConstantesServer.COLOR_ESTADO_PREDETERMINADO2)));
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO3, ConstantesServer.COLOR_ESTADO_PREDETERMINADO3)));
     }
 
     public void validateUser(String codigoActivacion) {

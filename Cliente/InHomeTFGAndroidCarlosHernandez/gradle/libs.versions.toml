@@ -1,6 +1,7 @@
 [versions]
 agp = "8.4.1"
 animation = "1.6.7"
+colorpickerCompose = "1.0.7"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -24,6 +25,7 @@ fuentes="1.7.5"
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version = "fuentes" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpickerCompose" }
 jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastoreVersion" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }

@@ -5,20 +5,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
 import com.example.inhometfgandroidcarloshernandez.data.model.response.PantallaEstadosResponseDTO
-import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.GetDatosCasaUseCase
 import com.example.inhometfgandroidcarloshernandez.data.remote.util.NetworkResult
-import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.ChangeStateUseCase
+import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.CambiarEstadoUseCase
+import com.example.inhometfgandroidcarloshernandez.domain.usecases.estados.GetDatosCasaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EstadosViewModel @Inject constructor(
     private val getDatosCasaUseCase: GetDatosCasaUseCase,
-    private val changeStateUseCase: ChangeStateUseCase,
+    private val cambiarEstadoUseCase: CambiarEstadoUseCase,
 ) : ViewModel() {
 
 
@@ -47,7 +48,10 @@ class EstadosViewModel @Inject constructor(
                         val datosCasa = result.data ?: PantallaEstadosResponseDTO()
                         _uiState.value = EstadosContract.EstadosState(
                             isLoading = false,
-                            pantallaEstados = datosCasa
+                            pantallaEstados = datosCasa,
+                        )
+                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(
+                            colorCambiarEstado = datosCasa.colorEstado
                         )
                     }
                     is NetworkResult.Error -> {
@@ -62,12 +66,15 @@ class EstadosViewModel @Inject constructor(
     }
     private fun cambiarEstado(estado: String, idCasa:String, idUsuario: String){
         viewModelScope.launch {
-            changeStateUseCase.invoke(estado,idCasa,idUsuario).collect { result ->
+            cambiarEstadoUseCase.invoke(estado,idCasa,idUsuario).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(
-                            isLoading = false,
-                        )
+                        _uiStateEstado.update {
+                            it.copy(
+                                colorCambiarEstado = result.data?.color ?: "",
+                                isLoading = false
+                            )
+                        }
                     }
                     is NetworkResult.Error -> {
                         _uiStateEstado.value = EstadosContract.CambiarEstadoState(mensaje = result.message)

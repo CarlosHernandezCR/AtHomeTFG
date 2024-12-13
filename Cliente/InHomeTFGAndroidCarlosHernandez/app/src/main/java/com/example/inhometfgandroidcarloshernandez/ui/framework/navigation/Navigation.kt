@@ -7,21 +7,18 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.inhometfgandroidcarloshernandez.common.Constantes
+import com.example.inhometfgandroidcarloshernandez.data.remote.di.TokenManager
 import com.example.inhometfgandroidcarloshernandez.ui.common.BottomBar
 import com.example.inhometfgandroidcarloshernandez.ui.common.ConstantesPantallas
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.calendario.CalendarioActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados.EstadosActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesActivity
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.login.LoginActivity
-import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.seleccionarcasa.SeleccionarCasaActivity
-import com.example.inhometfgandroidcarloshernandez.data.remote.di.TokenManager
 import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.registro.RegistroActivity
+import com.example.inhometfgandroidcarloshernandez.ui.framework.screens.seleccionarcasa.SeleccionarCasaActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -95,7 +92,8 @@ fun Navigation(
                     idUsuario = idUsuario,
                     idCasa = idCasa,
                     innerPadding = paddingValues,
-                    showSnackbar = showSnackbar
+                    showSnackbar = showSnackbar,
+                    volverSeleccionarCasa = { navController.popBackStack() }
                 )
             }
 

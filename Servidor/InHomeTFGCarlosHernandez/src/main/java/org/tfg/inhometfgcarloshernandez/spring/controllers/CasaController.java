@@ -8,6 +8,7 @@ import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServe
 import org.tfg.inhometfgcarloshernandez.spring.model.request.AgregarCasaRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.CambiarEstadoRequestDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.request.UnirseCasaRequestDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.response.CambiarEstadoResponseDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.GetCasasResponseDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
 
@@ -29,8 +30,9 @@ public class CasaController {
     }
 
     @PostMapping(ConstantesServer.CAMBIAR_ESTADO)
-    public ResponseEntity<Void> cambiarEstado(@RequestBody CambiarEstadoRequestDTO cambiarEstadoRequestDTO) {
-        return casaServicios.cambiarEstado(cambiarEstadoRequestDTO.getEstado(), cambiarEstadoRequestDTO.getIdUsuario(), cambiarEstadoRequestDTO.getIdCasa());
+    public ResponseEntity<CambiarEstadoResponseDTO> cambiarEstado(@RequestBody CambiarEstadoRequestDTO cambiarEstadoRequestDTO) {
+        CambiarEstadoResponseDTO color = new CambiarEstadoResponseDTO(casaServicios.cambiarEstado(cambiarEstadoRequestDTO.getEstado(), cambiarEstadoRequestDTO.getIdUsuario(), cambiarEstadoRequestDTO.getIdCasa()));
+        return ResponseEntity.ok(color);
     }
 
     @GetMapping(ConstantesServer.GET_CASAS)

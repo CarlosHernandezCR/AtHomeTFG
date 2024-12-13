@@ -1,4 +1,4 @@
-package org.tfg.inhometfgcarloshernandez.spring.model.response;
+package org.tfg.inhometfgcarloshernandez.spring.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class UsuarioCasaDTO {
     private String nombre;
     private String estado;
+    private String colorEstado;
+    private String colorUsuario;
 }

@@ -11,6 +11,7 @@ interface EstadosContract {
     )
 
     data class CambiarEstadoState(
+        val colorCambiarEstado: String = "",
         val isLoading: Boolean = false,
         val mensaje: String? = null
     )

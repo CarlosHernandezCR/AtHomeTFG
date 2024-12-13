@@ -5,6 +5,7 @@ import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEst
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.response.CambiarEstadoResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.remote.apiServices.UsuarioService
@@ -38,8 +39,8 @@ class UsuarioRemoteDataSource @Inject constructor(
             return NetworkResult.Error(ConstantesError.BASE_DE_DATOS_ERROR)
         }
     }
-    suspend fun cambiarEstado(cambiarEstadoRequestDTO : CambiarEstadoRequestDTO): NetworkResult<Boolean> =
-        safeApiCallNoBody{ usuarioService.cambiarEstado(cambiarEstadoRequestDTO) }
+    suspend fun cambiarEstado(cambiarEstadoRequestDTO : CambiarEstadoRequestDTO): NetworkResult<CambiarEstadoResponseDTO> =
+        safeApiCall{ usuarioService.cambiarEstado(cambiarEstadoRequestDTO) }
 
     suspend fun getUsuarios(idCasa: String): NetworkResult<GetUsuariosResponseDTO> =
         safeApiCall { usuarioService.getUsuarios(idCasa) }

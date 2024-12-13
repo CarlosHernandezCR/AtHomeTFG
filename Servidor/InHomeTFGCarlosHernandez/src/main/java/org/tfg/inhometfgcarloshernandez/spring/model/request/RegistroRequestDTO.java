@@ -12,4 +12,5 @@ public class RegistroRequestDTO {
     private String password;
     private String correo;
     private String telefono;
+    private String color;
 }

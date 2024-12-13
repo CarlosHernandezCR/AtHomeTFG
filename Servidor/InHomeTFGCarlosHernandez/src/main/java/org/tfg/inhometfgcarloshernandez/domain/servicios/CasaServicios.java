@@ -4,21 +4,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.tfg.inhometfgcarloshernandez.data.model.CasaEntity;
+import org.tfg.inhometfgcarloshernandez.data.model.EstadoEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.UsuarioEntity;
 import org.tfg.inhometfgcarloshernandez.data.model.ViveEntity;
-import org.tfg.inhometfgcarloshernandez.data.repositories.CasaRepository;
-import org.tfg.inhometfgcarloshernandez.data.repositories.EstadosUsuariosRepository;
-import org.tfg.inhometfgcarloshernandez.data.repositories.UsuarioRepository;
-import org.tfg.inhometfgcarloshernandez.data.repositories.ViveRepository;
+import org.tfg.inhometfgcarloshernandez.data.repositories.*;
 import org.tfg.inhometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.inhometfgcarloshernandez.domain.model.mappers.CasaMapper;
 import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesError;
+import org.tfg.inhometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.inhometfgcarloshernandez.spring.common.utils.Security;
 import org.tfg.inhometfgcarloshernandez.spring.common.utils.TokensTools;
 import org.tfg.inhometfgcarloshernandez.spring.model.CasaDetallesDTO;
 import org.tfg.inhometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
-import org.tfg.inhometfgcarloshernandez.spring.model.response.UsuarioCasaDTO;
+import org.tfg.inhometfgcarloshernandez.spring.model.UsuarioCasaDTO;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,7 @@ public class CasaServicios {
     private final CasaRepository casaRepository;
     private final EstadosUsuariosRepository estadosUsuariosRepository;
     private final ViveRepository viveRepository;
+    private final EstadosRepository estadosRepository;
     private final CasaMapper casaMapper;
     private final TokensTools tokensTools;
     private final Security security;
@@ -53,14 +55,18 @@ public class CasaServicios {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_VIVE_NO_ENCONTRADO + usuario.getId() + "-" + casa.getId()))
                 .getEstado();
-
+        String colorEstado = estadosRepository.findByDescripcion(estadoActual)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_ESTADO_NO_ENCONTRADO + estadoActual))
+                .getColor();
         List<String> estadosDisponibles = estadosUsuariosRepository.findEstadosUsuarioPorIdUsuario(Integer.parseInt(idUsuario));
-        return mapearDatosUsuario(estadoActual,casa,usuariosCasa,estadosDisponibles,token);
+        return mapearDatosUsuario(estadoActual,colorEstado,usuario.getColor(),casa,usuariosCasa,estadosDisponibles,token);
     }
 
-    private PantallaEstadosResponseDTO mapearDatosUsuario(String estadoActual, CasaEntity casa, List<UsuarioEntity> usuariosCasa, List<String> estadosDisponibles, String token) {
+    private PantallaEstadosResponseDTO mapearDatosUsuario(String estadoActual,String colorEstado, String color,CasaEntity casa, List<UsuarioEntity> usuariosCasa, List<String> estadosDisponibles, String token) {
         return PantallaEstadosResponseDTO.builder()
                 .estado(estadoActual)
+                .colorEstado(colorEstado)
+                .colorUsuario(color)
                 .idCasa(casa.getId())
                 .nombreCasa(casa.getNombre())
                 .direccion(casa.getDireccion())
@@ -73,19 +79,29 @@ public class CasaServicios {
     }
 
     private List<UsuarioCasaDTO> convertirAUsuariosCasa(List<UsuarioEntity> usuariosCasa, List<ViveEntity> viveEntities) {
-        return usuariosCasa.stream()
-                .map(usuario -> {
-                    String estado = viveEntities.stream()
-                            .filter(viveEntity -> viveEntity.getUsuarioEntity().getId().equals(usuario.getId()))
+        List<EstadoEntity> estados = new ArrayList<>();
+        for(ViveEntity viveEntity : viveEntities){
+            estados.add(estadosRepository.findByDescripcion(viveEntity.getEstado())
+                    .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_ESTADO_NO_ENCONTRADO + viveEntity.getEstado())));
+        }
+        List<UsuarioCasaDTO> usuarios = new ArrayList<>();
+        for(UsuarioEntity usuario : usuariosCasa){
+            for(ViveEntity viveEntity : viveEntities){
+                if(Objects.equals(viveEntity.getUsuarioEntity().getId(), usuario.getId())){
+                    usuarios.add(new UsuarioCasaDTO(usuario.getNombre(),viveEntity.getEstado(),estados.stream()
+                            .filter(estadoEntity -> Objects.equals(estadoEntity.getDescripcion(), viveEntity.getEstado()))
                             .findFirst()
-                            .map(ViveEntity::getEstado)
-                            .orElse(ConstantesError.ERROR_ESTADO_NO_ENCONTRADO);
-                    return new UsuarioCasaDTO(usuario.getNombre(), estado);
-                })
-                .toList();
+                            .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_ESTADO_NO_ENCONTRADO + viveEntity.getEstado()))
+                            .getColor(),usuario.getColor()));
+                }
+            }
+        }
+        return usuarios;
     }
 
-    public ResponseEntity<Void> cambiarEstado(String estado, int idUsuario, int idCasa) {
+    public String cambiarEstado(String estado, int idUsuario, int idCasa) {
+        EstadoEntity estadoEntity = estadosRepository.findByDescripcion(estado)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_ESTADO_NO_ENCONTRADO + estado));
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + idUsuario));
         CasaEntity casa = casaRepository.findById(idCasa)
@@ -94,7 +110,7 @@ public class CasaServicios {
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_VIVE_NO_ENCONTRADO + idUsuario + "-" + idCasa));
         viveEntity.setEstado(estado);
         viveRepository.save(viveEntity);
-        return ResponseEntity.ok().build();
+        return estadoEntity.getColor();
     }
 
     public List<CasaDetallesDTO> getCasas(String idUsuario) {
@@ -118,6 +134,6 @@ public class CasaServicios {
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_CASA_NO_ENCONTRADA + codigoInvitacion));
         UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
-        viveRepository.save(new ViveEntity(0,null,usuario,casa));
+        viveRepository.save(new ViveEntity(0, ConstantesServer.ESTADO_PREDETERMINADO2,usuario,casa));
     }
 }

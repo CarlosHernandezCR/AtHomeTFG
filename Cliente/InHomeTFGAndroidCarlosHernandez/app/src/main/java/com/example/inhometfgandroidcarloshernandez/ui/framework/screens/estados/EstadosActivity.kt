@@ -2,16 +2,44 @@ package com.example.inhometfgandroidcarloshernandez.ui.framework.screens.estados
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.inhometfgandroidcarloshernandez.R
 import com.example.inhometfgandroidcarloshernandez.common.Constantes
-import com.example.inhometfgandroidcarloshernandez.data.model.response.UsuarioCasaResponseDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.UsuarioCasaDTO
 
 @Composable
 fun EstadosActivity(
@@ -34,6 +62,7 @@ fun EstadosActivity(
     showSnackbar: (String) -> Unit = {},
     viewModel: EstadosViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
+    volverSeleccionarCasa: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val uiStateEstado by viewModel.uiStateEstado.collectAsState()
@@ -76,6 +105,8 @@ fun EstadosActivity(
                 estadoActual = uiState.pantallaEstados.estado,
                 codigoInvitacion = uiState.pantallaEstados.codigoInvitacion,
                 estadosDisponibles = uiState.pantallaEstados.estadosDisponibles,
+                color = uiStateEstado.colorCambiarEstado,
+                cargandoEstado = uiStateEstado.isLoading,
                 cambioEstado = { nuevoEstado ->
                     viewModel.handleEvent(
                         EstadosContract.EstadosEvent.CambiarEstado(nuevoEstado, idCasa, idUsuario)
@@ -84,7 +115,7 @@ fun EstadosActivity(
                 codigoCopiado = {
                     viewModel.handleEvent(EstadosContract.EstadosEvent.CodigoCopiado)
                 },
-                cargandoEstado = uiStateEstado.isLoading,
+                volverSeleccionarCasa = volverSeleccionarCasa
             )
         }
     }
@@ -94,13 +125,15 @@ fun EstadosActivity(
 fun PantallaEstados(
     titulo: String,
     direccion: String,
-    usuariosCasa: List<UsuarioCasaResponseDTO>,
+    usuariosCasa: List<UsuarioCasaDTO>,
     estadoActual: String,
     codigoInvitacion: String,
+    color: String,
+    cargandoEstado: Boolean,
     estadosDisponibles: List<String>,
     cambioEstado: (String) -> Unit,
     codigoCopiado: (Unit) -> Unit,
-    cargandoEstado: Boolean,
+    volverSeleccionarCasa: () -> Unit
 ) {
     var estadoSeleccionado by remember { mutableStateOf(estadoActual) }
 
@@ -109,7 +142,13 @@ fun PantallaEstados(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        CasaInfo(titulo = titulo, direccion = direccion, codigoInvitacion = codigoInvitacion, codigoCopiado = codigoCopiado)
+        CasaInfo(
+            titulo = titulo,
+            direccion = direccion,
+            codigoInvitacion = codigoInvitacion,
+            codigoCopiado = codigoCopiado,
+            volverSeleccionarCasa = volverSeleccionarCasa
+        )
         Spacer(modifier = Modifier.height(16.dp))
         if (usuariosCasa.isEmpty())
             Box(
@@ -135,6 +174,7 @@ fun PantallaEstados(
                 items = estadosDisponibles,
                 selectedItem = estadoSeleccionado,
                 titulo = Constantes.ESTADO,
+                color = color,
                 onItemSelected = { nuevoEstado ->
                     if (estadoSeleccionado != nuevoEstado) {
                         estadoSeleccionado = nuevoEstado
@@ -147,8 +187,10 @@ fun PantallaEstados(
 }
 
 @Composable
-fun CasaInfo(titulo: String, direccion: String, codigoInvitacion: String,
-             codigoCopiado: (Unit)-> Unit
+fun CasaInfo(
+    titulo: String, direccion: String, codigoInvitacion: String,
+    codigoCopiado: (Unit) -> Unit,
+    volverSeleccionarCasa: () -> Unit
 ) {
     val clipboardManager = LocalClipboardManager.current
 
@@ -161,14 +203,18 @@ fun CasaInfo(titulo: String, direccion: String, codigoInvitacion: String,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Box(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = titulo,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center)
+            IconButton(onClick = volverSeleccionarCasa) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = Constantes.VOLVER
                 )
             }
+            Text(
+                text = titulo,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
             IconButton(onClick = {
                 clipboardManager.setText(AnnotatedString(codigoInvitacion))
                 codigoCopiado(Unit)
@@ -185,18 +231,24 @@ fun CasaInfo(titulo: String, direccion: String, codigoInvitacion: String,
             textAlign = TextAlign.Center
         )
     }
+
 }
 
 @Composable
 fun UsuariosList(
-    usuariosCasa: List<UsuarioCasaResponseDTO>,
+    usuariosCasa: List<UsuarioCasaDTO>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier
     ) {
         items(usuariosCasa) { usuario ->
-            UsuarioItem(nombre = usuario.nombre, estado = usuario.estado)
+            UsuarioItem(
+                nombre = usuario.nombre,
+                estado = usuario.estado,
+                colorEstado = usuario.colorEstado,
+                colorUsuario = usuario.colorUsuario
+            )
         }
     }
 }
@@ -207,22 +259,22 @@ fun ComboBox(
     items: List<String>,
     selectedItem: String,
     titulo: String,
+    color: String,
     onItemSelected: (String) -> Unit,
 ) {
-    val backgroundColor = when (selectedItem) {
-        "En casa" -> Color.Green
-        "Fuera de casa" -> Color.Red
-        "Durmiendo" -> Color.Yellow
-        else -> Color.Gray
-    }
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
         modifier = Modifier
             .fillMaxWidth()
-            .background(backgroundColor)
-
+            .background(
+                if (color.isEmpty()) Color.Transparent else Color(
+                    android.graphics.Color.parseColor(
+                        color
+                    )
+                )
+            )
     ) {
         TextField(
             value = selectedItem,
@@ -246,32 +298,35 @@ fun ComboBox(
                 DropdownMenuItem(
                     text = { Text(item) },
                     onClick = {
-                        onItemSelected(item)
                         expanded = false
+                        onItemSelected(item)
                     }
                 )
             }
         }
-
     }
 }
 
 
 @Composable
-fun UsuarioItem(nombre: String, estado: String) {
-    val backgroundColor = when (estado) {
-        "En casa" -> Color.Green
-        "Fuera de casa" -> Color.Yellow
-        "Durmiendo" -> Color.Red
-        else -> Color.Gray
-    }
-
+fun UsuarioItem(nombre: String, estado: String, colorEstado: String, colorUsuario: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .border(
+                8.dp,
+                Color(android.graphics.Color.parseColor(colorUsuario)),
+                RoundedCornerShape(8.dp)
+            ),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+        colors = CardDefaults.cardColors(
+            containerColor = Color(
+                android.graphics.Color.parseColor(
+                    colorEstado
+                )
+            )
+        )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -297,14 +352,29 @@ fun UsuarioItem(nombre: String, estado: String) {
 @Composable
 fun PreviewEstadosActivity() {
     val usuariosCasa = listOf(
-        UsuarioCasaResponseDTO(nombre = "Carlos", estado = "En casa"),
-        UsuarioCasaResponseDTO(nombre = "Ana", estado = "Fuera de casa"),
-        UsuarioCasaResponseDTO(nombre = "Luis", estado = "Durmiendo")
+        UsuarioCasaDTO(
+            nombre = "Carlos",
+            estado = "En casa",
+            colorEstado = "#FF0000",
+            colorUsuario = "#FF0000"
+        ),
+        UsuarioCasaDTO(
+            nombre = "Ana",
+            estado = "Fuera de casa",
+            colorEstado = "#00FF00",
+            colorUsuario = "#0000FF"
+        ),
+        UsuarioCasaDTO(
+            nombre = "Luis",
+            estado = "Durmiendo",
+            colorEstado = "#0000FF",
+            colorUsuario = "#00FF00"
+        )
     )
     val estadosDisponibles = listOf("En casa", "Fuera de casa", "Durmiendo")
 
     PantallaEstados(
-        titulo = "Mi Casa",
+        titulo = "Mi casita",
         direccion = "Calle Falsa 123",
         usuariosCasa = usuariosCasa,
         estadoActual = "En casa",
@@ -312,6 +382,8 @@ fun PreviewEstadosActivity() {
         estadosDisponibles = estadosDisponibles,
         cambioEstado = {},
         codigoCopiado = {},
-        cargandoEstado = false
+        cargandoEstado = false,
+        color = "#FF0000",
+        volverSeleccionarCasa = {}
     )
 }

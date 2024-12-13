@@ -41,12 +41,16 @@ class RegistroViewModel @Inject constructor(
             is RegistroContract.RegistroEvent.TelefonoChange -> {
                 _uiState.value = _uiState.value.copy(telefono = event.telefono)
             }
+
+            is RegistroContract.RegistroEvent.ColorChange -> {
+                _uiState.value = _uiState.value.copy(color = event.color)
+            }
         }
     }
 
     private fun registro() {
         if(_uiState.value.nombre.isBlank() || _uiState.value.password.isBlank() || _uiState.value.correo.isBlank()
-            || _uiState.value.telefono.isBlank()){
+            || _uiState.value.telefono.isBlank() || _uiState.value.color.isBlank()){
             _uiState.value = _uiState.value.copy(mensaje = ConstantesError.CAMPO_VACIO_ERROR)
             return
         }
@@ -59,7 +63,7 @@ class RegistroViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            registroUseCase.invoke(_uiState.value.nombre, _uiState.value.password, _uiState.value.correo, _uiState.value.telefono).collect { result ->
+            registroUseCase.invoke(_uiState.value.nombre, _uiState.value.password, _uiState.value.correo, _uiState.value.telefono,_uiState.value.color).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
                         _uiState.update { it.copy(mensaje = Constantes.CONFIRMAR_REGISTRO, isRegistered = true, isLoading = false) }

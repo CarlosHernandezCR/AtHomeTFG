@@ -6,6 +6,7 @@ import com.example.inhometfgandroidcarloshernandez.data.model.request.CambiarEst
 import com.example.inhometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
+import com.example.inhometfgandroidcarloshernandez.data.model.response.CambiarEstadoResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.inhometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import retrofit2.Response
@@ -19,7 +20,7 @@ interface UsuarioService {
     suspend fun login(@Body loginDTO: LoginRequestDTO): Response<LoginResponseDTO>
 
     @POST(ConstantesPaths.CAMBIAR_ESTADO)
-    suspend fun cambiarEstado(@Body cambiarEstadoRequestDTO: CambiarEstadoRequestDTO): Response<Void>
+    suspend fun cambiarEstado(@Body cambiarEstadoRequestDTO: CambiarEstadoRequestDTO): Response<CambiarEstadoResponseDTO>
 
     @GET(ConstantesPaths.GET_USUARIOS)
     suspend fun getUsuarios(@Query(Constantes.IDCASA) idCasa: String): Response<GetUsuariosResponseDTO>

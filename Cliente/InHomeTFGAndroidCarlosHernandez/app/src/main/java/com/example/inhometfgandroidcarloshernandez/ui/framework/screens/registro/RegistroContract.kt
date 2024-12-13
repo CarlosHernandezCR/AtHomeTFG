@@ -6,6 +6,7 @@ interface RegistroContract {
         val password: String = "",
         val correo: String = "",
         val telefono: String = "",
+        val color: String = "",
         val isLoading: Boolean = false,
         val mensaje: String? = null,
         val isRegistered: Boolean = false
@@ -16,6 +17,7 @@ interface RegistroContract {
         data class PasswordChange(val password: String) : RegistroEvent()
         data class CorreoChange(val correo: String) : RegistroEvent()
         data class TelefonoChange(val telefono: String) : RegistroEvent()
+        data class ColorChange(val color: String) : RegistroEvent()
         data object Registro : RegistroEvent()
         data object MensajeMostrado : RegistroEvent()
     }

@@ -25,6 +25,13 @@ public class ConstantesServer {
     public static final String GET_CASAS = "/getCasas";
     public static final String AGREGAR_CASA = "/agregarCasa";
     public static final String UNIRSE_CASA = "/unirseCasa";
+    public static final int CADUCIDAD_CODIGO_REGISTRO = 5;
+    public static final String ESTADO_PREDETERMINADO1 = "Durmiendo";
+    public static final String ESTADO_PREDETERMINADO2 = "En casa";
+    public static final String ESTADO_PREDETERMINADO3 = "Cocinando";
+    public static final String COLOR_ESTADO_PREDETERMINADO1 = "#FF0000";
+    public static final String COLOR_ESTADO_PREDETERMINADO2 = "#00FF00";
+    public static final String COLOR_ESTADO_PREDETERMINADO3 = "#FFFF00";
 
     private ConstantesServer() {
     }

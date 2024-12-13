@@ -21,7 +21,7 @@ public class RegistroController {
 
     @PostMapping
     public ResponseEntity<Void> registro(@RequestBody RegistroRequestDTO registroRequestDTO) {
-        usuarioServicios.registro(registroRequestDTO.getNombre(), registroRequestDTO.getPassword(),  registroRequestDTO.getCorreo(),registroRequestDTO.getTelefono());
+        usuarioServicios.registro(registroRequestDTO.getNombre(), registroRequestDTO.getPassword(),  registroRequestDTO.getCorreo(),registroRequestDTO.getTelefono(), registroRequestDTO.getColor());
         return ResponseEntity.ok().build();
     }
 

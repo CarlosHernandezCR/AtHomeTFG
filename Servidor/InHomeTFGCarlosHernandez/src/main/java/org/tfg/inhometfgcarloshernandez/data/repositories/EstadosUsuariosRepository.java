@@ -13,4 +13,4 @@ public interface EstadosUsuariosRepository extends JpaRepository<EstadosUsuarioE
     @Query("SELECT eu.estadoEntity.descripcion FROM EstadosUsuarioEntity eu WHERE eu.usuarioEntity.id= :idUsuario")
     List<String> findEstadosUsuarioPorIdUsuario(Integer idUsuario);
 
-    Optional<EstadosUsuarioEntity> findByUsuarioEntityId(int id);}
+}
