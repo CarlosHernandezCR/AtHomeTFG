@@ -36,12 +36,11 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(POST, ConstantesServer.BASE_APK+ConstantesServer.LOGINPATH).permitAll()
-                        .requestMatchers(POST, ConstantesServer.BASE_APK+ConstantesServer.REGISTERPATH).permitAll()
-                        .requestMatchers(GET, ConstantesServer.BASE_APK+ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
-                        .requestMatchers(GET,ConstantesServer.BASE_APK+ ConstantesServer.DESCARGAR +ConstantesServer.APK).permitAll()
-                        .requestMatchers("/static/**", "/", "/descargar", "/index.html", "/js/**", "/css/**","/apk").permitAll()
-
+                        .requestMatchers(POST, ConstantesServer.BASE_APK + ConstantesServer.LOGINPATH).permitAll()
+                        .requestMatchers(POST, ConstantesServer.BASE_APK + ConstantesServer.REGISTERPATH).permitAll()
+                        .requestMatchers(GET, ConstantesServer.BASE_APK + ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
+                        .requestMatchers(GET, ConstantesServer.BASE_APK + ConstantesServer.DESCARGAR + ConstantesServer.APK).permitAll()
+                        .requestMatchers("/static/**", "/", "/descargar", "/descargar/apk", "/index.html", "/js/**", "/css/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
