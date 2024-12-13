@@ -6,7 +6,7 @@
       <IconAthome class="small-icon"/>
     </header>
     <main>
-      ¡Athome te ayuda a gestionar tu casa compartida de forma fácil! Descarga ahora la aplicación para mejorar la convivencia.
+      <p>¡Athome te ayuda a gestionar tu casa compartida de forma fácil! Descarga ahora la aplicación para mejorar la convivencia.</p>
       <router-link to="/descargar">
         <button>Descargar APK</button>
       </router-link>
@@ -63,7 +63,6 @@ button {
   border-radius: 5px;
   cursor: pointer;
   font-family: 'Audiowide', sans-serif;
-  margin-top: 3%;
 }
 
 button:hover {

@@ -23,6 +23,7 @@ import static org.springframework.http.HttpMethod.POST;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -38,10 +39,12 @@ public class SecurityConfig {
                         .requestMatchers(POST, ConstantesServer.LOGINPATH).permitAll()
                         .requestMatchers(POST, ConstantesServer.REGISTERPATH).permitAll()
                         .requestMatchers(GET, ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
+                        .requestMatchers(GET, ConstantesServer.DESCARGAR +ConstantesServer.APK).permitAll()
+                        .requestMatchers("/static/**", "/", "/descargar", "/index.html", "/js/**", "/css/**","/apk").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }

@@ -48,7 +48,7 @@ export default {
   name: "DescargaCompletada",
   data() {
     return {
-      apkDownloadUrl: "/apk",
+      apkDownloadUrl: "/descargar/apk",
     };
   },
   mounted() {

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 
 @RestController
-@RequestMapping(ConstantesServer.API)
+@RequestMapping(ConstantesServer.DESCARGAR)
 public class WebController {
 
     @GetMapping(ConstantesServer.APK)

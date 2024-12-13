@@ -32,7 +32,7 @@ public class ConstantesServer {
     public static final String COLOR_ESTADO_PREDETERMINADO1 = "#FF0000";
     public static final String COLOR_ESTADO_PREDETERMINADO2 = "#00FF00";
     public static final String COLOR_ESTADO_PREDETERMINADO3 = "#FFFF00";
-    public static final String API = "/api";
+    public static final String DESCARGAR = "/descargar";
     public static final String APK = "/apk";
     public static final String UBI_APK = "static/apk/atHome.apk";
     public static final String HEADER_APK = "attachment; filename=AtHome.apk";
