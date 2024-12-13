@@ -36,7 +36,7 @@ public class ConstantesServer {
     public static final String APK = "/apk";
     public static final String UBI_APK = "static/apk/atHome.apk";
     public static final String HEADER_APK = "attachment; filename=AtHome.apk";
-
+    public static final String BASE_APK = "/inhome";
     private ConstantesServer() {
     }
 }
