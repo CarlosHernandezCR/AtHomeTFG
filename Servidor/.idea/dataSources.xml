@@ -13,13 +13,24 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="Carlos_Hernandez_AtHomeTFG@127.0.0.1" uuid="f34a7eaf-4878-4d30-ade2-1a2555e9e137">
+    <data-source source="LOCAL" name="AtHomeInsti" uuid="fbb14b1c-9a35-4de6-b1af-be967d098a58">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://informatica.iesquevedo.es:3335</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.host.port" />
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+        <property name="com.intellij.clouds.kubernetes.db.container.port" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="Carlos_Hernandez_AtHomeTFG@informatica.iesquevedo.es" uuid="c39cb143-2302-4249-b9f0-3c87d72c7c4b">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
-      <remarks>$PROJECT_DIR$/InHomeTFGCarlosHernandez/src/main/resources/application.properties</remarks>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://127.0.0.1:3306/Carlos_Hernandez_AtHomeTFG</jdbc-url>
+      <jdbc-url>jdbc:mysql://informatica.iesquevedo.es:3335/Carlos_Hernandez_AtHomeTFG</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
