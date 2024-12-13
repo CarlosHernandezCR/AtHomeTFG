@@ -61,7 +61,8 @@ object Constantes {
     const val INICIAR_SESION: String = "Iniciar Sesion"
     const val CORREO: String = "Correo"
     const val DATA_STORE_NAME = "data_store"
-    const val BASE_URL: String = "https://informatica.iesquevedo.es/inhome/"
+    const val BASE_URL2: String = "https://informatica.iesquevedo.es/inhome/"
+    const val BASE_URL: String = "https://192.168.1.16:8889/"
     const val TIMEOUT: Long = 1000
     const val IDCASA = "idCasa"
     const val MUEBLE = "mueble"
