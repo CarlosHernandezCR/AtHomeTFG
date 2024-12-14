@@ -45,4 +45,5 @@ abstract class BaseApiResponse {
 
     private fun <T> error(errorMessage: String): NetworkResult<T> =
         NetworkResult.Error(errorMessage)
+
 }

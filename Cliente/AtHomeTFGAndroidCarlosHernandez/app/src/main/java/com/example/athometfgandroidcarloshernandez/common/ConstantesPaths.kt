@@ -13,6 +13,7 @@ object ConstantesPaths {
     const val GET_EVENTOS_MES = "calendario/getEventosMes"
     const val GET_EVENTOS_DIA = "calendario/getEventosDia"
     const val CREAR_EVENTO = "calendario/crearEvento"
+    const val VOTAR = "calendario/votar"
     const val INMUEBLES= "inmuebles/pantallaInmuebles"
     const val AGREGAR_HABITACION = "inmuebles/agregarHabitacion"
     const val AGREGAR_MUEBLE = "inmuebles/agregarMueble"
@@ -23,4 +24,5 @@ object ConstantesPaths {
     const val REGISTRO= "registro"
     const val AGREGAR_CASA= "casa/agregarCasa"
     const val UNIRSE_CASA= "casa/unirseCasa"
+    const val BORRAR_CAJON= "inmuebles/borrarCajon"
 }

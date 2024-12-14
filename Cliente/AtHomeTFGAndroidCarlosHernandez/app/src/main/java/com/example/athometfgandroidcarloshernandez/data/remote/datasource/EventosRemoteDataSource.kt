@@ -1,6 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.remote.datasource
 
 import com.example.athometfgandroidcarloshernandez.data.model.request.CrearEventoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.VotarRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.DiasConEventosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.EventosEnDiaResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.EventosService
@@ -18,4 +19,7 @@ class EventosRemoteDataSource @Inject constructor(
 
     suspend fun cargarEventosDelDia(idCasa: String, dia: Int, mes: Int, anio: Int): NetworkResult<EventosEnDiaResponseDTO> =
         safeApiCall{ eventosService.cargarEventosDelDia(idCasa,dia,mes,anio) }
+
+    suspend fun votar(votarRequestDTO: VotarRequestDTO): NetworkResult<Boolean> =
+        safeApiCallNoBody { eventosService.votar(votarRequestDTO) }
 }

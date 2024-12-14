@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
+import org.tfg.athometfgcarloshernandez.domain.errores.TokenException;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesSpring;
 import org.tfg.athometfgcarloshernandez.spring.common.utils.TokensTools;
@@ -52,26 +53,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         final String token = header.split(" ")[1].trim();
-        try {
-            if (!jwtTokenUtil.validarToken(token)) {
-                chain.doFilter(request, response);
-                return;
-            }
-            UserDetails userDetails = userRepo.loadUserByUsername(jwtTokenUtil.getSubjectDesdeToken(token));
-            UsernamePasswordAuthenticationToken
-                    authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null,
-                    userDetails == null ?
-                            List.of() : userDetails.getAuthorities()
-            );
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!jwtTokenUtil.validarToken(token)) {
             chain.doFilter(request, response);
-        } catch (CustomedException exception) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
+        UserDetails userDetails = userRepo.loadUserByUsername(jwtTokenUtil.getSubjectDesdeToken(token));
+        UsernamePasswordAuthenticationToken
+                authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null,
+                userDetails == null ?
+                        List.of() : userDetails.getAuthorities()
+        );
+        authentication.setDetails(
+                new WebAuthenticationDetailsSource().buildDetails(request)
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(request, response);
+
     }
 
 }

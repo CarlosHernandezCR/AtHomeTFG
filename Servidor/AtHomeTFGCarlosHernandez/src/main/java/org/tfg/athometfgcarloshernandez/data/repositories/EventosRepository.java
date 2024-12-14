@@ -9,7 +9,7 @@ import org.tfg.athometfgcarloshernandez.data.model.EventoEntity;
 import java.util.List;
 
 @Repository
-public interface EventosRepository extends JpaRepository<EventoEntity, Long> {
+public interface EventosRepository extends JpaRepository<EventoEntity, Integer> {
 
     @Query("SELECT DISTINCT DAY(e.fecha) FROM EventoEntity e WHERE e.idCasaEntity.id = :idCasa AND MONTH(e.fecha) = :mes AND YEAR(e.fecha) = :anio")
     List<Integer> findDiasConEventos(@Param("idCasa") int idCasa, @Param("mes") int mes, @Param("anio") int anio);

@@ -8,6 +8,7 @@ import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResul
 import com.example.athometfgandroidcarloshernandez.domain.usecases.calendario.CargarEventosDelDiaUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.calendario.CargarEventosDelMesUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.calendario.CrearEventoUseCase
+import com.example.athometfgandroidcarloshernandez.domain.usecases.calendario.VotarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class CalendarioViewModel @Inject constructor(
     private val cargarEventosDelMesUseCase: CargarEventosDelMesUseCase,
     private val cargarEventosDelDiaUseCase: CargarEventosDelDiaUseCase,
-    private val crearEventoUseCase: CrearEventoUseCase
+    private val crearEventoUseCase: CrearEventoUseCase,
+    private val votarUseCase: VotarUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CalendarioContract.CalendarioState())
@@ -88,6 +90,38 @@ class CalendarioViewModel @Inject constructor(
             }
 
             is CalendarioContract.CalendarioEvent.CambiarAnioPorMes -> cambiarAnioPorMes(event.avanza)
+            is CalendarioContract.CalendarioEvent.VotarEvento -> votar(event.eventoId,event.idUsuario)
+        }
+    }
+
+    private fun votar(eventoId: String, idUsuario: String) {
+        viewModelScope.launch {
+            votarUseCase.invoke(eventoId, idUsuario).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        getEventosDia(_uiState.value.idCasa, _uiStateEventos.value.diaSeleccionado, _uiState.value.mesActual, _uiState.value.anioActual)
+                    }
+
+                    is NetworkResult.Error -> {
+                        val errorMessage = result.message ?: ConstantesError.ERROR_VOTAR_EVENTO
+                        val finalMessage = if (errorMessage.contains("400", ignoreCase = true)) {
+                            ConstantesError.YA_VOTADO
+                        } else {
+                            errorMessage
+                        }
+                        _uiState.update {
+                            it.copy(
+                                error = finalMessage
+                            )
+                        }
+                    }
+
+
+                    is NetworkResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
         }
     }
 
@@ -207,7 +241,8 @@ class CalendarioViewModel @Inject constructor(
                                     organizador = evento.organizador,
                                     horaComienzo = evento.horaComienzo,
                                     horaFin = evento.horaFin,
-                                    votacion = evento.votacion
+                                    votacion = evento.votacion,
+                                    id = evento.id.toString()
                                 )
                             }
                             _uiStateEventos.update { currentState ->

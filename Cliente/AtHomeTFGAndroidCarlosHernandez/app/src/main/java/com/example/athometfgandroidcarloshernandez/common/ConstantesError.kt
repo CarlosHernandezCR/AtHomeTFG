@@ -1,6 +1,11 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val YA_VOTADO: String="Ya votaste en este evento"
+    const val ERROR_VOTAR_EVENTO: String="Error al votar"
+    const val NO_HAY_CAJON_QUE_BORRAR: String="No hay cajón que borrar"
+    const val NO_SE_PUEDE_BORRAR_CAJON: String="No se puede borrar el cajón, borra uno de tu propiedad"
+    const val ERROR_BORRAR_CAJON: String = "Error al borrar el cajón"
     const val TELEFONO_NO_VALIDO: String = "Escriba un número de teléfono válido"
     const val CORREO_NO_VALIDO: String = "Escriba un correo válido"
     const val CASA_NO_SELECCIONADA: String = "Debe seleccionar una casa para continuar"

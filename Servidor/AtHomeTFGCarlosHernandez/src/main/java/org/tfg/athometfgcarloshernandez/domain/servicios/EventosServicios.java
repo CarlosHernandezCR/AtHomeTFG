@@ -2,13 +2,16 @@ package org.tfg.athometfgcarloshernandez.domain.servicios;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.tfg.athometfgcarloshernandez.data.model.CasaEntity;
-import org.tfg.athometfgcarloshernandez.data.model.EventoEntity;
-import org.tfg.athometfgcarloshernandez.data.model.UsuarioEntity;
+import org.tfg.athometfgcarloshernandez.common.constantes.Constantes;
+import org.tfg.athometfgcarloshernandez.data.model.*;
 import org.tfg.athometfgcarloshernandez.data.repositories.EventosRepository;
 import org.tfg.athometfgcarloshernandez.data.repositories.UsuarioRepository;
+import org.tfg.athometfgcarloshernandez.data.repositories.VotoRepository;
+import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
+import org.tfg.athometfgcarloshernandez.domain.errores.YaVotadoException;
 import org.tfg.athometfgcarloshernandez.domain.model.Evento;
 import org.tfg.athometfgcarloshernandez.domain.model.mappers.EventoMappers;
+import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.athometfgcarloshernandez.spring.model.EventoDTO;
 
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ public class EventosServicios {
     private final EventosRepository eventosRepository;
     private final EventoMappers eventoMappers;
     private final UsuarioRepository usuarioRepository;
+    private final VotoRepository votoRepository;
 
     public List<Integer> getEventosMes(int idCasa, int mes, int anio) {
         List<Integer> diasConEvento = eventosRepository.findDiasConEventos(idCasa, mes, anio);
@@ -70,5 +74,29 @@ public class EventosServicios {
         eventoEntity.setHoraFin(horaFin);
 
         eventosRepository.save(eventoEntity);
+    }
+
+    public void votar(int idUsuario, int idEvento) {
+        EventoEntity eventoEntity = eventosRepository.findById(idEvento).
+                orElseThrow(() -> new CustomedException(ConstantesError.EVENTO_NO_ENCONTRADO));
+        VotoEntity votoEntity = votoRepository.findByEvento(eventoEntity).
+                orElseThrow(() -> new CustomedException(ConstantesError.EVENTO_NO_ENCONTRADO));
+        if(votoEntity.getUsuario()!=null){
+            if(votoEntity.getUsuario().getId()==idUsuario){
+                throw new YaVotadoException(ConstantesError.YA_VOTADO);
+            }
+        }else {
+            String votacion = eventoEntity.getVotacion();
+            String[] votos = votacion.split("/");
+            int votosActuales = Integer.parseInt(votos[0]);
+            int nResidentes = Integer.parseInt(votos[1]);
+            votosActuales++;
+            if (votosActuales == nResidentes) {
+                eventoEntity.setVotacion(Constantes.VOTACION_ACEPTADA);
+            } else {
+                eventoEntity.setVotacion(votosActuales + "/" + nResidentes);
+            }
+            eventosRepository.save(eventoEntity);
+        }
     }
 }

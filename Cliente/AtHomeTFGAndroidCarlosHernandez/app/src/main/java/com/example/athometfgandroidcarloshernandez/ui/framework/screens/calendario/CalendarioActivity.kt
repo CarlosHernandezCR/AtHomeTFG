@@ -114,6 +114,9 @@ fun CalendarioActivity(
                 )
             },
             onMostrarDialogoChange = { viewModel.handleEvent(CalendarioContract.CalendarioEvent.CambiarDialogo) },
+            onVotar = { eventoId, idUsuarioVoto ->
+                viewModel.handleEvent(CalendarioContract.CalendarioEvent.VotarEvento(eventoId, idUsuarioVoto))
+            }
         )
 }
 
@@ -133,7 +136,9 @@ fun CalendarioPantalla(
     onMesCambio: (Int) -> Unit,
     onDiaClicado: (Int) -> Unit,
     onCrearEvento: (CalendarioContract.EventoCasa) -> Unit,
-    onMostrarDialogoChange: () -> Unit
+    onMostrarDialogoChange: () -> Unit,
+    onVotar: (String, String) -> Unit
+
 ) {
     LazyColumn(
         modifier = Modifier
@@ -194,7 +199,8 @@ fun CalendarioPantalla(
                     idUsuario = idUsuario,
                     mostrarDialogo = mostrarDialogo,
                     onCrearEvento = onCrearEvento,
-                    onMostrarDialogoChange = onMostrarDialogoChange
+                    onMostrarDialogoChange = onMostrarDialogoChange,
+                    onVotar = onVotar
                 )
         }
 
@@ -212,7 +218,6 @@ fun Cargando() {
         CircularProgressIndicator()
     }
 }
-
 @Composable
 fun CampoEvento(
     diaSeleccionado: String,
@@ -220,7 +225,8 @@ fun CampoEvento(
     listaEventos: List<CalendarioContract.EventoCasa>,
     mostrarDialogo: Boolean,
     onCrearEvento: (CalendarioContract.EventoCasa) -> Unit,
-    onMostrarDialogoChange: () -> Unit
+    onMostrarDialogoChange: () -> Unit,
+    onVotar: (String, String) -> Unit
 ) {
     Spacer(modifier = Modifier.height(6.dp))
     if (listaEventos.isEmpty()) {
@@ -230,9 +236,9 @@ fun CampoEvento(
             textAlign = TextAlign.Center
         )
     } else {
-        DetallesEvento(listaEventos)
+        DetallesEvento(listaEventos, idUsuario, onVotar, onMostrarDialogoChange)
     }
-    if (!diaSeleccionado.startsWith(Constantes.MENOSUNO)) {
+    if (!diaSeleccionado.startsWith(Constantes.MENOSUNO) && listaEventos.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
@@ -255,9 +261,11 @@ fun CampoEvento(
 
 @Composable
 fun DetallesEvento(
-    listaEventos: List<CalendarioContract.EventoCasa>
+    listaEventos: List<CalendarioContract.EventoCasa>,
+    idUsuario: String,
+    onVotar: (String, String) -> Unit,
+    onMostrarDialogoChange: () -> Unit
 ) {
-
     var indiceSeleccionado by remember { mutableIntStateOf(1) }
 
     Column(
@@ -297,6 +305,14 @@ fun DetallesEvento(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    TextButton(onClick = onMostrarDialogoChange) {
+                        Text(Constantes.CREAR_EVENTO.uppercase(Locale.getDefault()))
+                    }
+                }
             }
             Column(
                 modifier = Modifier.weight(1f)
@@ -316,11 +332,19 @@ fun DetallesEvento(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    TextButton(onClick = { onVotar(eventoSeleccionado.id, idUsuario) }) {
+                        Text(Constantes.VOTAR)
+                    }
+                }
             }
         }
+
     }
 }
-
 
 
 @Composable
@@ -473,7 +497,8 @@ fun CrearEventoDialog(
                                 organizador = idUsuario,
                                 horaComienzo = horaInicio,
                                 horaFin = horaFin,
-                                votacion = ""
+                                votacion = "",
+                                id = ""
                             )
                             onCrearEvento(evento)
                         }
@@ -497,7 +522,8 @@ fun PreviewCalendarioScreen() {
             organizador = "Juan",
             horaComienzo = "09:00",
             horaFin = "10:00",
-            votacion = "3/3"
+            votacion = "3/3",
+            id = "1"
         ),
         CalendarioContract.EventoCasa(
             tipo = "Cumpleaños",
@@ -505,7 +531,8 @@ fun PreviewCalendarioScreen() {
             organizador = "Ana",
             horaComienzo = "16:00",
             horaFin = "20:00",
-            votacion = "2/3"
+            votacion = "2/3",
+            id = "2"
         ),
         CalendarioContract.EventoCasa(
             tipo = "Taller",
@@ -513,7 +540,8 @@ fun PreviewCalendarioScreen() {
             organizador = "Luis",
             horaComienzo = "12:00",
             horaFin = "16:00",
-            votacion = "1/3"
+            votacion = "1/3",
+            id = "3"
         )
     )
 
@@ -530,7 +558,8 @@ fun PreviewCalendarioScreen() {
         onCrearEvento = {},
         idUsuario = "1",
         loadingEvento = false,
-        onMostrarDialogoChange = {}
+        onMostrarDialogoChange = {},
+        onVotar = { _, _ -> }
     )
 }
 

@@ -31,5 +31,6 @@ interface InmueblesContract {
         data class AgregarHabitacion(val habitacion: String) : InmueblesEvent()
         data class AgregarMueble(val mueble: String) : InmueblesEvent()
         data class AgregarCajon(val cajon: String, val idUsuario: String) : InmueblesEvent()
+        data class BorrarCajon(val idCajon: String, val idUsuario: String, val idPropietario: String) : InmueblesEvent()
     }
 }

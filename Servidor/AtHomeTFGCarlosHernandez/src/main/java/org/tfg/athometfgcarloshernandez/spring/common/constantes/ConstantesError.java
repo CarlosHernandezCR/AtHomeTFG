@@ -26,6 +26,8 @@ public class ConstantesError {
     public static final String HABITACION_NO_ENCONTRADA = "Habitación no encontrada";
     public static final String CASA_NO_ENCONTRADA = "Casa no encontrada";
     public static final String ERROR_VIVE_NO_ENCONTRADO = "No encontrado el usuario con ID y casa con ID ";
+    public static final String EVENTO_NO_ENCONTRADO = "Evento no encontrado";
+    public static final String YA_VOTADO = "Ya has votado";
 
 
     private ConstantesError() {

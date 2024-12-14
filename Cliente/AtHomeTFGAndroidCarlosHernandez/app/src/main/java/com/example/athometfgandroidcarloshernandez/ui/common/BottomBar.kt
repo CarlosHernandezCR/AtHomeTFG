@@ -62,11 +62,10 @@ fun BottomBar(
                             val route = if (screen.route in listOf(
                                     ConstantesPantallas.CASA,
                                     ConstantesPantallas.CALENDARIO,
+                                    ConstantesPantallas.INMUEBLES
                                 )) {
                                 "${screen.route}/$idUsuario/$idCasa"
-                            } else if (screen.route == ConstantesPantallas.INMUEBLES) {
-                                "${screen.route}/$idCasa"
-                            } else {
+                            }  else {
                                 "${screen.route}/$idUsuario"
                             }
 

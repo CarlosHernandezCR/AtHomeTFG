@@ -25,6 +25,7 @@ interface CalendarioContract {
     )
 
     data class EventoCasa(
+        val id: String,
         val tipo: String,
         val nombre: String,
         val organizador:String,
@@ -43,6 +44,8 @@ interface CalendarioContract {
         data class CambioDiaSeleccionado(val dia: Int): CalendarioEvent()
         data class CrearEvento(val eventoCasa: EventoCasa) : CalendarioEvent()
         data class CambiarAnioPorMes(val avanza: Boolean) : CalendarioEvent()
+        data class VotarEvento(val eventoId: String, val idUsuario: String) : CalendarioEvent()
+
         data object CambiarDialogo : CalendarioEvent()
     }
 }

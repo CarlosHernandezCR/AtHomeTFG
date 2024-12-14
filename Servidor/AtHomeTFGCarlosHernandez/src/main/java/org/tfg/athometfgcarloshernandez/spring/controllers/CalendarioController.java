@@ -7,6 +7,7 @@ import org.tfg.athometfgcarloshernandez.domain.model.Evento;
 import org.tfg.athometfgcarloshernandez.domain.servicios.EventosServicios;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.model.request.CrearEventoRequestDTO;
+import org.tfg.athometfgcarloshernandez.spring.model.request.VotarRequestDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.DiasConEventosResponseDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.EventosEnDiaResponseDTO;
 
@@ -48,6 +49,12 @@ public class CalendarioController {
     @PostMapping(ConstantesServer.CREAR_EVENTO)
     public ResponseEntity<Void> crearEvento(@RequestBody CrearEventoRequestDTO evento) {
         eventosServicios.crearEvento(evento.getIdCasa(), evento.getEventoCasa(), evento.getFecha());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(ConstantesServer.VOTAR)
+    public ResponseEntity<?> votar(@RequestBody VotarRequestDTO votarRequestDTO) {
+        eventosServicios.votar(votarRequestDTO.getIdUsuario(), votarRequestDTO.getIdEvento());
         return ResponseEntity.ok().build();
     }
 }

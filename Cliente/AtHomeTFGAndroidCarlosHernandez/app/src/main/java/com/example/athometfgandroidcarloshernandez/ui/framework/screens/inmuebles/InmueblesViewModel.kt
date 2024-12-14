@@ -9,6 +9,7 @@ import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResul
 import com.example.athometfgandroidcarloshernandez.domain.usecases.inmuebles.AgregarCajonUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.inmuebles.AgregarHabitacionUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.inmuebles.AgregarMuebleUseCase
+import com.example.athometfgandroidcarloshernandez.domain.usecases.inmuebles.BorrarCajonUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.inmuebles.GetDatosHabitacionesUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.inmuebles.GetUsuariosUseCase
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.InmueblesEvent
@@ -27,7 +28,8 @@ class InmueblesViewModel @Inject constructor(
     private val agregarHabitacionUseCase: AgregarHabitacionUseCase,
     private val agregarMuebleUseCase: AgregarMuebleUseCase,
     private val agregarCajonUseCase: AgregarCajonUseCase,
-    private val getUsuariosUseCase: GetUsuariosUseCase
+    private val getUsuariosUseCase: GetUsuariosUseCase,
+    private val borrarCajonUseCase: BorrarCajonUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(InmueblesState())
     val uiState: StateFlow<InmueblesState> = _uiState.asStateFlow()
@@ -43,6 +45,48 @@ class InmueblesViewModel @Inject constructor(
             is InmueblesEvent.CambioMueble -> cambiarMueble(event.muebleId)
             is InmueblesEvent.AgregarHabitacion -> agregarHabitacion(event.habitacion)
             is InmueblesEvent.CargarUsuarios -> cargarUsuarios(event.idCasa)
+            is InmueblesEvent.BorrarCajon -> borrarCajon(event.idCajon, event.idUsuario, event.idPropietario)
+        }
+    }
+
+    private fun borrarCajon(idCajon: String,idUsuario:String, idPropietario: String) {
+        if (idUsuario != idPropietario){
+            _uiState.update { it.copy(mensaje = ConstantesError.NO_SE_PUEDE_BORRAR_CAJON) }
+        }
+        if(idCajon.isEmpty()){
+            _uiState.update { it.copy(mensaje = ConstantesError.NO_HAY_CAJON_QUE_BORRAR) }
+        }
+        viewModelScope.launch {
+            borrarCajonUseCase.invoke(idCajon).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                mensaje = Constantes.CAJON_BORRADO
+                            )
+                        }
+                        _uiState.value.idCasa.let {
+                            cargarDatos(
+                                idCasa = it,
+                                habitacion = _uiState.value.idHabitacionActual,
+                                mueble = _uiState.value.muebleActual
+                            )
+                        }
+                    }
+                    is NetworkResult.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                mensaje = result.message ?: ConstantesError.ERROR_BORRAR_CAJON,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
         }
     }
 

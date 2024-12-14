@@ -12,6 +12,7 @@ import org.tfg.athometfgcarloshernandez.spring.model.CajonDTO;
 public interface CajonMappers {
 
     @Mapping(target = "propietario", source = "propietario", qualifiedByName = "usuarioEntityToString")
+    @Mapping(target = "idPropietario", source = "propietario.id")
     CajonDTO cajonEntityToCajonDTO(CajonEntity cajonEntity);
 
     @Named("usuarioEntityToString")

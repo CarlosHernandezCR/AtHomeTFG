@@ -19,4 +19,6 @@ class InmueblesRemoteDataSource @Inject constructor(
         safeApiCallNoBody{ inmueblesService.agregarMueble(mueble) }
     suspend fun agregarCajon(cajon:AgregarCajonRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody{ inmueblesService.agregarCajon(cajon) }
+    suspend fun borrarCajon(idCajon:String): NetworkResult<Boolean> =
+        safeApiCallNoBody{ inmueblesService.borrarCajon(idCajon) }
 }

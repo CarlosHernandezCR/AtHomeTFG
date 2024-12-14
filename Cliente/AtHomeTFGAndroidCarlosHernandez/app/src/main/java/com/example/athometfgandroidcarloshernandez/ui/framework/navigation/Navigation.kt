@@ -93,7 +93,9 @@ fun Navigation(
                     idCasa = idCasa,
                     innerPadding = paddingValues,
                     showSnackbar = showSnackbar,
-                    volverSeleccionarCasa = { navController.popBackStack() }
+                    volverSeleccionarCasa = {
+                        navController.navigate("${ConstantesPantallas.SELECCIONAR_CASA}/$idUsuario")
+                    }
                 )
             }
 
@@ -107,9 +109,11 @@ fun Navigation(
                 )
             }
 
-            composable("${ConstantesPantallas.INMUEBLES}/{idCasa}") { backStackEntry ->
+            composable("${ConstantesPantallas.INMUEBLES}/{idUsuario}/{idCasa}") { backStackEntry ->
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
                 val idCasa = backStackEntry.arguments?.getString("idCasa") ?: "0"
                 InmueblesActivity(
+                    idUsuario = idUsuario,
                     idCasa = idCasa,
                     showSnackbar = showSnackbar
                 )

@@ -35,4 +35,10 @@ class InmueblesRepository @Inject constructor(
         val result = remoteDataSource.agregarCajon(AgregarCajonRequestDTO(idCasa, nombreHabitacion, nombreMueble, nombre, idPropietario))
         emit(result)
     }.flowOn(Dispatchers.IO)
+
+    fun borrarCajon(idCajon:String): Flow<NetworkResult<Boolean>> = flow {
+        emit(NetworkResult.Loading())
+        val result = remoteDataSource.borrarCajon(idCajon)
+        emit(result)
+    }.flowOn(Dispatchers.IO)
 }

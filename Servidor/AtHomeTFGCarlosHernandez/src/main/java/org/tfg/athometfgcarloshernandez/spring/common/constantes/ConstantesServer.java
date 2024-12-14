@@ -37,6 +37,9 @@ public class ConstantesServer {
     public static final String UBI_APK = "static/apk/atHome.apk";
     public static final String HEADER_APK = "attachment; filename=AtHome.apk";
     public static final String BASE_API = "/inhome";
+    public static final String BORRAR_CAJON = "/borrarCajon";
+    public static final String VOTAR = "/votar";
+
     private ConstantesServer() {
     }
 }

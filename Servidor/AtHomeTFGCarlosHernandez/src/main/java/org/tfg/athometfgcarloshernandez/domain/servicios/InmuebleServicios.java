@@ -95,4 +95,8 @@ public class InmuebleServicios {
 
         cajonesRepository.save(cajonEntity);
     }
+
+    public void borrarCajon(int idCajon) {
+        cajonesRepository.deleteById(idCajon);
+    }
 }

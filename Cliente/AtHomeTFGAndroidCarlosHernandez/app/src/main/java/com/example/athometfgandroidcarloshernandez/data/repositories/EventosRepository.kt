@@ -1,6 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.repositories
 
 import com.example.athometfgandroidcarloshernandez.data.model.request.CrearEventoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.VotarRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.DiasConEventosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.EventosEnDiaResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.datasource.EventosRemoteDataSource
@@ -29,6 +30,12 @@ class EventosRepository @Inject constructor(
     fun cargarEventosDelDia(idCasa: String,dia:Int, mes: Int, anio: Int): Flow<NetworkResult<EventosEnDiaResponseDTO>> = flow {
         emit(NetworkResult.Loading())
         val result = remoteDataSource.cargarEventosDelDia(idCasa,dia, mes, anio)
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    fun votar(idEvento: String, voto: String): Flow<NetworkResult<Boolean>> = flow {
+        emit(NetworkResult.Loading())
+        val result = remoteDataSource.votar(VotarRequestDTO( idEvento, voto))
         emit(result)
     }.flowOn(Dispatchers.IO)
 }

@@ -2,6 +2,7 @@ package com.example.athometfgandroidcarloshernandez.data.remote.apiServices
 
 import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.athometfgandroidcarloshernandez.data.model.request.CrearEventoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.VotarRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.DiasConEventosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.EventosEnDiaResponseDTO
 import retrofit2.Response
@@ -24,4 +25,7 @@ interface EventosService {
                                     @Query(ConstantesPaths.DIA_QUERY)dia: Int,
                                     @Query(ConstantesPaths.MES_QUERY)mes: Int,
                                     @Query(ConstantesPaths.ANIO_QUERY)anio: Int): Response<EventosEnDiaResponseDTO>
+
+    @POST(ConstantesPaths.VOTAR)
+    suspend fun votar(@Body votarRequestDTO: VotarRequestDTO): Response<Void>
 }

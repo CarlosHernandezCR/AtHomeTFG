@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class CajonDTO {
     private int id;
     private String nombre;
+    private String idPropietario;
     private String propietario;
 }

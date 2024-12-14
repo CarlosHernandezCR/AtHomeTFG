@@ -9,6 +9,8 @@ public class Constantes {
     public static final String ACTIVAR_SU_CUENTA_HTML = "\"> click aquí </a> para activar su cuenta</html>";
     public static final String SPRING = "spring";
     public static final String ARROBA = "@";
+    public static final String VOTACION_ACEPTADA = "Votación aceptada";
+
     private Constantes() {
     }
 }

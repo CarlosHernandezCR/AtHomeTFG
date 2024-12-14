@@ -58,4 +58,9 @@ public class InmueblesController {
         inmuebleServicios.agregarCajon(agregarCajonRequestDTO);
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping(ConstantesServer.BORRAR_CAJON)
+    public ResponseEntity<Void> borrarCajon(@RequestParam int idCajon) {
+        inmuebleServicios.borrarCajon(idCajon);
+        return ResponseEntity.ok().build();
+    }
 }

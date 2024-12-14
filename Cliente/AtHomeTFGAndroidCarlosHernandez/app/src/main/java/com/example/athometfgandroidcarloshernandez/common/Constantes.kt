@@ -1,6 +1,10 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object Constantes {
+    const val VOTAR: String = "VOTAR"
+    const val BORRAR: String= "Borrar"
+    const val IDCAJON: String = "idCajon"
+    const val CAJON_BORRADO: String = "Cajón borrado correctamente"
     const val VOLVER: String = "Volver"
     const val BLANCO: String = "#FFFFFF"
     const val SELECCIONAR_COLOR: String = "Seleccionar Color"
@@ -29,7 +33,7 @@ object Constantes {
     const val NOMBRE_APP: String = "AtHome"
     const val IDENTIFICADOR: String = "nombre/correo/telefono"
     const val CONTRASENA: String = "Contraseña"
-    const val RESERVA_DE: String = "Habitaciones a reservar:"
+    const val RESERVA_DE: String = "Reserva de:"
     const val CAJON_AGREGADO: String = "Cajón agregado correctamente"
     const val MUEBLE_AGREGADO: String = "Mueble agregado correctamente"
     const val HABITACION_AGREGADO: String = "Habitacion agregada correctamente"

@@ -1,21 +1,27 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,14 +34,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.wear.compose.material.FractionalThreshold
+import androidx.wear.compose.material.rememberSwipeableState
+import androidx.wear.compose.material.swipeable
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.HabitacionDTO
@@ -44,9 +56,11 @@ import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendar
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.estados.ComboBox
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.Usuario
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.Selector
+import kotlin.math.roundToInt
 
 @Composable
 fun InmueblesActivity(
+    idUsuario: String,
     idCasa: String,
     showSnackbar: (String) -> Unit = {},
     viewModel: InmueblesViewModel = hiltViewModel(),
@@ -82,6 +96,15 @@ fun InmueblesActivity(
                 viewModel.handleEvent(
                     InmueblesContract.InmueblesEvent.CajonSeleccionado(
                         it
+                    )
+                )
+            },
+            borrarCajon = { idCajon, idPropietario ->
+                viewModel.handleEvent(
+                    InmueblesContract.InmueblesEvent.BorrarCajon(
+                        idCajon,
+                        idUsuario,
+                        idPropietario
                     )
                 )
             },
@@ -122,6 +145,7 @@ fun InmueblesPantalla(
     cambioHabitacion: (String) -> Unit = {},
     cambioMueble: (String) -> Unit = {},
     cajonClicado: (String) -> Unit = {},
+    borrarCajon: (String, String) -> Unit = { _, _ -> },
     agregarCajon: (String, String) -> Unit,
     agregarMueble: (String) -> Unit = {},
     agregarHabitacion: (String) -> Unit = {},
@@ -137,7 +161,10 @@ fun InmueblesPantalla(
             .padding(16.dp)
     ) {
         Selector(
-            valorActual = habitaciones.find { it.id == habitacionActual } ?: HabitacionDTO(id = "", nombre = Constantes.ANADE_HABITACION),
+            valorActual = habitaciones.find { it.id == habitacionActual } ?: HabitacionDTO(
+                id = "",
+                nombre = Constantes.ANADE_HABITACION
+            ),
             opciones = habitaciones,
             onCambio = { habitacion ->
                 cambioHabitacion(habitacion.id)
@@ -147,7 +174,10 @@ fun InmueblesPantalla(
         Spacer(modifier = Modifier.height(16.dp))
 
         Selector(
-            valorActual = muebles.find { it.id == muebleActual } ?: MuebleDTO(id = "", nombre = Constantes.NO_HAY_MUEBLE),
+            valorActual = muebles.find { it.id == muebleActual } ?: MuebleDTO(
+                id = "",
+                nombre = Constantes.NO_HAY_MUEBLE
+            ),
             opciones = muebles,
             onCambio = { mueble ->
                 cambioMueble(mueble.id)
@@ -161,19 +191,16 @@ fun InmueblesPantalla(
                 .weight(1f)
         ) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                modifier = Modifier.weight(2f)
             ) {
                 items(cajones) { item ->
-                    CajonItem(
-                        cajon = item.nombre,
-                        propietario = item.propietario,
-                        onClick = { cajonClicado(item.nombre) }
+                    SwipeToDeleteItem(
+                        cajon = item,
+                        borrarCajon = borrarCajon
                     )
                 }
             }
+
             BotoneraMuebles(
                 showDialog = { showDialog = it },
                 dialogTitle = { dialogTitle = it },
@@ -207,14 +234,62 @@ fun InmueblesPantalla(
         }
     }
 }
+@OptIn(ExperimentalWearMaterialApi::class)
+@Composable
+fun SwipeToDeleteItem(
+    cajon: CajonDTO,
+    borrarCajon: (String, String) -> Unit
+) {
+    val swipeableState = rememberSwipeableState(initialValue = 0)
+    val swipeThreshold = 300f
+    val anchors = mapOf(0f to 0, -swipeThreshold to 1)
 
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Red)
+    ) {
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(8.dp)
+                .swipeable(
+                    state = swipeableState,
+                    anchors = anchors,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Horizontal
+                )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CajonItem(cajon = cajon.nombre, propietario = cajon.propietario)
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = Constantes.BORRAR,
+                    tint = Color.Gray,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
+        }
+        if (swipeableState.currentValue == 1) {
+            LaunchedEffect(Unit) {
+                borrarCajon(cajon.id, cajon.idPropietario)
+            }
+        }
+    }
+}
 @Composable
 fun BotoneraMuebles(
+    modifier: Modifier = Modifier,
     showDialog: (Boolean) -> Unit,
     dialogTitle: (String) -> Unit,
     isCajon: (Boolean) -> Unit,
     areHabitacionesEmpty: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -280,11 +355,11 @@ fun BotoneraMuebles(
 }
 
 @Composable
-fun CajonItem(cajon: String, propietario: String, onClick: () -> Unit) {
+fun CajonItem(cajon: String, propietario: String) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .fillMaxWidth(),
+            //.clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -368,7 +443,8 @@ fun PreviewInmueblesActivity() {
         HabitacionDTO(id = "2", nombre = "Habitación 2"),
         HabitacionDTO(id = "3", nombre = "Habitación 3")
     )
-    val muebles = listOf(MuebleDTO(id = "1", nombre = "Mesa"), MuebleDTO(id = "2", nombre = "Silla"))
+    val muebles =
+        listOf(MuebleDTO(id = "1", nombre = "Mesa"), MuebleDTO(id = "2", nombre = "Silla"))
     val cajones = listOf(
         CajonDTO(nombre = "Cajón 1", propietario = "Carlos"),
         CajonDTO(nombre = "Cajón 2", propietario = "Ana"),

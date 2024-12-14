@@ -8,6 +8,7 @@ import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarMue
 import com.example.athometfgandroidcarloshernandez.data.model.response.PantallaInmueblesResponseDTO
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -21,5 +22,7 @@ interface InmueblesService {
     suspend fun agregarMueble(@Body agregarMuebleRequestDTO: AgregarMuebleRequestDTO): Response<Void>
     @POST(ConstantesPaths.AGREGAR_CAJON)
     suspend fun agregarCajon(@Body agregarCajonRequestDTO: AgregarCajonRequestDTO): Response<Void>
+    @DELETE(ConstantesPaths.BORRAR_CAJON)
+    suspend fun borrarCajon(@Query(Constantes.IDCAJON) idCajon: String): Response<Void>
 
 }
