@@ -30,7 +30,4 @@ public class UsuarioEntity {
     @Column(name = UsuarioConstantes.COLUMN_COLOR, nullable = false)
     private String color;
 
-    public UsuarioEntity(Integer id) {
-        this.id = id;
-    }
 }

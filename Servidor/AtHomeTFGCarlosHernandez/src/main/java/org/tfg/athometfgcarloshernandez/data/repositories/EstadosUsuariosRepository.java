@@ -7,9 +7,11 @@ import org.tfg.athometfgcarloshernandez.data.model.EstadosUsuarioEntity;
 
 import java.util.List;
 
+import static org.tfg.athometfgcarloshernandez.common.constantes.QueryConstantes.FIND_ESTADOS_USUARIO_POR_ID_USUARIO;
+
 @Repository
 public interface EstadosUsuariosRepository extends JpaRepository<EstadosUsuarioEntity, Integer> {
-    @Query("SELECT eu.estadoEntity.descripcion FROM EstadosUsuarioEntity eu WHERE eu.usuarioEntity.id= :idUsuario")
+    @Query(FIND_ESTADOS_USUARIO_POR_ID_USUARIO)
     List<String> findEstadosUsuarioPorIdUsuario(Integer idUsuario);
 
 }

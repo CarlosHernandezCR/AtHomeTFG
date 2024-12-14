@@ -23,11 +23,6 @@ public class ConstantesSpring {
     public static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
     public static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
     public static final String MAIL_DEBUG = "mail.debug";
-    public static final String ACTIVACION_CODIGO = "<html>Haga <a href=\"http://localhost:8889/register/validacion?codigo=";
-    public static final String ACTIVAR_SU_CUENTA_HTML = "\"> click aquí </a> para activar su cuenta</html>";
-    public static final String HTML_SU_NUEVA_CONTRASENYA_TEMPORAL_ES = "<html>Su nueva contraseña temporal es: ";
-    public static final String CONTRA_TEMPORAL = "Contra temporal";
-    public static final String CLOSE_HTML = ". Úsela para loguearse y cambie la contraseña desde la app.</html>";
     public static final String IDUSUARIO= "idUsuario";
     public static final String IDCASA = "idCasa";
 

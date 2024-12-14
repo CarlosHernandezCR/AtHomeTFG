@@ -514,7 +514,7 @@ fun CrearEventoDialog(
 @Preview(showBackground = true)
 @Composable
 fun PreviewCalendarioScreen() {
-    val diasEnMes = generateDummyDaysWithCompleteWeeks()
+    val diasEnMes = generarDiasDePrueba()
     val listaEventos = listOf(
         CalendarioContract.EventoCasa(
             tipo = "Reunión",
@@ -563,7 +563,7 @@ fun PreviewCalendarioScreen() {
     )
 }
 
-fun generateDummyDaysWithCompleteWeeks(): List<List<DiaCalendario>> {
+fun generarDiasDePrueba(): List<List<DiaCalendario>> {
     val calendar = Calendar.getInstance().apply {
         set(Calendar.DAY_OF_MONTH, 1)
     }

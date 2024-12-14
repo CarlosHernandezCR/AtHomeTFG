@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +20,6 @@ import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
 import org.tfg.athometfgcarloshernandez.domain.errores.TokenException;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesSpring;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
@@ -108,11 +105,11 @@ public class TokensTools {
         }
     }
 
-    public boolean validarToken(String token) {
+    public void validarToken(String token) {
         Jws<Claims> claimsJws = parseToken(token);
         long expirationMillis = claimsJws.getBody().getExpiration().getTime();
-        if (System.currentTimeMillis() <= expirationMillis) return true;
-        else throw new TokenException(ConstantesError.TOKEN_EXPIRADO);
+        if (!(System.currentTimeMillis() <= expirationMillis))
+            throw new TokenException(ConstantesError.TOKEN_EXPIRADO);
     }
 
     public String refreshTokens(String refreshToken) {
@@ -155,13 +152,6 @@ public class TokensTools {
 
     }
 
-    public String extraerToken(HttpServletRequest request) {
-        final String header = request.getHeader(AUTHORIZATION);
-        if (header == null || !header.startsWith(ConstantesSpring.BEARER)) {
-            throw new TokenException(ConstantesError.TOKEN_INVALIDO);
-        }
-        return header.split(" ")[1].trim();
-    }
     public String actualizarAccessTokenConCasa(String token, int idCasa) {
         Jws<Claims> claimsJws = parseToken(token);
         String subject = claimsJws.getBody().getSubject();

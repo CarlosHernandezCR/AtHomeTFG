@@ -40,7 +40,6 @@ class InmueblesViewModel @Inject constructor(
             is InmueblesEvent.MensajeMostrado -> _uiState.update { it.copy(mensaje = null) }
             is InmueblesEvent.AgregarCajon -> agregarCajon(event.cajon, event.idUsuario)
             is InmueblesEvent.AgregarMueble -> agregarMueble(event.mueble)
-            is InmueblesEvent.CajonSeleccionado -> TODO()
             is InmueblesEvent.CambioHabitacion -> cambiarHabitacion(event.habitacionId)
             is InmueblesEvent.CambioMueble -> cambiarMueble(event.muebleId)
             is InmueblesEvent.AgregarHabitacion -> agregarHabitacion(event.habitacion)

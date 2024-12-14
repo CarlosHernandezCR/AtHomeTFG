@@ -30,9 +30,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.setAllowedOrigins(List.of("http://localhost:8889", "https://informatica.iesquevedo.es/inhome"));
-                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowedOrigins(List.of(ConstantesServer.BASE_API, ConstantesServer.BASE_API_INSTI));
+                    corsConfig.setAllowedMethods(List.of(ConstantesServer.GET, ConstantesServer.PUT, ConstantesServer.POST, ConstantesServer.DELETE));
+                    corsConfig.setAllowedHeaders(List.of(ConstantesServer.ASTERISCO));
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
@@ -40,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(POST,  ConstantesServer.REGISTERPATH).permitAll()
                         .requestMatchers(GET, ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO).permitAll()
                         .requestMatchers(GET,  ConstantesServer.DESCARGAR + ConstantesServer.APK).permitAll()
-                        .requestMatchers("/static/**", "/", "/descargar", "/descargar/apk", "/index.html", "/js/**", "/css/**").permitAll()
+                        .requestMatchers(ConstantesServer.STATIC, ConstantesServer.BARRA, ConstantesServer.DESCARGAR_APK, ConstantesServer.INDEX, ConstantesServer.JS, ConstantesServer.CSS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

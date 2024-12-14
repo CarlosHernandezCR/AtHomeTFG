@@ -91,5 +91,5 @@ dependencies {
     //fuentes
     implementation(libs.androidx.ui.text.google.fonts)
     //ColorPicker
-    implementation(libs.colorpicker.compose);
+    implementation(libs.colorpicker.compose)
 }

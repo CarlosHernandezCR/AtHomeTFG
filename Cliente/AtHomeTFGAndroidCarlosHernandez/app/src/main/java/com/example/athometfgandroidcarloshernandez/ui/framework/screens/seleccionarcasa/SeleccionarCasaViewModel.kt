@@ -25,7 +25,7 @@ class SeleccionarCasaViewModel @Inject constructor(
 
     fun handleEvent(event: SeleccionarCasaContract.SeleccionarCasaEvent){
         when(event){
-            is SeleccionarCasaContract.SeleccionarCasaEvent.CargarCasas -> cargarCasas(event.idUsuario);
+            is SeleccionarCasaContract.SeleccionarCasaEvent.CargarCasas -> cargarCasas(event.idUsuario)
             is SeleccionarCasaContract.SeleccionarCasaEvent.ErrorMostrado -> _uiState.update { it.copy(error = null) }
             is SeleccionarCasaContract.SeleccionarCasaEvent.AgregarCasa -> agregarCasa(event.idUsuario, event.nombre, event.direccion, event.codigoPostal)
             is SeleccionarCasaContract.SeleccionarCasaEvent.UnirseCasa -> unirseCasa(event.idUsuario, event.codigoInvitacion)

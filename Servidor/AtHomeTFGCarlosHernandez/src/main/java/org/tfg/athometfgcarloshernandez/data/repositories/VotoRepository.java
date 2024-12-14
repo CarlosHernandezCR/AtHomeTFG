@@ -5,9 +5,9 @@ import org.springframework.stereotype.Repository;
 import org.tfg.athometfgcarloshernandez.data.model.EventoEntity;
 import org.tfg.athometfgcarloshernandez.data.model.VotoEntity;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface VotoRepository extends JpaRepository<VotoEntity, Integer> {
-    Optional<VotoEntity> findByEvento(EventoEntity evento);
+    List<VotoEntity> findByEvento(EventoEntity evento);
 }

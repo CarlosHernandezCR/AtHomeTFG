@@ -59,7 +59,7 @@ class TokenManager @Inject constructor(
         return decodedJWT.getClaim(Constantes.IDUSUARIO).asInt()?.toString()
     }
 
-    fun extractIdCasaFromToken(token: String): String? {
+    private fun extractIdCasaFromToken(token: String): String? {
         val decodedJWT = JWT.decode(token)
         return decodedJWT.getClaim(Constantes.IDCASA).asInt()?.toString()
     }

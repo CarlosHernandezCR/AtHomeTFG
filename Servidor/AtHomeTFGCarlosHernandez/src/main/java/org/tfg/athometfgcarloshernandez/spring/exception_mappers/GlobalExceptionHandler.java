@@ -4,11 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.tfg.athometfgcarloshernandez.common.constantes.Constantes;
-import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
-import org.tfg.athometfgcarloshernandez.domain.errores.NotFoundException;
-import org.tfg.athometfgcarloshernandez.domain.errores.TokenException;
-import org.tfg.athometfgcarloshernandez.domain.errores.YaVotadoException;
+import org.tfg.athometfgcarloshernandez.domain.errores.*;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError;
 
 @RestControllerAdvice
@@ -34,6 +30,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleBadUserException(TokenException ex) {
         return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
                 .body(ConstantesError.TOKEN_EXPIRADO);
+    }
+    @ExceptionHandler(ErrorLoginException.class)
+    public ResponseEntity<String> handleBadUserException(ErrorLoginException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ConstantesError.ERROR_INICIAR_SESION);
     }
 
 }

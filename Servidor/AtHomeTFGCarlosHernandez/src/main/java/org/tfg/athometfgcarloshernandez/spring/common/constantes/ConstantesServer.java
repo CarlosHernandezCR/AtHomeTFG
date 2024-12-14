@@ -28,7 +28,7 @@ public class ConstantesServer {
     public static final int CADUCIDAD_CODIGO_REGISTRO = 5;
     public static final String ESTADO_PREDETERMINADO1 = "Durmiendo";
     public static final String ESTADO_PREDETERMINADO2 = "En casa";
-    public static final String ESTADO_PREDETERMINADO3 = "Cocinando";
+    public static final String ESTADO_PREDETERMINADO3 = "Fuera de casa";
     public static final String COLOR_ESTADO_PREDETERMINADO1 = "#FF0000";
     public static final String COLOR_ESTADO_PREDETERMINADO2 = "#00FF00";
     public static final String COLOR_ESTADO_PREDETERMINADO3 = "#FFFF00";
@@ -36,9 +36,23 @@ public class ConstantesServer {
     public static final String APK = "/apk";
     public static final String UBI_APK = "static/apk/atHome.apk";
     public static final String HEADER_APK = "attachment; filename=AtHome.apk";
-    public static final String BASE_API = "/inhome";
+    public static final String BASE_API = "http://localhost:8889";
     public static final String BORRAR_CAJON = "/borrarCajon";
     public static final String VOTAR = "/votar";
+    public static final String BASE_API_INSTI = "https://informatica.iesquevedo.es/inhome";
+    public static final String GET = "GET";
+    public static final String POST = "POST";
+    public static final String DELETE = "DELETE";
+    public static final String PUT = "PUT";
+    public static final String STATIC = "/static/**";
+    public static final String BARRA = "/";
+    public static final String DESCARGAR_APK = "/descargar/apk";
+    public static final String INDEX = "/index.html";
+    public static final String JS = "/js/**";
+    public static final String CSS = "/css/**";
+    public static final String ASTERISCO = "*";
+    public static final String ASUNTO_ACTIVACION = "Activación de cuenta";
+
 
     private ConstantesServer() {
     }

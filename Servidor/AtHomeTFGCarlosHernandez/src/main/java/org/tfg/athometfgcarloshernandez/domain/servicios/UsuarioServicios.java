@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import org.tfg.athometfgcarloshernandez.common.constantes.Constantes;
 import org.tfg.athometfgcarloshernandez.common.utils.UserTools;
 import org.tfg.athometfgcarloshernandez.data.model.*;
-import org.tfg.athometfgcarloshernandez.data.repositories.CasaRepository;
 import org.tfg.athometfgcarloshernandez.data.repositories.CredencialesRepository;
 import org.tfg.athometfgcarloshernandez.data.repositories.EstadosUsuariosRepository;
 import org.tfg.athometfgcarloshernandez.data.repositories.UsuarioRepository;
 import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
+import org.tfg.athometfgcarloshernandez.domain.errores.ErrorLoginException;
 import org.tfg.athometfgcarloshernandez.domain.model.mappers.UsuarioMappers;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
@@ -35,7 +35,6 @@ public class UsuarioServicios {
     private final TokensTools tokensTools;
     private final UserDetailsService userDetailsService;
     private final UserTools userTools;
-    private final CasaRepository casaRepository;
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMappers usuarioMappers;
     private final CredencialesRepository credencialesRepository;
@@ -50,7 +49,7 @@ public class UsuarioServicios {
         try {
             auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), password));
         } catch (AuthenticationException e) {
-            throw new CustomedException(ConstantesError.ERROR_INICIAR_SESION);
+            throw new ErrorLoginException(ConstantesError.ERROR_INICIAR_SESION);
         }
         UsuarioEntity usuarioEntity = userTools.getUsuarioEntityByIdentificador(identificador);
         String accessToken = tokensTools.generarAccessToken(auth.getName(), usuarioEntity.getId() );
@@ -83,8 +82,9 @@ public class UsuarioServicios {
         mandarMail.generateAndSendEmail(
                 correo,
                 Constantes.ACTIVACION_CODIGO + codigoActivacion + Constantes.ACTIVAR_SU_CUENTA_HTML,
-                codigoActivacion
+                ConstantesServer.ASUNTO_ACTIVACION
         );
+
         estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO1, ConstantesServer.COLOR_ESTADO_PREDETERMINADO1)));
         estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO2, ConstantesServer.COLOR_ESTADO_PREDETERMINADO2)));
         estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO3, ConstantesServer.COLOR_ESTADO_PREDETERMINADO3)));

@@ -73,7 +73,4 @@ public class Security {
         return encoder.encode(contra);
     }
 
-    public boolean verificarContra(String contraHasheada, String contraNormal) {
-        return encoder.matches(contraNormal, contraHasheada);
-    }
 }

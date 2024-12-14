@@ -1,6 +1,8 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val ERROR_USUARIO_NO_ENCONTRADO: String = "Usuario no encontrado"
+    const val ERROR_NO_CONFIRMADO: String = "Usuario no validado, confirme el correo"
     const val YA_VOTADO: String="Ya votaste en este evento"
     const val ERROR_VOTAR_EVENTO: String="Error al votar"
     const val NO_HAY_CAJON_QUE_BORRAR: String="No hay cajón que borrar"
@@ -17,7 +19,6 @@ object ConstantesError {
     const val ERROR_AGREGAR_MUEBLE: String = "Error al añadir el mueble"
     const val ERROR_AGREGAR_HABITACION: String="Error al añadir la habitacion"
     const val NO_ESTA_LOGUEADO: String = "Debe iniciar sesión para acceder a esta sección"
-    const val NO_CORREO: String = "Por favor ingrese un correo válido"
     const val GET_HABITACIONES_ERROR: String = "Error al obtener los datos de las habitaciones"
     const val GET_EVENTOS_ERROR: String = "Error al obtener los eventos"
     const val CREAR_EVENTO_ERROR: String =  "Error al crear el evento"

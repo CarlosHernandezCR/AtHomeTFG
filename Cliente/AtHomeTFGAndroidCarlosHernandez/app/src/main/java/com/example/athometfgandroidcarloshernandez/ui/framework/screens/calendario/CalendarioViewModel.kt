@@ -99,19 +99,25 @@ class CalendarioViewModel @Inject constructor(
             votarUseCase.invoke(eventoId, idUsuario).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                error = null,
+                                isLoading = false
+                            )
+                        }
                         getEventosDia(_uiState.value.idCasa, _uiStateEventos.value.diaSeleccionado, _uiState.value.mesActual, _uiState.value.anioActual)
                     }
-
                     is NetworkResult.Error -> {
                         val errorMessage = result.message ?: ConstantesError.ERROR_VOTAR_EVENTO
-                        val finalMessage = if (errorMessage.contains("400", ignoreCase = true)) {
+                        val finalMessage = if (errorMessage.contains("409", ignoreCase = true)) {
                             ConstantesError.YA_VOTADO
                         } else {
                             errorMessage
                         }
                         _uiState.update {
                             it.copy(
-                                error = finalMessage
+                                error = finalMessage,
+                                isLoading = false
                             )
                         }
                     }
@@ -137,13 +143,9 @@ class CalendarioViewModel @Inject constructor(
 
     private fun cambiarAnioPorMes(avanza: Boolean) {
         if (avanza) {
-            _uiState.update { it.copy(anioActual = _uiState.value.anioActual + 1, mesActual = 0) }
-            limpiarDetalleEvento()
-            uiState.value.idCasa?.let { getEventosMes(it, 0, uiState.value.anioActual + 1) }
+            updateFullState(anio = _uiState.value.anioActual + 1, mes = 0, actualizar = true)
         } else {
-            _uiState.update { it.copy(anioActual = _uiState.value.anioActual - 1, mesActual = 11) }
-            uiState.value.idCasa?.let { getEventosMes(it, 11, uiState.value.anioActual - 1) }
-            limpiarDetalleEvento()
+            updateFullState(anio = _uiState.value.anioActual - 1, mes = 11, actualizar = true)
         }
     }
 
@@ -353,7 +355,6 @@ class CalendarioViewModel @Inject constructor(
         val totalDiasMesAnterior = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
         calendar.add(Calendar.MONTH, 1)
 
-        //provisional
         val COLOR_NORMAL = "#FFFFFF"
         val COLOR_HOY = "#0000ff"
         val COLOR_OTRO_MES = "#C4C4C4"

@@ -27,7 +27,6 @@ interface InmueblesContract {
         data object MensajeMostrado : InmueblesEvent()
         data class CambioHabitacion(val habitacionId: String) : InmueblesEvent()
         data class CambioMueble(val muebleId: String) : InmueblesEvent()
-        data class CajonSeleccionado(val cajon: String) : InmueblesEvent()
         data class AgregarHabitacion(val habitacion: String) : InmueblesEvent()
         data class AgregarMueble(val mueble: String) : InmueblesEvent()
         data class AgregarCajon(val cajon: String, val idUsuario: String) : InmueblesEvent()

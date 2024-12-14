@@ -4,14 +4,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.lang.NonNullApi;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
-import org.tfg.athometfgcarloshernandez.domain.errores.TokenException;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesSpring;
 import org.tfg.athometfgcarloshernandez.spring.common.utils.TokensTools;
@@ -34,9 +33,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain)
+    protected void doFilterInternal (HttpServletRequest request,
+                                     HttpServletResponse response ,
+                                     FilterChain chain)
             throws ServletException, IOException {
         if (request.getRequestURI().equals(ConstantesServer.LOGINPATH) ||
                 request.getRequestURI().equals(ConstantesServer.REGISTERPATH) ||
@@ -53,10 +52,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         final String token = header.split(" ")[1].trim();
-        if (!jwtTokenUtil.validarToken(token)) {
-            chain.doFilter(request, response);
-            return;
-        }
+        jwtTokenUtil.validarToken(token);
         UserDetails userDetails = userRepo.loadUserByUsername(jwtTokenUtil.getSubjectDesdeToken(token));
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(

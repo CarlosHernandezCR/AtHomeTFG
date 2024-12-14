@@ -92,13 +92,6 @@ fun InmueblesActivity(
                 )
             },
             cambioMueble = { viewModel.handleEvent(InmueblesContract.InmueblesEvent.CambioMueble(it)) },
-            cajonClicado = {
-                viewModel.handleEvent(
-                    InmueblesContract.InmueblesEvent.CajonSeleccionado(
-                        it
-                    )
-                )
-            },
             borrarCajon = { idCajon, idPropietario ->
                 viewModel.handleEvent(
                     InmueblesContract.InmueblesEvent.BorrarCajon(
@@ -144,7 +137,6 @@ fun InmueblesPantalla(
     usuarios: List<Usuario> = emptyList(),
     cambioHabitacion: (String) -> Unit = {},
     cambioMueble: (String) -> Unit = {},
-    cajonClicado: (String) -> Unit = {},
     borrarCajon: (String, String) -> Unit = { _, _ -> },
     agregarCajon: (String, String) -> Unit,
     agregarMueble: (String) -> Unit = {},
@@ -459,7 +451,6 @@ fun PreviewInmueblesActivity() {
         cajones = cajones,
         cambioHabitacion = {},
         cambioMueble = {},
-        cajonClicado = {},
         agregarCajon = { _, _ -> },
         agregarMueble = {},
     )
