@@ -51,9 +51,11 @@ class InmueblesViewModel @Inject constructor(
     private fun borrarCajon(idCajon: String,idUsuario:String, idPropietario: String) {
         if (idUsuario != idPropietario){
             _uiState.update { it.copy(mensaje = ConstantesError.NO_SE_PUEDE_BORRAR_CAJON) }
+            return
         }
         if(idCajon.isEmpty()){
             _uiState.update { it.copy(mensaje = ConstantesError.NO_HAY_CAJON_QUE_BORRAR) }
+            return
         }
         viewModelScope.launch {
             borrarCajonUseCase.invoke(idCajon).collect { result ->

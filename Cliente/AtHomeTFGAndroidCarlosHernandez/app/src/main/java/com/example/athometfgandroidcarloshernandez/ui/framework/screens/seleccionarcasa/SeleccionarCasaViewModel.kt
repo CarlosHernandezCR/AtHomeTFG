@@ -2,6 +2,7 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.selecci
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.athometfgandroidcarloshernandez.common.ConstantesError
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.athometfgandroidcarloshernandez.domain.usecases.seleccionarcasa.AgregarCasaUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.seleccionarcasa.GetCasasUseCase
@@ -41,7 +42,7 @@ class SeleccionarCasaViewModel @Inject constructor(
                         cargarCasas(idUsuario)
                     }
                     is NetworkResult.Error -> {
-                        _uiState.update { it.copy(error = result.message, isLoading = false) }
+                        _uiState.update { it.copy(error = ConstantesError.ERROR_CODIGO, isLoading = false) }
                     }
                     is NetworkResult.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
@@ -57,6 +58,10 @@ class SeleccionarCasaViewModel @Inject constructor(
         direccion: String,
         codigoPostal: String
     ) {
+        if(nombre.isEmpty() || direccion.isEmpty() || codigoPostal.isEmpty()){
+            _uiState.update { it.copy(error = ConstantesError.CAMPO_VACIO_ERROR) }
+            return
+        }
         viewModelScope.launch {
             agregarCasaUseCase.invoke(idUsuario, nombre, direccion, codigoPostal).collect { result ->
                 when (result) {

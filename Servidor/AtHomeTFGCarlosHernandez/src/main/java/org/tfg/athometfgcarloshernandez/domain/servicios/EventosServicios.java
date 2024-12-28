@@ -52,8 +52,8 @@ public class EventosServicios {
 
         eventoEntity.setTipo(evento.getTipo());
 
-        int nResidentes= usuarioRepository.findNumeroResidentes(idCasa);
-        String votacion= "1/" + nResidentes;
+        int nResidentes = usuarioRepository.findNumeroResidentes(idCasa);
+        String votacion = "1/" + nResidentes;
         eventoEntity.setVotacion(votacion);
 
         UsuarioEntity organizador = new UsuarioEntity();
@@ -76,35 +76,35 @@ public class EventosServicios {
         eventosRepository.save(eventoEntity);
     }
 
-public void votar(int idUsuario, int idEvento) {
-    UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
-            .orElseThrow(() -> new CustomedException(ConstantesError.USUARIO_NO_ENCONTRADO));
-    EventoEntity eventoEntity = eventosRepository.findById(idEvento)
-            .orElseThrow(() -> new CustomedException(ConstantesError.EVENTO_NO_ENCONTRADO));
-    List<VotoEntity> votoEntities = votoRepository.findByEvento(eventoEntity);
+    public void votar(int idUsuario, int idEvento) {
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new CustomedException(ConstantesError.USUARIO_NO_ENCONTRADO));
+        EventoEntity eventoEntity = eventosRepository.findById(idEvento)
+                .orElseThrow(() -> new CustomedException(ConstantesError.EVENTO_NO_ENCONTRADO));
+        List<VotoEntity> votoEntities = votoRepository.findByEvento(eventoEntity);
 
-    boolean yaVotado = votoEntities.stream()
-            .anyMatch(voto -> voto.getUsuario() != null && voto.getUsuario().getId() == idUsuario);
+        boolean yaVotado = votoEntities.stream()
+                .anyMatch(voto -> voto.getUsuario() != null && voto.getUsuario().getId() == idUsuario);
 
-    if (yaVotado) {
-        throw new YaVotadoException(ConstantesError.YA_VOTADO);
-    } else {
-        VotoEntity votoEntity = new VotoEntity();
-        votoEntity.setUsuario(usuarioEntity);
-        votoEntity.setEvento(eventoEntity);
-        votoRepository.save(votoEntity);
-
-        String votacion = eventoEntity.getVotacion();
-        String[] votos = votacion.split("/");
-        int votosActuales = Integer.parseInt(votos[0]);
-        int nResidentes = Integer.parseInt(votos[1]);
-        votosActuales++;
-        if (votosActuales == nResidentes) {
-            eventoEntity.setVotacion(Constantes.VOTACION_ACEPTADA);
+        if (yaVotado) {
+            throw new YaVotadoException(ConstantesError.YA_VOTADO);
         } else {
-            eventoEntity.setVotacion(votosActuales + "/" + nResidentes);
+            VotoEntity votoEntity = new VotoEntity();
+            votoEntity.setUsuario(usuarioEntity);
+            votoEntity.setEvento(eventoEntity);
+            votoRepository.save(votoEntity);
+
+            String votacion = eventoEntity.getVotacion();
+            String[] votos = votacion.split("/");
+            int votosActuales = Integer.parseInt(votos[0]);
+            int nResidentes = Integer.parseInt(votos[1]);
+            votosActuales++;
+            if (votosActuales == nResidentes) {
+                eventoEntity.setVotacion(Constantes.VOTACION_ACEPTADA);
+            } else {
+                eventoEntity.setVotacion(votosActuales + "/" + nResidentes);
+            }
+            eventosRepository.save(eventoEntity);
         }
-        eventosRepository.save(eventoEntity);
     }
-}
 }

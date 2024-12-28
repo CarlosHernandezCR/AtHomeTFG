@@ -73,7 +73,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Hilt
+    // Hilt
     implementation(libs.hilt)
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
@@ -83,13 +83,13 @@ dependencies {
     implementation(libs.timber)
     // Datastore
     implementation(libs.datastore)
-    //jwt
+    // JWT
     implementation(libs.jwt)
-    //iconos
+    // Iconos
     implementation (libs.androidx.material.icons.extended)
     implementation (libs.material3)
-    //fuentes
+    // Fuentes
     implementation(libs.androidx.ui.text.google.fonts)
-    //ColorPicker
+    // ColorPicker
     implementation(libs.colorpicker.compose)
 }

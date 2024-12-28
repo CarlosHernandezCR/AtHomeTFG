@@ -20,7 +20,7 @@ interface CalendarioContract {
     )
 
     data class DiaCalendario(
-        val numero: Int,
+        val numero: Int ,
         val colorFondo: String,
     )
 

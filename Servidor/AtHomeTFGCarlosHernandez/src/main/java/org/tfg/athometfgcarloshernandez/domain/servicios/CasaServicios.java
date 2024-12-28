@@ -124,7 +124,7 @@ public class CasaServicios {
         casaEntity=casaRepository.save(casaEntity);
         UsuarioEntity usuarioEntity = usuarioRepository.findById(Integer.parseInt(idUsuario))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
-        viveRepository.save(new ViveEntity(0,null,usuarioEntity, casaEntity));
+        viveRepository.save(new ViveEntity(0,ConstantesServer.ESTADO_PREDETERMINADO2,usuarioEntity, casaEntity));
     }
 
     public void unirseCasa(String idUsuario, String codigoInvitacion) {

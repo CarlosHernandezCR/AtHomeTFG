@@ -1,6 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val ERROR_CODIGO : String = "Código inválido"
     const val ERROR_USUARIO_NO_ENCONTRADO: String = "Usuario no encontrado"
     const val ERROR_NO_CONFIRMADO: String = "Usuario no validado, confirme el correo"
     const val YA_VOTADO: String="Ya votaste en este evento"
