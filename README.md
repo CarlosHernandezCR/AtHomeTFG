@@ -11,8 +11,9 @@ Sus principales funcionalidades incluyen:
 
 ## **Características Principales**
 - **Web de Descarga**: Página web simple y atractiva para descargar el APK del cliente móvil.  
-- **Seguridad Mejorada**: Uso de tokens para autenticar al cliente móvil y proteger los datos.  
+- **Seguridad Mejorada**: Uso de tokens con caducidad para autenticar al cliente móvil y proteger los datos.  
 - **Privacidad Total**: Los propietarios de los cajones tienen acceso exclusivo a su contenido.  
+- **Fácil de usar**: Usabilidad simple, interactiva e intuitiva para darle las mayores facilidades al usuario.
 
 ---
 
@@ -28,11 +29,13 @@ Sus principales funcionalidades incluyen:
 - **Vue 3**: Utilizado para servir la web de descarga desde el servidor.  
 
 ### **Base de Datos**
-- **SQL (DBeaver)**: Base de datos relacional con modelo Entidad-Relación.  
+- **SQL (DBeaver)**: Base de datos relacional diseñado desde un modelo Entidad-Relación.  
 
 ### **Infraestructura**
 - **Docker**: Contenedores para facilitar el despliegue y la portabilidad del proyecto.  
 
+### **Organización**
+- **Taiga**: Página web donde se pueden realizar prácticas Scrum para organización de proyectos 
 ---
 
 ## **Arquitectura del Sistema**
@@ -52,6 +55,81 @@ Sus principales funcionalidades incluyen:
 - **jsonwebtoken**: Gestión de tokens para autenticación.  
 - **Glassfish Containers**: Contenedores de seguridad.  
 - **Jakarta Web API**: Para facilitar el desarrollo web.  
+
+---
+## 🚀 Desarrollo
+
+### 1️⃣ Diseño del Modelo de Datos  
+Se comenzó diseñando el **modelo entidad-relación (E-R)** con la herramienta **DIA**, definiendo las entidades principales, sus atributos y las relaciones entre ellas (*1-N*, *N-M*, *1-1*).  
+![Modelo Entidad-Relacion](images/modelo_E-R.png)  
+
+Tras validar el modelo E-R, se creó el **modelo de tablas** en **DBeaver**, estableciendo claves primarias y foráneas.  
+![Modelo de tablas](images/tablas.png)  
+
+Finalmente, se insertaron **datos de prueba** en la base de datos para verificar la estructura.
+
+---
+
+### 2️⃣ Desarrollo del Backend (Spring Boot)
+Se implementó la base estructural del **servidor API-REST** con **Spring Boot**.  
+#### 🔹 Configuración inicial:
+- Se añadieron las **dependencias** necesarias en el `pom.xml`.
+- Se crearon las clases de configuración:
+  - `ConfigurationBeans` y `SecurityConfig` para la seguridad del sistema.
+  - `JwtTokenFilter` y `UserDetailsServiceImpl` para la autenticación con JWT.
+- Se implementaron clases de utilidad como `Security` y `TokensTools`.
+- Se definieron **excepciones personalizadas** (`NOT_FOUND`, `UNAUTHORIZED`, `BAD_REQUEST`, etc.) y su mapeador.
+- Se configuró el archivo `application.properties` para definir la conexión con la base de datos y otros ajustes.
+
+#### 🔹 Arquitectura en Capas:
+Se siguió un **modelo de capas**, organizando el código en las siguientes carpetas:
+📂 backend
+           ├── 📂 common # Clases de utilidad y configuración 
+           ├── 📂 data # Entidades del modelo de datos 
+           ├── 📂 domain # Modelos de datos, errores y servicios 
+           ├── 📂 spring  
+                 ├── 📂 common # Configuración general  
+                 ├── 📂 controllers # Controladores de la API  
+                 ├── 📂 mappers # Mapeo de excepciones 
+                 ├── 📂 model # DTOs para entrada/salida de datos 
+                 ├── 📂 security # Clases de seguridad y autenticación
+   ![Modelo de capas](images/modelo_capas.png)
+
+Se implementaron las clases **entidad** siguiendo el modelo de datos, con sus anotaciones correspondientes.
+
+---
+
+### 3️⃣ Desarrollo de Funcionalidades
+Cada funcionalidad se desarrolló en base a historias de usuario, aplicando **Scrum**.
+
+#### 📌 **Ejemplo: Registro de Usuario**
+##### 🖥️ **Backend**
+1. Se creó el **`RegistroController`** para gestionar la llamada de registro.
+2. Se definió el **DTO `RegistroRequestDTO`** para recibir los datos del usuario.
+3. Se implementó el servicio **`UsuarioServicios`**, encargado de:
+   - Crear y guardar la entidad `Usuario`.
+   - Generar un código de activación con expiración.
+   - Encriptar la contraseña con `Security`.
+   - Guardar credenciales con `CredencialesRepository`.
+   - Enviar el correo de activación con `MailService`.
+4. Se probó la funcionalidad con **Postman** y **HTTP Requests**.
+
+##### 🎨 **Frontend**
+1. Se diseñó la pantalla de **Registro** en `RegistroActivity`, incluyendo:
+   - Campos: nombre, contraseña, correo, teléfono y **ColorPicker**.
+   - Botón de **Registrarse**.
+2. Se implementó el **`RegistroState`** para manejar los datos ingresados.
+3. Se creó el evento de **registro**, gestionado por `RegistroViewModel`, que:
+   - Validó los campos y formateó los datos.
+   - Llamó a `RegistroUseCase`, que gestionó la lógica del registro.
+   - Enviando los datos al **servidor** a través de `UsuarioRemoteDataSource`.
+4. Se realizó la llamada **HTTP POST** con `UsuarioService`, enviando el `RegistroRequestDTO`.
+5. Se validaron los resultados, comprobando:
+   - El envío correcto del correo de activación.
+   - El almacenamiento adecuado del usuario en la base de datos.
+6. Se realizaron pruebas de **conectividad** y **manejo de errores**, finalizando la tarea.
+
+Este proceso se repitió para cada funcionalidad, asegurando una implementación estructurada y validada.
 
 ---
 
@@ -79,4 +157,4 @@ Iniciar el contenedor:
   docker-compose up
 ```
 Acceder al Cliente Web
-Visitar: http://localhost:8080
+Visitar: http://localhost:8889
