@@ -84,15 +84,16 @@ Se implementó la base estructural del **servidor API-REST** con **Spring Boot**
 #### 🔹 Arquitectura en Capas:
 Se siguió un **modelo de capas**, organizando el código en las siguientes carpetas:
 📂 backend
-           ├── 📂 common # Clases de utilidad y configuración 
-           ├── 📂 data # Entidades del modelo de datos 
-           ├── 📂 domain # Modelos de datos, errores y servicios 
-           ├── 📂 spring  
-                 ├── 📂 common # Configuración general  
-                 ├── 📂 controllers # Controladores de la API  
-                 ├── 📂 mappers # Mapeo de excepciones 
-                 ├── 📂 model # DTOs para entrada/salida de datos 
-                 ├── 📂 security # Clases de seguridad y autenticación
+          ├── 📂 common # Clases de utilidad y configuración 
+          ├── 📂 data # Entidades del modelo de datos 
+          ├── 📂 domain # Modelos de datos, errores y servicios 
+          ├── 📂 spring  
+            ├── 📂 common # Configuración general  
+            ├── 📂 controllers # Controladores de la API  
+            ├── 📂 mappers # Mapeo de excepciones 
+            ├── 📂 model # DTOs para entrada/salida de datos 
+            ├── 📂 security # Clases de seguridad y autenticación
+            
    ![Modelo de capas](images/modelo_capas.png)
 
 Se implementaron las clases **entidad** siguiendo el modelo de datos, con sus anotaciones correspondientes.
