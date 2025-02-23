@@ -82,38 +82,7 @@ Se implementó la base estructural del **servidor API-REST** con **Spring Boot**
 - Se configuró el archivo `application.properties` para definir la conexión con la base de datos y otros ajustes.
 
 #### 🔹 Arquitectura en Capas:
-Se siguió un **modelo de capas**, organizando el código en las siguientes carpetas:
-📂 backend
-    ├── 📂 common          # Clases de utilidad y configuración
-    ├── 📂 data            # Entidades del modelo de datos
-    ├── 📂 domain          # Modelos de datos, errores y servicios
-    ├── 📂 spring
-        ├── 📂 common      # Configuración general
-        ├── 📂 controllers # Controladores de la API
-        ├── 📂 mappers     # Mapeo de excepciones
-        ├── 📂 model       # DTOs para entrada/salida de datos
-        ├── 📂 security    # Clases de seguridad y autenticación
-
-📂 frontend
-    ├── 📂 common          # Constantes
-    ├── 📂 data            # Clases de utilidad y configuración
-        ├── 📂 model       # DTOs para entrada/salida de datos
-        ├── 📂 remote      # Clases e interfaces para conectarse al servidor
-            ├── 📂 apiServices  # Interfaces para realizar las llamadas
-            ├── 📂 datasource   # Clases para manejar las llamadas y sus respuestas
-            ├── 📂 di           # Clases de gestión de tokens
-            ├── 📂 util         # Clases de utilidad para gestionar los datos de las llamadas
-        ├── 📂 repositories     # Clases para realizar los flows y comenzar las llamadas
-    ├── 📂 domain          # Clases de casos de uso, separadas por objetos tratados y acciones
-    ├── 📂 ui              # Clases para la interacción con el usuario
-        ├── 📂 common      # Clases de utilidad comunes entre pantallas
-        ├── 📂 framework   # Manejo de pantallas
-            ├── 📂 navigation # Nombres de las pantallas y rutas
-            ├── 📂 screens    # Cada pantalla con su Activity, Contract (State y eventos) y ViewModel
-        ├── 📂 theme       # Clases de personalización de la app
-
- 
-            
+Se siguió un **modelo de capas**, organizando el código en las siguientes carpetas:       
    ![Modelo de capas](images/modelo_capas.png)
 
 Se implementaron las clases **entidad** siguiendo el modelo de datos, con sus anotaciones correspondientes.
