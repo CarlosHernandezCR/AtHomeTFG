@@ -88,11 +88,27 @@ Se siguió un **modelo de capas**, organizando el código en las siguientes carp
           ├── 📂 data # Entidades del modelo de datos 
           ├── 📂 domain # Modelos de datos, errores y servicios 
           ├── 📂 spring  
-            ├── 📂 common # Configuración general  
-            ├── 📂 controllers # Controladores de la API  
-            ├── 📂 mappers # Mapeo de excepciones 
-            ├── 📂 model # DTOs para entrada/salida de datos 
-            ├── 📂 security # Clases de seguridad y autenticación
+              ├── 📂 common # Configuración general  
+              ├── 📂 controllers # Controladores de la API  
+              ├── 📂 mappers # Mapeo de excepciones 
+              ├── 📂 model # DTOs para entrada/salida de datos 
+              ├── 📂 security # Clases de seguridad y autenticación
+ 📂 frontend
+          ├── 📂 common # Constantes
+          ├── 📂 data # Clases de utilidad y configuración
+              ├── 📂 model # DTOs para entrada/salida de datos
+              ├── 📂 remote # Clases de utilidad y configuración 
+                        ├── 📂 common # Clases de utilidad y configuración 
+                        ├── 📂 common # Clases de utilidad y configuración 
+                        ├── 📂 common # Clases de utilidad y configuración 
+                        ├── 📂 common # Clases de utilidad y configuración 
+
+              ├── 📂 repositories # Clases de utilidad y configuración 
+          ├── 📂 common # Clases de utilidad y configuración 
+          ├── 📂 common # Clases de utilidad y configuración 
+          ├── 📂 common # Clases de utilidad y configuración 
+          ├── 📂 common # Clases de utilidad y configuración 
+ 
             
    ![Modelo de capas](images/modelo_capas.png)
 
