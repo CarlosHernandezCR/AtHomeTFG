@@ -40,7 +40,7 @@ public class UsuarioServicios {
     private final CredencialesRepository credencialesRepository;
     private final Security security;
     private final EstadosUsuariosRepository estadosUsuariosRepository;
-    private final MandarMail mandarMail;
+    private final MailService mailService;
 
 
     public LoginResponseDTO doLogin(String identificador, String password) {
@@ -79,15 +79,11 @@ public class UsuarioServicios {
                 0, usuario, contraCodificada, false, codigoActivacion, fechaCaducidad
         );
         credencialesRepository.save(credenciales);
-        mandarMail.generateAndSendEmail(
+        mailService.sendEmail(
                 correo,
                 Constantes.ACTIVACION_CODIGO + codigoActivacion + Constantes.ACTIVAR_SU_CUENTA_HTML,
                 ConstantesServer.ASUNTO_ACTIVACION
         );
-
-        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO1, ConstantesServer.COLOR_ESTADO_PREDETERMINADO1)));
-        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO2, ConstantesServer.COLOR_ESTADO_PREDETERMINADO2)));
-        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO3, ConstantesServer.COLOR_ESTADO_PREDETERMINADO3)));
     }
 
     public void validateUser(String codigoActivacion) {
@@ -102,5 +98,9 @@ public class UsuarioServicios {
         } else {
             throw new CustomedException(ConstantesError.CODIGO_NO_VALIDO);
         }
+        UsuarioEntity usuario = credencialesEntity.getIdUsuario();
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO1, ConstantesServer.COLOR_ESTADO_PREDETERMINADO1)));
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO2, ConstantesServer.COLOR_ESTADO_PREDETERMINADO2)));
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0, usuario, new EstadoEntity(ConstantesServer.ESTADO_PREDETERMINADO3, ConstantesServer.COLOR_ESTADO_PREDETERMINADO3)));
     }
 }

@@ -18,7 +18,6 @@ public class HabitacionEntity {
     private Integer id;
     @Column(name = HabitacionConstantes.COLUMN_NOMBRE)
     private String nombre;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = HabitacionConstantes.COLUMN_ID_CASA, nullable = false)
     private CasaEntity idCasaEntity;

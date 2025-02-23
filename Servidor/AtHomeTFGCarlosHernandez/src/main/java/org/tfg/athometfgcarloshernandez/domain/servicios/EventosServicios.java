@@ -7,7 +7,7 @@ import org.tfg.athometfgcarloshernandez.data.model.*;
 import org.tfg.athometfgcarloshernandez.data.repositories.EventosRepository;
 import org.tfg.athometfgcarloshernandez.data.repositories.UsuarioRepository;
 import org.tfg.athometfgcarloshernandez.data.repositories.VotoRepository;
-import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
+import org.tfg.athometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.athometfgcarloshernandez.domain.errores.YaVotadoException;
 import org.tfg.athometfgcarloshernandez.domain.model.Evento;
 import org.tfg.athometfgcarloshernandez.domain.model.mappers.EventoMappers;
@@ -78,9 +78,9 @@ public class EventosServicios {
 
     public void votar(int idUsuario, int idEvento) {
         UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new CustomedException(ConstantesError.USUARIO_NO_ENCONTRADO));
+                .orElseThrow(() -> new NotFoundException(ConstantesError.USUARIO_NO_ENCONTRADO));
         EventoEntity eventoEntity = eventosRepository.findById(idEvento)
-                .orElseThrow(() -> new CustomedException(ConstantesError.EVENTO_NO_ENCONTRADO));
+                .orElseThrow(() -> new NotFoundException(ConstantesError.EVENTO_NO_ENCONTRADO));
         List<VotoEntity> votoEntities = votoRepository.findByEvento(eventoEntity);
 
         boolean yaVotado = votoEntities.stream()
