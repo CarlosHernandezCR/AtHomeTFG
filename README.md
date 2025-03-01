@@ -130,7 +130,14 @@ Este proceso se repitió para cada funcionalidad, asegurando una implementación
 - Docker y Docker Compose  
 
 ---
-
+## **Ejemplo de Uso**
+1. Vamos a ponernos en la situación del usuario que se lo quiere descargar, empezaría yéndose a la página web de descarga, es la desarrollada con Vue.js.
+      ![PaginaWeb](images/pagina_descarga.png)
+2. El usuario le da click al botón de descarga y se pone en espera hasta que recibe.
+      ![CargandoDescarga](images/cargando_descarga.png)
+3. El usuario abrirá la aplicación y tendrá que registrarse, damos por hecho que el usuario no ha usado la aplicación ya
+       
+---
 ## **Instalación**
 ### **Clonar el repositorio**
 ```bash
