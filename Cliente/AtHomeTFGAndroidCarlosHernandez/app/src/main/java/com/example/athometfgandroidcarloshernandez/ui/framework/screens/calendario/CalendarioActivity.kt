@@ -258,7 +258,6 @@ fun CampoEvento(
         )
     }
 }
-
 @Composable
 fun DetallesEvento(
     listaEventos: List<CalendarioContract.EventoCasa>,
@@ -267,13 +266,15 @@ fun DetallesEvento(
     onMostrarDialogoChange: () -> Unit
 ) {
     var indiceSeleccionado by remember { mutableIntStateOf(1) }
+    val backgroundColor = MaterialTheme.colorScheme.surface
+    val borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray)
+            .background(backgroundColor)
             .padding(8.dp)
-            .border(1.dp, Color.Gray)
+            .border(1.dp, borderColor)
     ) {
         Selector(
             valorActual = indiceSeleccionado,
@@ -288,12 +289,13 @@ fun DetallesEvento(
             horizontalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
             ) {
                 Text(
                     text = Constantes.TIPO + eventoSeleccionado.tipo,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
                     text = Constantes.RESERVA_DE + eventoSeleccionado.nombre,
@@ -315,7 +317,8 @@ fun DetallesEvento(
                 }
             }
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
             ) {
                 Text(
                     text = Constantes.HORA_INICIO + eventoSeleccionado.horaComienzo,
@@ -342,7 +345,6 @@ fun DetallesEvento(
                 }
             }
         }
-
     }
 }
 
@@ -352,6 +354,8 @@ fun Calendario(
     diasDelMes: List<List<DiaCalendario>>,
     diaClicado: (Int) -> Unit
 ) {
+    var diaSeleccionado by remember { mutableIntStateOf(-1) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -385,9 +389,10 @@ fun Calendario(
                                     Color(android.graphics.Color.parseColor(day.colorFondo))
                                 )
                                 .border(
-                                    1.dp, Color.Gray, CircleShape
+                                    1.dp, if (day.numero == diaSeleccionado && day.colorFondo!= "#C4C4C4") Color.Green else Color.Gray, CircleShape
                                 )
                                 .clickable(enabled = day.colorFondo != "#C4C4C4") {
+                                    diaSeleccionado = day.numero
                                     diaClicado(day.numero)
                                 },
                             contentAlignment = Alignment.Center
