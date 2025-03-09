@@ -3,6 +3,7 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
+    const val SALIR_DE_CASA = "Salir de Casa"
     const val ACEPTAR = "Aceptar"
     const val CREAR_ESTADO="Crear Estado"
     const val NUEVO_ESTADO = "Nuevo estado"
@@ -66,7 +67,7 @@ object Constantes {
     const val FORMATO_HORA = "%02d:%02d"
     const val HORA_INICIO: String = "Hora Inicio: "
     const val HORA_FIN: String = "Hora Fin: "
-    const val CANCELAR: String = "Cancelar"
+    const val SALIR: String = "Salir"
     const val CREAR_EVENTO: String = "Crear Evento"
     const val ESTADO: String = "Estado: "
     const val PROPIETARIO: String = "Propietario: "
@@ -78,4 +79,6 @@ object Constantes {
     const val IDCASA = "idCasa"
     const val MUEBLE = "mueble"
     const val HABITACION = "habitacion"
+    const val ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_ = "¿Está seguro de salir de esta casa?"
+
 }

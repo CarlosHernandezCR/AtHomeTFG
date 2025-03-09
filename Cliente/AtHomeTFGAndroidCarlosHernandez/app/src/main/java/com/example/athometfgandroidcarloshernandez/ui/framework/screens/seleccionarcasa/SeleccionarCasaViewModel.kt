@@ -6,6 +6,7 @@ import com.example.athometfgandroidcarloshernandez.common.ConstantesError
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.athometfgandroidcarloshernandez.domain.usecases.seleccionarcasa.AgregarCasaUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.seleccionarcasa.GetCasasUseCase
+import com.example.athometfgandroidcarloshernandez.domain.usecases.seleccionarcasa.SalirCasaUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.seleccionarcasa.UnirseCasaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,16 +21,43 @@ class SeleccionarCasaViewModel @Inject constructor(
     private val getCasasUseCase: GetCasasUseCase,
     private val agregarCasaUseCase: AgregarCasaUseCase,
     private val unirseCasaUseCase: UnirseCasaUseCase,
+    private val salirCasaUseCase: SalirCasaUseCase
 ): ViewModel(){
     private val _uiState = MutableStateFlow(SeleccionarCasaContract.SeleccionarCasaState())
     val uiState: StateFlow<SeleccionarCasaContract.SeleccionarCasaState> = _uiState.asStateFlow()
 
     fun handleEvent(event: SeleccionarCasaContract.SeleccionarCasaEvent){
         when(event){
+            is SeleccionarCasaContract.SeleccionarCasaEvent.SalirCasa ->salirCasa(event.idUsuario,event.idCasa)
             is SeleccionarCasaContract.SeleccionarCasaEvent.CargarCasas -> cargarCasas(event.idUsuario)
             is SeleccionarCasaContract.SeleccionarCasaEvent.ErrorMostrado -> _uiState.update { it.copy(error = null) }
             is SeleccionarCasaContract.SeleccionarCasaEvent.AgregarCasa -> agregarCasa(event.idUsuario, event.nombre, event.direccion, event.codigoPostal)
             is SeleccionarCasaContract.SeleccionarCasaEvent.UnirseCasa -> unirseCasa(event.idUsuario, event.codigoInvitacion)
+        }
+    }
+
+    private fun salirCasa(idUsuario: String, idCasa: String) {
+        viewModelScope.launch {
+            salirCasaUseCase.invoke(idUsuario,idCasa).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                isLoading = false,
+                                casas = currentState.casas.filterNot { it.id == idCasa }
+                            )
+                        }
+                    }
+
+                    is NetworkResult.Error -> {
+                        _uiState.update { it.copy(error = result.message, isLoading = false) }
+                    }
+
+                    is NetworkResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
         }
     }
 

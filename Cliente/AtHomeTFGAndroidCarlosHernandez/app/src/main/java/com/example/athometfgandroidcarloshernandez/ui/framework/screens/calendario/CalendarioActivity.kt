@@ -492,7 +492,7 @@ fun CrearEventoDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(Constantes.CANCELAR)
+                        Text(Constantes.SALIR)
                     }
                     TextButton(
                         onClick = {

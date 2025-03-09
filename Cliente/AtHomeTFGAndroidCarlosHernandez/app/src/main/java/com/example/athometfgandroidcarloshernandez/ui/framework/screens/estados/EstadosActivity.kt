@@ -57,7 +57,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.R
 import com.example.athometfgandroidcarloshernandez.common.Constantes
-import com.example.athometfgandroidcarloshernandez.common.Constantes.CANCELAR
+import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.ESTADO
 import com.example.athometfgandroidcarloshernandez.common.Constantes.NUEVO_ESTADO
 import com.example.athometfgandroidcarloshernandez.data.model.UsuarioCasaDTO
@@ -426,7 +426,7 @@ fun NuevoEstadoDialog(
                         Text(Constantes.CREAR_ESTADO)
                     }
                     Button(onClick = onDismiss) {
-                        Text(CANCELAR)
+                        Text(SALIR)
                     }
                 }
                 if (showColorPicker) {

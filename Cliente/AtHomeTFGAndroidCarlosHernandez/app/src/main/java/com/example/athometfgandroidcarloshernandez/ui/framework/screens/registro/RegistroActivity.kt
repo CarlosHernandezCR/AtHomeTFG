@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.R
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.ACEPTAR
-import com.example.athometfgandroidcarloshernandez.common.Constantes.CANCELAR
+import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 
@@ -240,7 +240,7 @@ fun ColorPickerDialog(
                     onClick = onDismiss,
                     modifier = Modifier
                 ) {
-                    Text(CANCELAR)
+                    Text(SALIR)
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.example.athometfgandroidcarloshernandez.data.remote.apiServices
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCasaRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.SalirCasaRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.UnirseCasaRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.GetCasasResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.PantallaEstadosResponseDTO
@@ -10,6 +11,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface CasaService {
@@ -21,6 +23,9 @@ interface CasaService {
 
     @POST(ConstantesPaths.UNIRSE_CASA)
     suspend fun unirseCasa(@Body unirseCasaRequestDTO: UnirseCasaRequestDTO): Response<Void>
+
+    @PUT(ConstantesPaths.SALIR_CASA)
+    suspend fun salirCasa(@Body salirCasaRequestDTO: SalirCasaRequestDTO): Response<Void>
 
     @GET(ConstantesPaths.ESTADOS)
     suspend fun getDatosCasa(@Query(Constantes.IDUSUARIO) idUsuario: String,@Query(Constantes.IDCASA) idCasa: String, @Query(Constantes.TOKEN) token: String): Response<PantallaEstadosResponseDTO>

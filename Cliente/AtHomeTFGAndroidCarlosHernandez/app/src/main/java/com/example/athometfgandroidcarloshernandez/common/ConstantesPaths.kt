@@ -24,6 +24,7 @@ object ConstantesPaths {
     const val REGISTRO= "registro"
     const val AGREGAR_CASA= "casa/agregarCasa"
     const val UNIRSE_CASA= "casa/unirseCasa"
+    const val SALIR_CASA= "casa/salirCasa"
     const val BORRAR_CAJON= "inmuebles/borrarCajon"
     const val CREAR_ESTADO= "casa/crearEstado"
 }

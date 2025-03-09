@@ -419,7 +419,7 @@ fun DialogNuevoElemento(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(Constantes.CANCELAR)
+                        Text(Constantes.SALIR)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(onClick = { onConfirm(itemName, selectedUsuario?.id) }) {

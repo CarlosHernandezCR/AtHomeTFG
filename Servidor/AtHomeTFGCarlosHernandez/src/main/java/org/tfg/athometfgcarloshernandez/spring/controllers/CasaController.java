@@ -5,10 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tfg.athometfgcarloshernandez.domain.servicios.CasaServicios;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
-import org.tfg.athometfgcarloshernandez.spring.model.request.AgregarCasaRequestDTO;
-import org.tfg.athometfgcarloshernandez.spring.model.request.CambiarEstadoRequestDTO;
-import org.tfg.athometfgcarloshernandez.spring.model.request.CrearEstadoRequestDTO;
-import org.tfg.athometfgcarloshernandez.spring.model.request.UnirseCasaRequestDTO;
+import org.tfg.athometfgcarloshernandez.spring.model.request.*;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CambiarEstadoResponseDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.GetCasasResponseDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
@@ -50,6 +47,11 @@ public class CasaController {
     @PostMapping(ConstantesServer.UNIRSE_CASA)
     public ResponseEntity<Void> unirseCasa(@RequestBody UnirseCasaRequestDTO unirseCasaRequestDTO) {
          casaServicios.unirseCasa(unirseCasaRequestDTO.getIdUsuario(), unirseCasaRequestDTO.getCodigoInvitacion());
+         return ResponseEntity.ok().build();
+    }
+    @PutMapping(ConstantesServer.SALIR_CASA)
+    public ResponseEntity<Void> salirCasa(@RequestBody SalirCasaRequestDTO salirCasaRequestDTO) {
+         casaServicios.salirCasa(salirCasaRequestDTO.getIdUsuario(), salirCasaRequestDTO.getIdCasa());
          return ResponseEntity.ok().build();
     }
 

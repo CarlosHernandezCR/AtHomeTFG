@@ -1,6 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.remote.datasource
 
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCasaRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.SalirCasaRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.UnirseCasaRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.GetCasasResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.CasaService
@@ -16,4 +17,6 @@ class CasaRemoteDataSource @Inject constructor(
         safeApiCallNoBody {casaService.agregarCasa(agregarCasaRequestDTO)}
     suspend fun unirseCasa(unirseCasaRequestDTO: UnirseCasaRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody {casaService.unirseCasa(unirseCasaRequestDTO)}
+    suspend fun salirCasa(salirCasaRequestDTO: SalirCasaRequestDTO): NetworkResult<Boolean> =
+        safeApiCallNoBody {casaService.salirCasa(salirCasaRequestDTO)}
 }

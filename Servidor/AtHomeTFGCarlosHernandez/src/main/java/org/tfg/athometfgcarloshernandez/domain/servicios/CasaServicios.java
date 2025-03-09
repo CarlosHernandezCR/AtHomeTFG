@@ -14,6 +14,7 @@ import org.tfg.athometfgcarloshernandez.spring.model.CasaDetallesDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.UsuarioCasaDTO;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,7 @@ public class CasaServicios {
     private final EstadosUsuariosRepository estadosUsuariosRepository;
     private final ViveRepository viveRepository;
     private final EstadosRepository estadosRepository;
+    private final EventosRepository eventosRepository;
     private final CasaMapper casaMapper;
     private final TokensTools tokensTools;
     private final Security security;
@@ -130,6 +132,33 @@ public class CasaServicios {
         UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
         viveRepository.save(new ViveEntity(0, ConstantesServer.ESTADO_PREDETERMINADO2,usuario,casa));
+        aumentarVotos(casa);
+    }
+
+    private void aumentarVotos(CasaEntity casa) {
+        LocalDate today = LocalDate.now();
+        List<EventoEntity> eventos = eventosRepository.findByIdCasaEntityAndFechaAfter(casa, today);
+        for (EventoEntity evento : eventos) {
+            String[] votacionParts = evento.getVotacion().split("/");
+            int votos = Integer.parseInt(votacionParts[0]);
+            int total = Integer.parseInt(votacionParts[1]) + 1;
+            String nuevaVotacion = votos + "/" + total;
+            evento.setVotacion(nuevaVotacion);
+            eventosRepository.save(evento);
+        }
+    }
+
+    private void decrecerVotos(CasaEntity casa) {
+        LocalDate today = LocalDate.now();
+        List<EventoEntity> eventos = eventosRepository.findByIdCasaEntityAndFechaAfter(casa, today);
+        for (EventoEntity evento : eventos) {
+            String[] votacionParts = evento.getVotacion().split("/");
+            int votos = Integer.parseInt(votacionParts[0]);
+            int total = Integer.parseInt(votacionParts[1]) - 1;
+            String nuevaVotacion = votos + "/" + total;
+            evento.setVotacion(nuevaVotacion);
+            eventosRepository.save(evento);
+        }
     }
 
     public void crearEstado(String estado, String color, String idUsuario) {
@@ -137,5 +166,19 @@ public class CasaServicios {
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
         EstadoEntity estadoEntity = estadosRepository.save(new EstadoEntity(estado,color));
         estadosUsuariosRepository.save(new EstadosUsuarioEntity(0,usuario,estadoEntity));
+    }
+
+    public void salirCasa(String idUsuario, String idCasa) {
+        UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
+        CasaEntity casa = casaRepository.findById(Integer.parseInt(idCasa))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_CASA_NO_ENCONTRADA + Integer.parseInt(idCasa)));
+        ViveEntity vive = viveRepository.findByCasaEntityAndUsuarioEntity(casa,usuario)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_VIVE_NO_ENCONTRADO + usuario.getId() + "-" + casa.getId()));
+        viveRepository.delete(vive);
+        if(viveRepository.findByCasaEntity(casa).isEmpty()){
+            casaRepository.delete(casa);
+        }
+        decrecerVotos(casa);
     }
 }

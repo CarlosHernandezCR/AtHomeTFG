@@ -1,6 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.repositories
 
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCasaRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.SalirCasaRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.UnirseCasaRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.GetCasasResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.datasource.CasaRemoteDataSource
@@ -31,4 +32,11 @@ class CasaRepository @Inject constructor(
         val result = remoteDataSource.unirseCasa(UnirseCasaRequestDTO(idUsuario, codigoInvitacion))
         emit(result)
     }.flowOn(Dispatchers.IO)
+
+    fun salirCasa(idUsuario: String, idCasa: String): Flow<NetworkResult<Boolean>> = flow {
+        emit(NetworkResult.Loading())
+        val result = remoteDataSource.salirCasa(SalirCasaRequestDTO(idUsuario, idCasa))
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
 }

@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -33,13 +37,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.common.Constantes
+import com.example.athometfgandroidcarloshernandez.common.Constantes.ACEPTAR
+import com.example.athometfgandroidcarloshernandez.common.Constantes.ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_
+import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.example.athometfgandroidcarloshernandez.data.model.CasaDetallesDTO
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
 
 @Composable
 fun SeleccionarCasaActivity(
     idUsuario: String,
-    onCasaSelected: (idCasa: Int) -> Unit,
+    onCasaSelected: (idCasa: String) -> Unit,
     showSnackbar: (String) -> Unit,
     viewModel: SeleccionarCasaViewModel = hiltViewModel()
 ) {
@@ -83,7 +90,15 @@ fun SeleccionarCasaActivity(
         casas = uiState.casas,
         onCasaSelected = onCasaSelected,
         onAddCasa = { mostrarCrearCasaDialog.value = true },
-        onUnirseCasa = { mostrarUnirseCasaDialog.value = true }
+        onUnirseCasa = { mostrarUnirseCasaDialog.value = true },
+        salirCasa = { idCasa ->
+            viewModel.handleEvent(
+                SeleccionarCasaContract.SeleccionarCasaEvent.SalirCasa(
+                    idUsuario,
+                    idCasa
+                )
+            )
+        }
     )
 }
 
@@ -93,9 +108,10 @@ fun SeleccionarCasaActivity(
 fun SeleccionarCasaScreen(
     isLoading: Boolean,
     casas: List<CasaDetallesDTO>,
-    onCasaSelected: (Int) -> Unit,
+    onCasaSelected: (String) -> Unit,
     onAddCasa: () -> Unit,
-    onUnirseCasa: () -> Unit
+    onUnirseCasa: () -> Unit,
+    salirCasa: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -146,7 +162,8 @@ fun SeleccionarCasaScreen(
                             items(casas) { casa ->
                                 CasaItem(
                                     casa = casa,
-                                    onCasaSelected = onCasaSelected
+                                    onCasaSelected = onCasaSelected,
+                                    salirCasa = salirCasa
                                 )
                             }
                         }
@@ -208,7 +225,7 @@ fun UnirseCasaDialog(
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(Constantes.CANCELAR)
+                Text(SALIR)
             }
         }
     )
@@ -245,50 +262,95 @@ fun CrearCasaDialog(
                 )
             }
         },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text(SALIR)
+            }
+        },
         confirmButton = {
             Button(onClick = { onCrearCasa(nombre, direccion, codigoPostal) }) {
                 Text(Constantes.CREAR_CASA)
             }
         },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text(Constantes.CANCELAR)
-            }
-        }
     )
 }
 
-
 @Composable
-fun CasaItem(casa: CasaDetallesDTO, onCasaSelected: (Int) -> Unit) {
+fun CasaItem(casa: CasaDetallesDTO, onCasaSelected: (String) -> Unit, salirCasa: (String) -> Unit) {
+    var mostrarDialogo by remember { mutableStateOf(false) }
+
+    if (mostrarDialogo) {
+        SalirCasaDialog(
+            onDismiss = { mostrarDialogo = false },
+            onConfirm = {
+                salirCasa(casa.id)
+                mostrarDialogo = false
+            }
+        )
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { onCasaSelected(casa.id) }
             .border(2.dp, Color.Gray, RoundedCornerShape(8.dp))
             .background(Color.LightGray, RoundedCornerShape(8.dp)),
         shape = MaterialTheme.shapes.medium
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = casa.nombre, style = MaterialTheme.typography.titleMedium)
-            Text(text = casa.direccion, style = MaterialTheme.typography.bodyMedium)
-            Text(text = casa.codigo, style = MaterialTheme.typography.bodyMedium)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f).clickable { onCasaSelected(casa.id) }) {
+                Text(text = casa.nombre, style = MaterialTheme.typography.titleMedium)
+                Text(text = casa.direccion, style = MaterialTheme.typography.bodyMedium)
+                Text(text = casa.codigo, style = MaterialTheme.typography.bodyMedium)
+            }
+            IconButton(onClick = { mostrarDialogo = true }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = Constantes.SALIR_DE_CASA,
+                    tint = Color.Red
+                )
+            }
         }
     }
 }
-
+@Composable
+fun SalirCasaDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_) },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(ACEPTAR)
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text(SALIR)
+            }
+        }
+    )
+}
 @Preview(showBackground = true)
 @Composable
 fun CasaPreview() {
     SeleccionarCasaScreen(
         isLoading = false,
         casas = listOf(
-            CasaDetallesDTO(1, "Casa 1", "Dirección 1", "Código 1"),
-            CasaDetallesDTO(2, "Casa 2", "Dirección 2", "Código 2")
+            CasaDetallesDTO("1", "Casa 1", "Dirección 1", "Código 1"),
+            CasaDetallesDTO("2", "Casa 2", "Dirección 2", "Código 2")
         ),
         onCasaSelected = {},
         onAddCasa = {},
-        onUnirseCasa = {}
+        onUnirseCasa = {},
+        salirCasa = {}
     )
 }
