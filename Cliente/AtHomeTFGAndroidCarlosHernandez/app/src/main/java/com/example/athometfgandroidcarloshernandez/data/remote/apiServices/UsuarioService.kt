@@ -3,6 +3,7 @@ package com.example.athometfgandroidcarloshernandez.data.remote.apiServices
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.CrearEstadoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
@@ -30,4 +31,7 @@ interface UsuarioService {
 
     @POST(ConstantesPaths.REGISTRO)
     suspend fun registro(@Body registroRequestDTO: RegistroRequestDTO) : Response<Void>
+
+    @POST(ConstantesPaths.CREAR_ESTADO)
+    suspend fun crearEstado(@Body crearEstadoRequestDTO: CrearEstadoRequestDTO) : Response<Void>
 }

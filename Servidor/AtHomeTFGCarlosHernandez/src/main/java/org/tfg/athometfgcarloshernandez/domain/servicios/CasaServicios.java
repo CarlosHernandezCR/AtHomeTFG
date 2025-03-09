@@ -2,10 +2,7 @@ package org.tfg.athometfgcarloshernandez.domain.servicios;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.tfg.athometfgcarloshernandez.data.model.CasaEntity;
-import org.tfg.athometfgcarloshernandez.data.model.EstadoEntity;
-import org.tfg.athometfgcarloshernandez.data.model.UsuarioEntity;
-import org.tfg.athometfgcarloshernandez.data.model.ViveEntity;
+import org.tfg.athometfgcarloshernandez.data.model.*;
 import org.tfg.athometfgcarloshernandez.data.repositories.*;
 import org.tfg.athometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.athometfgcarloshernandez.domain.model.mappers.CasaMapper;
@@ -133,5 +130,12 @@ public class CasaServicios {
         UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
         viveRepository.save(new ViveEntity(0, ConstantesServer.ESTADO_PREDETERMINADO2,usuario,casa));
+    }
+
+    public void crearEstado(String estado, String color, String idUsuario) {
+        UsuarioEntity usuario = usuarioRepository.findById(Integer.parseInt(idUsuario))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.ERROR_USUARIO_NO_ENCONTRADO + Integer.parseInt(idUsuario)));
+        EstadoEntity estadoEntity = estadosRepository.save(new EstadoEntity(estado,color));
+        estadosUsuariosRepository.save(new EstadosUsuarioEntity(0,usuario,estadoEntity));
     }
 }

@@ -1,6 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -53,8 +58,7 @@ import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.HabitacionDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.estados.ComboBox
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.Usuario
+import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.UsuarioInmuebles
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.Selector
 import kotlin.math.roundToInt
 
@@ -134,7 +138,7 @@ fun InmueblesPantalla(
     muebleActual: String,
     muebles: List<MuebleDTO>,
     cajones: List<CajonDTO>,
-    usuarios: List<Usuario> = emptyList(),
+    usuarios: List<UsuarioInmuebles> = emptyList(),
     cambioHabitacion: (String) -> Unit = {},
     cambioMueble: (String) -> Unit = {},
     borrarCajon: (String, String) -> Unit = { _, _ -> },
@@ -343,6 +347,7 @@ fun BotoneraMuebles(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
     }
 }
 
@@ -373,12 +378,12 @@ fun CajonItem(cajon: String, propietario: String) {
 @Composable
 fun DialogNuevoElemento(
     title: String,
-    usuarios: List<Usuario> = emptyList(),
+    usuarios: List<UsuarioInmuebles> = emptyList(),
     onConfirm: (String, String?) -> Unit,
     onDismiss: () -> Unit
 ) {
     var itemName by remember { mutableStateOf("") }
-    var selectedUsuario by remember { mutableStateOf<Usuario?>(null) }
+    var selectedUsuario by remember { mutableStateOf<UsuarioInmuebles?>(null) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -399,11 +404,10 @@ fun DialogNuevoElemento(
                 )
                 if (usuarios.isNotEmpty() && title != Constantes.AGREGAR_HABITACION && title != Constantes.AGREGAR_MUEBLE) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    ComboBox(
-                        items = usuarios.map { it.nombre },
+                    ComboBoxPropietarios(
+                        items = usuarios,
                         selectedItem = selectedUsuario?.nombre ?: "",
                         titulo = Constantes.PROPIETARIO,
-                        color = Constantes.BLANCO,
                         onItemSelected = { name ->
                             selectedUsuario = usuarios.find { it.nombre == name }
                         }
@@ -425,6 +429,68 @@ fun DialogNuevoElemento(
             }
         }
     }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ComboBoxPropietarios(
+    items: List<UsuarioInmuebles>,
+    selectedItem: String,
+    titulo: String,
+    onItemSelected: (String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var colorSelected by remember { mutableStateOf("#000000") }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.DarkGray)
+            .border(width = 2.dp, color = Color(android.graphics.Color.parseColor(colorSelected)))
+    ) {
+        TextField(
+            value = selectedItem,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(titulo) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item.nombre) },
+                    onClick = {
+                        expanded = false
+                        onItemSelected(item.nombre)
+                        colorSelected = item.color
+                    },
+                    modifier = Modifier.border(width = 2.dp, color = Color(android.graphics.Color.parseColor(item.color)))
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewDialogNuevoElemento() {
+    val usuarios = listOf(
+        UsuarioInmuebles(id = "1", nombre = "Carlos", color = Constantes.VERDE),
+        UsuarioInmuebles(id = "2", nombre = "Ana" , color = Constantes.AMARILLO),
+        UsuarioInmuebles(id = "3", nombre = "Luis", color = Constantes.ROJO)
+    )
+    DialogNuevoElemento(title = Constantes.AGREGAR_CAJON,usuarios, onConfirm = { _, _ -> }, onDismiss = {})
 }
 
 @Preview(showBackground = true)

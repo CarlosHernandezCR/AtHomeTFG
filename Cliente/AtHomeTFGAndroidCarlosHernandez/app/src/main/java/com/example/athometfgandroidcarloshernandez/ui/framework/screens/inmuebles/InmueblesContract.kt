@@ -12,14 +12,14 @@ interface InmueblesContract {
         val habitaciones: List<HabitacionDTO> = emptyList(),
         val muebles: List<MuebleDTO> = emptyList(),
         val cajones: List<CajonDTO> = emptyList(),
-        val usuarios: List<Usuario> = emptyList(),
+        val usuarios: List<UsuarioInmuebles> = emptyList(),
         var idHabitacionActual: String = Constantes.NADA,
         var muebleActual: String = Constantes.NADA,
         var mensaje: String? = null,
         var isLoading: Boolean = false,
     )
 
-    data class Usuario(val id: String, val nombre: String)
+    data class UsuarioInmuebles(val id: String, val nombre: String, val color: String)
 
     sealed class InmueblesEvent {
         data class CargarDatos(val idCasa: String) : InmueblesEvent()

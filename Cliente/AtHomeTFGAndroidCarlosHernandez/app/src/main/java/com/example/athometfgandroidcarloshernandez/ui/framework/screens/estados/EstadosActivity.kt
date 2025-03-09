@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +32,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -44,16 +46,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.R
 import com.example.athometfgandroidcarloshernandez.common.Constantes
+import com.example.athometfgandroidcarloshernandez.common.Constantes.CANCELAR
+import com.example.athometfgandroidcarloshernandez.common.Constantes.ESTADO
+import com.example.athometfgandroidcarloshernandez.common.Constantes.NUEVO_ESTADO
 import com.example.athometfgandroidcarloshernandez.data.model.UsuarioCasaDTO
+import com.example.athometfgandroidcarloshernandez.ui.framework.screens.registro.ColorPickerDialog
 
 @Composable
 fun EstadosActivity(
@@ -115,7 +123,12 @@ fun EstadosActivity(
                 codigoCopiado = {
                     viewModel.handleEvent(EstadosContract.EstadosEvent.CodigoCopiado)
                 },
-                volverSeleccionarCasa = volverSeleccionarCasa
+                volverSeleccionarCasa = volverSeleccionarCasa,
+                nuevoEstado = { nuevoEstado, color ->
+                    viewModel.handleEvent(
+                        EstadosContract.EstadosEvent.NuevoEstado(nuevoEstado, color, idUsuario)
+                    )
+                }
             )
         }
     }
@@ -133,7 +146,8 @@ fun PantallaEstados(
     estadosDisponibles: List<String>,
     cambioEstado: (String) -> Unit,
     codigoCopiado: (Unit) -> Unit,
-    volverSeleccionarCasa: () -> Unit
+    volverSeleccionarCasa: () -> Unit,
+    nuevoEstado: (String, String) -> Unit
 ) {
     var estadoSeleccionado by remember { mutableStateOf(estadoActual) }
 
@@ -170,7 +184,7 @@ fun PantallaEstados(
         if (cargandoEstado) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
-            ComboBox(
+            ComboBoxEstados(
                 items = estadosDisponibles,
                 selectedItem = estadoSeleccionado,
                 titulo = Constantes.ESTADO,
@@ -180,6 +194,9 @@ fun PantallaEstados(
                         estadoSeleccionado = nuevoEstado
                         cambioEstado(nuevoEstado)
                     }
+                },
+                nuevoEstado = { nuevoEstado, color ->
+                    nuevoEstado(nuevoEstado, color)
                 }
             )
         }
@@ -255,14 +272,18 @@ fun UsuariosList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ComboBox(
+fun ComboBoxEstados(
     items: List<String>,
     selectedItem: String,
     titulo: String,
     color: String,
     onItemSelected: (String) -> Unit,
+    nuevoEstado: (String, String) -> Unit
 ) {
+    val itemsWithNuevoEstado = items + NUEVO_ESTADO
     var expanded by remember { mutableStateOf(false) }
+    var showNuevoEstadoDialog by remember { mutableStateOf(false) }
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
@@ -294,19 +315,29 @@ fun ComboBox(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            items.forEach { item ->
+            itemsWithNuevoEstado.forEach { item ->
                 DropdownMenuItem(
                     text = { Text(item) },
                     onClick = {
                         expanded = false
-                        onItemSelected(item)
+                        if (item == NUEVO_ESTADO) {
+                            showNuevoEstadoDialog = true
+                        } else {
+                            onItemSelected(item)
+                        }
                     }
                 )
             }
         }
     }
-}
 
+    if (showNuevoEstadoDialog) {
+        NuevoEstadoDialog(
+            onDismiss = { showNuevoEstadoDialog = false },
+            nuevoEstado = nuevoEstado
+        )
+    }
+}
 
 @Composable
 fun UsuarioItem(nombre: String, estado: String, colorEstado: String, colorUsuario: String) {
@@ -348,6 +379,77 @@ fun UsuarioItem(nombre: String, estado: String, colorEstado: String, colorUsuari
     }
 }
 
+
+@Composable
+fun NuevoEstadoDialog(
+    onDismiss: () -> Unit,
+    nuevoEstado: (String, String) -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            var estado by remember { mutableStateOf("") }
+            var showColorPicker by remember { mutableStateOf(false) }
+            var selectedColor by remember { mutableStateOf(Color.White) }
+            val onColorChange: (String) -> Unit = { color ->
+                selectedColor = Color(android.graphics.Color.parseColor(color))
+            }
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = NUEVO_ESTADO, style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    value = estado,
+                    onValueChange = { estado = it },
+                    label = { Text(ESTADO) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { showColorPicker = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = selectedColor)
+                ) {
+                    Text(Constantes.SELECCIONAR_COLOR)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(onClick = {
+                        nuevoEstado(estado, "#${Integer.toHexString(selectedColor.toArgb())}")
+                        onDismiss()
+                    }) {
+                        Text(Constantes.CREAR_ESTADO)
+                    }
+                    Button(onClick = onDismiss) {
+                        Text(CANCELAR)
+                    }
+                }
+                if (showColorPicker) {
+                    ColorPickerDialog(
+                        onDismiss = { showColorPicker = false },
+                        onColorSelected = { color ->
+                            selectedColor = color
+                            onColorChange("#${Integer.toHexString(color.toArgb())}")
+                            showColorPicker = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewNuevoEstadoDialog() {
+    NuevoEstadoDialog(onDismiss = {}, nuevoEstado = { _, _ -> })
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewEstadosActivity() {
@@ -384,6 +486,7 @@ fun PreviewEstadosActivity() {
         codigoCopiado = {},
         cargandoEstado = false,
         color = "#FF0000",
-        volverSeleccionarCasa = {}
+        volverSeleccionarCasa = {},
+        nuevoEstado = { _, _ -> }
     )
 }

@@ -7,6 +7,7 @@ import org.tfg.athometfgcarloshernandez.domain.servicios.CasaServicios;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.model.request.AgregarCasaRequestDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.request.CambiarEstadoRequestDTO;
+import org.tfg.athometfgcarloshernandez.spring.model.request.CrearEstadoRequestDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.request.UnirseCasaRequestDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CambiarEstadoResponseDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.GetCasasResponseDTO;
@@ -51,4 +52,11 @@ public class CasaController {
          casaServicios.unirseCasa(unirseCasaRequestDTO.getIdUsuario(), unirseCasaRequestDTO.getCodigoInvitacion());
          return ResponseEntity.ok().build();
     }
+
+    @PostMapping(ConstantesServer.CREAR_ESTADO)
+    public ResponseEntity<Void> crearEstado(@RequestBody CrearEstadoRequestDTO crearEstadoRequestDTO) {
+        casaServicios.crearEstado(crearEstadoRequestDTO.getEstado(),crearEstadoRequestDTO.getColor(),crearEstadoRequestDTO.getIdUsuario());
+        return ResponseEntity.ok().build();
+    }
+
 }

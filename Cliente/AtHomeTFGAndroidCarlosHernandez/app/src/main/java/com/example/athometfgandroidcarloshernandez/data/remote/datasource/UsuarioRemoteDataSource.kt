@@ -1,11 +1,9 @@
 package com.example.athometfgandroidcarloshernandez.data.remote.datasource
 
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError
-import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
-import com.example.athometfgandroidcarloshernandez.data.model.response.CambiarEstadoResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.UsuarioService
@@ -39,8 +37,6 @@ class UsuarioRemoteDataSource @Inject constructor(
             return NetworkResult.Error(ConstantesError.BASE_DE_DATOS_ERROR)
         }
     }
-    suspend fun cambiarEstado(cambiarEstadoRequestDTO : CambiarEstadoRequestDTO): NetworkResult<CambiarEstadoResponseDTO> =
-        safeApiCall{ usuarioService.cambiarEstado(cambiarEstadoRequestDTO) }
 
     suspend fun getUsuarios(idCasa: String): NetworkResult<GetUsuariosResponseDTO> =
         safeApiCall { usuarioService.getUsuarios(idCasa) }

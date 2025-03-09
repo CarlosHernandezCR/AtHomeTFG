@@ -17,6 +17,7 @@ interface EstadosContract {
     )
 
     sealed class EstadosEvent {
+        data class NuevoEstado(val estado: String,val color:String, val idUsuario: String) : EstadosEvent()
         data class CargarCasa(val idUsuario: String,val idCasa:String) : EstadosEvent()
         data object ErrorMostrado: EstadosEvent()
         data object CodigoCopiado: EstadosEvent()

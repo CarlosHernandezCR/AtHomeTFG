@@ -8,6 +8,7 @@ import com.example.athometfgandroidcarloshernandez.data.model.response.PantallaE
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.athometfgandroidcarloshernandez.domain.usecases.estados.CambiarEstadoUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.estados.GetDatosCasaUseCase
+import com.example.athometfgandroidcarloshernandez.domain.usecases.estados.NuevoEstadoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class EstadosViewModel @Inject constructor(
     private val getDatosCasaUseCase: GetDatosCasaUseCase,
     private val cambiarEstadoUseCase: CambiarEstadoUseCase,
+    private val crearEstadoUseCase: NuevoEstadoUseCase,
 ) : ViewModel() {
 
 
@@ -32,11 +34,43 @@ class EstadosViewModel @Inject constructor(
 
     fun handleEvent(event: EstadosContract.EstadosEvent) {
         when (event) {
+            is EstadosContract.EstadosEvent.NuevoEstado -> nuevoEstado(event.estado,event.color,event.idUsuario)
             is EstadosContract.EstadosEvent.CargarCasa -> cargarCasa(event.idUsuario,event.idCasa)
             is EstadosContract.EstadosEvent.ErrorMostrado -> _uiState.value = _uiState.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.ErrorMostradoEstado -> _uiStateEstado.value = _uiStateEstado.value.copy(mensaje = null)
             is EstadosContract.EstadosEvent.CambiarEstado -> cambiarEstado(event.estado, event.idCasa, event.idUsuario)
             EstadosContract.EstadosEvent.CodigoCopiado -> _uiState.value = _uiState.value.copy(mensaje = Constantes.CODIGO_COPIADO)
+        }
+    }
+
+    private fun nuevoEstado(estado: String,color:String, idUsuario: String) {
+        viewModelScope.launch {
+            crearEstadoUseCase.invoke(estado,color,idUsuario).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiStateEstado.update {
+                            it.copy(
+                                isLoading = false,
+                                colorCambiarEstado = uiState.value.pantallaEstados.colorEstado
+                            )
+                        }
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                isLoading = false,
+                                pantallaEstados = currentState.pantallaEstados.copy(
+                                    estadosDisponibles = currentState.pantallaEstados.estadosDisponibles + estado
+                                )
+                            )
+                        }
+                    }
+                    is NetworkResult.Error -> {
+                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(mensaje = result.message)
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiStateEstado.value = EstadosContract.CambiarEstadoState(isLoading = true)
+                    }
+                }
+            }
         }
     }
 

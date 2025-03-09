@@ -1,10 +1,8 @@
 package com.example.athometfgandroidcarloshernandez.data.repositories
 
-import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarEstadoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.LoginRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.RegistroRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.AccessTokenResponseDTO
-import com.example.athometfgandroidcarloshernandez.data.model.response.CambiarEstadoResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.GetUsuariosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.LoginResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.datasource.UsuarioRemoteDataSource
@@ -21,12 +19,6 @@ class UsuarioRepository @Inject constructor(
     fun login(identificador: String, password: String): Flow<NetworkResult<LoginResponseDTO>> = flow {
         emit(NetworkResult.Loading())
         val result = remoteDataSource.login(LoginRequestDTO(identificador,password))
-        emit(result)
-    }.flowOn(Dispatchers.IO)
-
-    fun cambiarEstado(estado: String, idCasa:String, idUsuario: String): Flow<NetworkResult<CambiarEstadoResponseDTO>> = flow {
-        emit(NetworkResult.Loading())
-        val result = remoteDataSource.cambiarEstado(CambiarEstadoRequestDTO(estado, idCasa, idUsuario))
         emit(result)
     }.flowOn(Dispatchers.IO)
 

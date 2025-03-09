@@ -52,6 +52,7 @@ public class ConstantesServer {
     public static final String CSS = "/css/**";
     public static final String ASTERISCO = "*";
     public static final String ASUNTO_ACTIVACION = "Activación de cuenta";
+    public static final String CREAR_ESTADO = "/crearEstado";
 
 
     private ConstantesServer() {

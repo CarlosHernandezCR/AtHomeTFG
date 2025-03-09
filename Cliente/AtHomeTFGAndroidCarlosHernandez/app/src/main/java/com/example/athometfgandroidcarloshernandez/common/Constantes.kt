@@ -3,6 +3,12 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
+    const val ACEPTAR = "Aceptar"
+    const val CREAR_ESTADO="Crear Estado"
+    const val NUEVO_ESTADO = "Nuevo estado"
+    const val AMARILLO: String = "#FFFF00"
+    const val VERDE: String = "#00FF00"
+    const val ROJO: String = "#FF0000"
     const val BASE_URL: String = BuildConfig.BASE_URL
     const val VOTAR: String = "VOTAR"
     const val BORRAR: String= "Borrar"

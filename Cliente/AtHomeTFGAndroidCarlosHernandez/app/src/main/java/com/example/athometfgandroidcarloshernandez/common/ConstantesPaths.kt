@@ -25,4 +25,5 @@ object ConstantesPaths {
     const val AGREGAR_CASA= "casa/agregarCasa"
     const val UNIRSE_CASA= "casa/unirseCasa"
     const val BORRAR_CAJON= "inmuebles/borrarCajon"
+    const val CREAR_ESTADO= "casa/crearEstado"
 }
