@@ -4,14 +4,13 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("kapt")
     alias(libs.plugins.daggerHilt)
-
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.athometfgandroidcarloshernandez"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.athometfgandroidcarloshernandez"
@@ -87,7 +86,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
     // Retrofit
     implementation(libs.bundles.retrofit)
@@ -98,8 +97,8 @@ dependencies {
     // JWT
     implementation(libs.jwt)
     // Iconos
-    implementation (libs.androidx.material.icons.extended)
-    implementation (libs.material3)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.material3)
     // Fuentes
     implementation(libs.androidx.ui.text.google.fonts)
     // ColorPicker

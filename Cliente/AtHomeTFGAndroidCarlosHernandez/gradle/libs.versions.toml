@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.1"
+agp = "8.9.0"
 animation = "1.6.7"
 colorpickerCompose = "1.0.7"
 kotlin = "1.9.0"
@@ -15,6 +15,7 @@ materialIconsExtended = "1.7.5"
 retrofit = "2.9.0"
 interceptorVersion= "4.12.0"
 timber = "5.0.1"
+ksp = "1.9.0-1.0.13"
 hilt = "2.51"
 androidxHiltNavigationCompose = "1.2.0"
 datastoreVersion = "1.1.1"
@@ -60,6 +61,7 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 retrofit = ["retrofit", "converterGson", "loggingInterceptor", "converterMoshi", "converterScalars"]
 
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

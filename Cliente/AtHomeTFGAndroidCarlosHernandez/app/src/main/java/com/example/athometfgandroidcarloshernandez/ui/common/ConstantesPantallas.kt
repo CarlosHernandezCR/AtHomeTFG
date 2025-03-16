@@ -1,13 +1,14 @@
 package com.example.athometfgandroidcarloshernandez.ui.common
 
 object ConstantesPantallas{
+    const val CESTA: String = "cesta"
     const val REGISTRO: String = "registro"
     const val INMUEBLES: String = "inmuebles"
     const val CALENDARIO: String = "calendario"
     const val idUsuario: String = "idUsuario"
     const val idCasa: String = "idCasa"
     const val CASA: String = "casa"
-    const val LOGIN: String = "iniciar sesion"
+    const val LOGIN: String = "Login"
     const val SELECCIONAR_CASA = "seleccionar_casa"
     val nombresMeses = listOf(
          "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
