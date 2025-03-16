@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.R
 import com.example.athometfgandroidcarloshernandez.common.Constantes
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
+import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 
 @Composable
 fun LoginActivity(

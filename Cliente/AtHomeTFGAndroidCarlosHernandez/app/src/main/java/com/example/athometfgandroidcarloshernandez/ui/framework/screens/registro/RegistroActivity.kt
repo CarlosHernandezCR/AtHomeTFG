@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -34,11 +32,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.R
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.ACEPTAR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
+import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 
@@ -106,7 +106,7 @@ fun RegistroScreen(
     var showColorPicker by remember { mutableStateOf(false) }
     val defaultColor = Color.White
     var selectedColor by remember { mutableStateOf(
-        if (color.isNotEmpty()) Color(android.graphics.Color.parseColor(color)) else defaultColor
+        if (color.isNotEmpty()) Color(color.toColorInt()) else defaultColor
     )}
 
     Box(
@@ -177,13 +177,7 @@ fun RegistroScreen(
             }
         }
         if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
-            ) {
-                CircularProgressIndicator()
-            }
+            Cargando()
         }
         if (showColorPicker) {
             ColorPickerDialog(

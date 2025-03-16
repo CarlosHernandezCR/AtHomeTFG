@@ -40,8 +40,8 @@ import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_
 import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.example.athometfgandroidcarloshernandez.data.model.CasaDetallesDTO
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.ConfirmationDialog
+import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
+import com.example.athometfgandroidcarloshernandez.ui.common.ConfirmationDialog
 
 @Composable
 fun SeleccionarCasaActivity(

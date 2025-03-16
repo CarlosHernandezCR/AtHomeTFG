@@ -1,4 +1,4 @@
-package com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils
+package com.example.athometfgandroidcarloshernandez.ui.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

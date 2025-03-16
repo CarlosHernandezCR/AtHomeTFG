@@ -54,12 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.R
 import com.example.athometfgandroidcarloshernandez.common.Constantes
-import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.ESTADO
 import com.example.athometfgandroidcarloshernandez.common.Constantes.NUEVO_ESTADO
+import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.example.athometfgandroidcarloshernandez.data.model.UsuarioCasaDTO
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.registro.ColorPickerDialog
 
@@ -290,11 +291,7 @@ fun ComboBoxEstados(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (color.isEmpty()) Color.Transparent else Color(
-                    android.graphics.Color.parseColor(
-                        color
-                    )
-                )
+                if (color.isEmpty()) Color.Transparent else Color(color.toColorInt())
             )
     ) {
         TextField(
@@ -347,15 +344,13 @@ fun UsuarioItem(nombre: String, estado: String, colorEstado: String, colorUsuari
             .padding(vertical = 8.dp)
             .border(
                 8.dp,
-                Color(android.graphics.Color.parseColor(colorUsuario)),
+                Color(colorUsuario.toColorInt()),
                 RoundedCornerShape(8.dp)
             ),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(
-                android.graphics.Color.parseColor(
-                    colorEstado
-                )
+                colorEstado.toColorInt()
             )
         )
     ) {
@@ -394,7 +389,7 @@ fun NuevoEstadoDialog(
             var showColorPicker by remember { mutableStateOf(false) }
             var selectedColor by remember { mutableStateOf(Color.White) }
             val onColorChange: (String) -> Unit = { color ->
-                selectedColor = Color(android.graphics.Color.parseColor(color))
+                selectedColor = Color(color.toColorInt())
             }
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = NUEVO_ESTADO, style = MaterialTheme.typography.titleLarge)

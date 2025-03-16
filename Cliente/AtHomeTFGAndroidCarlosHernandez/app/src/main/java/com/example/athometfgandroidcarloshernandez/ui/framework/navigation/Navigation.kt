@@ -17,6 +17,7 @@ import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendar
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.estados.EstadosActivity
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesActivity
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.login.LoginActivity
+import com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos.ProductosActivity
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.registro.RegistroActivity
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.seleccionarcasa.SeleccionarCasaActivity
 import kotlinx.coroutines.launch
@@ -79,7 +80,7 @@ fun Navigation(
                 SeleccionarCasaActivity(
                     idUsuario = idUsuario,
                     onCasaSelected = { idCasa ->
-                        navController.navigate("casa/$idUsuario/$idCasa")
+                        navController.navigate("${ConstantesPantallas.CASA}/$idUsuario/$idCasa")
                     },
                     showSnackbar = showSnackbar
                 )
@@ -115,8 +116,33 @@ fun Navigation(
                 InmueblesActivity(
                     idUsuario = idUsuario,
                     idCasa = idCasa,
+                    onCajonSeleccionado = { idCajon, idPropietario, idUsuario ->
+                        navController.navigate("${ConstantesPantallas.PRODUCTOS}/$idCajon/$idPropietario/$idUsuario")
+                    },
                     showSnackbar = showSnackbar
                 )
+            }
+            composable("${ConstantesPantallas.PRODUCTOS}/{idCajon}/{idPropietario}/{idUsuario}") { backStackEntry ->
+                val idCajon = backStackEntry.arguments?.getString("idCajon") ?: "0"
+                val idPropietario = backStackEntry.arguments?.getString("idPropietario") ?: "0"
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+                ProductosActivity(
+                    idCajon = idCajon,
+                    idPropietario = idPropietario,
+                    idUsuario = idUsuario,
+                    verCesta = {
+                        navController.navigate("${ConstantesPantallas.CESTA}/$idUsuario")
+                    },
+                    showSnackbar = showSnackbar,
+                    innerPadding = paddingValues
+                )
+            }
+            composable("${ConstantesPantallas.CESTA}/{idUsuario}") { backStackEntry ->
+                val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
+//                CestaActivity(
+//                    idUsuario = idUsuario,
+//                    showSnackbar = showSnackbar
+//                )
             }
         }
     }

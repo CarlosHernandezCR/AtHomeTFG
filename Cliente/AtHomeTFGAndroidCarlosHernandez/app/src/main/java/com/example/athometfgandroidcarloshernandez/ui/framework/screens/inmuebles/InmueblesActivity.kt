@@ -2,6 +2,7 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebl
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.material.FractionalThreshold
@@ -58,16 +60,17 @@ import com.example.athometfgandroidcarloshernandez.common.Constantes.CONFIRMAR_B
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.HabitacionDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
+import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
+import com.example.athometfgandroidcarloshernandez.ui.common.ConfirmationDialog
+import com.example.athometfgandroidcarloshernandez.ui.common.Selector
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.UsuarioInmuebles
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.ConfirmationDialog
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.Selector
 import kotlin.math.roundToInt
 
 @Composable
 fun InmueblesActivity(
     idUsuario: String,
     idCasa: String,
+    onCajonSeleccionado: (String, String, idUsuario: String) -> Unit,
     showSnackbar: (String) -> Unit = {},
     viewModel: InmueblesViewModel = hiltViewModel(),
 ) {
@@ -129,6 +132,7 @@ fun InmueblesActivity(
                     )
                 )
             },
+            onCajonSeleccionado = onCajonSeleccionado
         )
     }
 }
@@ -147,6 +151,7 @@ fun InmueblesPantalla(
     agregarCajon: (String, String) -> Unit,
     agregarMueble: (String) -> Unit = {},
     agregarHabitacion: (String) -> Unit = {},
+    onCajonSeleccionado: (String, String, String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
@@ -194,7 +199,8 @@ fun InmueblesPantalla(
                 items(cajones) { item ->
                     SwipeToDeleteItem(
                         cajon = item,
-                        borrarCajon = borrarCajon
+                        borrarCajon = borrarCajon,
+                        onCajonSeleccionado = onCajonSeleccionado
                     )
                 }
             }
@@ -232,11 +238,13 @@ fun InmueblesPantalla(
         }
     }
 }
+
 @OptIn(ExperimentalWearMaterialApi::class)
 @Composable
 fun SwipeToDeleteItem(
     cajon: CajonDTO,
-    borrarCajon: (String, String) -> Unit
+    borrarCajon: (String, String) -> Unit,
+    onCajonSeleccionado: (String, String, String) -> Unit
 ) {
     val swipeableState = rememberSwipeableState(initialValue = 0)
     val swipeThreshold = 300f
@@ -265,7 +273,11 @@ fun SwipeToDeleteItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CajonItem(cajon = cajon.nombre, propietario = cajon.propietario)
+                CajonItem(
+                    cajon = cajon,
+                    propietario = cajon.propietario,
+                    onCajonSeleccionado = onCajonSeleccionado
+                )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -292,6 +304,7 @@ fun SwipeToDeleteItem(
         )
     }
 }
+
 @Composable
 fun BotoneraMuebles(
     modifier: Modifier = Modifier,
@@ -365,11 +378,15 @@ fun BotoneraMuebles(
 }
 
 @Composable
-fun CajonItem(cajon: String, propietario: String) {
+fun CajonItem(
+    cajon: CajonDTO,
+    propietario: String,
+    onCajonSeleccionado: (String, String, String) -> Unit
+) {
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
-            //.clickable(onClick = onClick),
+            .fillMaxWidth()
+            .clickable { onCajonSeleccionado(cajon.id, cajon.idPropietario,"") },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -378,7 +395,7 @@ fun CajonItem(cajon: String, propietario: String) {
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Text(text = cajon, style = MaterialTheme.typography.titleMedium)
+            Text(text = cajon.nombre, style = MaterialTheme.typography.titleMedium)
             Text(
                 text = propietario,
                 style = MaterialTheme.typography.titleSmall,
@@ -443,6 +460,7 @@ fun DialogNuevoElemento(
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComboBoxPropietarios(
@@ -460,7 +478,7 @@ fun ComboBoxPropietarios(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.DarkGray)
-            .border(width = 2.dp, color = Color(android.graphics.Color.parseColor(colorSelected)))
+            .border(width = 2.dp, color = Color(colorSelected.toColorInt()))
     ) {
         TextField(
             value = selectedItem,
@@ -488,7 +506,10 @@ fun ComboBoxPropietarios(
                         onItemSelected(item.nombre)
                         colorSelected = item.color
                     },
-                    modifier = Modifier.border(width = 2.dp, color = Color(android.graphics.Color.parseColor(item.color)))
+                    modifier = Modifier.border(
+                        width = 2.dp,
+                        color = Color(android.graphics.Color.parseColor(item.color))
+                    )
                 )
             }
         }
@@ -500,10 +521,14 @@ fun ComboBoxPropietarios(
 fun PreviewDialogNuevoElemento() {
     val usuarios = listOf(
         UsuarioInmuebles(id = "1", nombre = "Carlos", color = Constantes.VERDE),
-        UsuarioInmuebles(id = "2", nombre = "Ana" , color = Constantes.AMARILLO),
+        UsuarioInmuebles(id = "2", nombre = "Ana", color = Constantes.AMARILLO),
         UsuarioInmuebles(id = "3", nombre = "Luis", color = Constantes.ROJO)
     )
-    DialogNuevoElemento(title = Constantes.AGREGAR_CAJON,usuarios, onConfirm = { _, _ -> }, onDismiss = {})
+    DialogNuevoElemento(
+        title = Constantes.AGREGAR_CAJON,
+        usuarios,
+        onConfirm = { _, _ -> },
+        onDismiss = {})
 }
 
 @Preview(showBackground = true)
@@ -532,5 +557,7 @@ fun PreviewInmueblesActivity() {
         cambioMueble = {},
         agregarCajon = { _, _ -> },
         agregarMueble = {},
+        agregarHabitacion = {},
+        onCajonSeleccionado = { _, _, _ -> }
     )
 }

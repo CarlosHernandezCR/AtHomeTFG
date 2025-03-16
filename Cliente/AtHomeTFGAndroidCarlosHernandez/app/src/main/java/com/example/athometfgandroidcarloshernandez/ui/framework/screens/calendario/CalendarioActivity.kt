@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -45,12 +43,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.FORMATO_HORA
+import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.common.ConstantesPantallas.ANIO_ANTERIOR
 import com.example.athometfgandroidcarloshernandez.ui.common.ConstantesPantallas.ANIO_SIGUIENTE
 import com.example.athometfgandroidcarloshernandez.ui.common.ConstantesPantallas.nombresDias
 import com.example.athometfgandroidcarloshernandez.ui.common.ConstantesPantallas.nombresMeses
+import com.example.athometfgandroidcarloshernandez.ui.common.Selector
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.CalendarioContract.DiaCalendario
-import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.Selector
 import java.util.Calendar
 import java.util.Locale
 
@@ -208,16 +207,6 @@ fun CalendarioPantalla(
     }
 }
 
-@Composable
-fun Cargando() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    ) {
-        CircularProgressIndicator()
-    }
-}
 @Composable
 fun CampoEvento(
     diaSeleccionado: String,
