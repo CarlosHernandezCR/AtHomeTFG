@@ -37,11 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.common.Constantes
-import com.example.athometfgandroidcarloshernandez.common.Constantes.ACEPTAR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_
 import com.example.athometfgandroidcarloshernandez.common.Constantes.SALIR
 import com.example.athometfgandroidcarloshernandez.data.model.CasaDetallesDTO
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
+import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.ConfirmationDialog
 
 @Composable
 fun SeleccionarCasaActivity(
@@ -70,7 +70,14 @@ fun SeleccionarCasaActivity(
         CrearCasaDialog(
             onDismiss = { mostrarCrearCasaDialog.value = false },
             onCrearCasa = { nombre, direccion, codigoPostal ->
-                viewModel.handleEvent(SeleccionarCasaContract.SeleccionarCasaEvent.AgregarCasa(idUsuario,nombre, direccion, codigoPostal))
+                viewModel.handleEvent(
+                    SeleccionarCasaContract.SeleccionarCasaEvent.AgregarCasa(
+                        idUsuario,
+                        nombre,
+                        direccion,
+                        codigoPostal
+                    )
+                )
                 mostrarCrearCasaDialog.value = false
             }
         )
@@ -80,7 +87,12 @@ fun SeleccionarCasaActivity(
         UnirseCasaDialog(
             onDismiss = { mostrarUnirseCasaDialog.value = false },
             onUnirseCasa = { codigoInvitacion ->
-                viewModel.handleEvent(SeleccionarCasaContract.SeleccionarCasaEvent.UnirseCasa(idUsuario,codigoInvitacion))
+                viewModel.handleEvent(
+                    SeleccionarCasaContract.SeleccionarCasaEvent.UnirseCasa(
+                        idUsuario,
+                        codigoInvitacion
+                    )
+                )
                 mostrarUnirseCasaDialog.value = false
             }
         )
@@ -101,7 +113,6 @@ fun SeleccionarCasaActivity(
         }
     )
 }
-
 
 
 @Composable
@@ -178,12 +189,13 @@ fun SeleccionarCasaScreen(
         )
     }
 }
+
 @Composable
 fun Botonera(
     onAddCasa: () -> Unit,
     onUnirseCasa: () -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -276,11 +288,16 @@ fun CrearCasaDialog(
 }
 
 @Composable
-fun CasaItem(casa: CasaDetallesDTO, onCasaSelected: (String) -> Unit, salirCasa: (String) -> Unit) {
+fun CasaItem(
+    casa: CasaDetallesDTO,
+    onCasaSelected: (String) -> Unit,
+    salirCasa: (String) -> Unit
+) {
     var mostrarDialogo by remember { mutableStateOf(false) }
 
     if (mostrarDialogo) {
-        SalirCasaDialog(
+        ConfirmationDialog(
+            text = ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_,
             onDismiss = { mostrarDialogo = false },
             onConfirm = {
                 salirCasa(casa.id)
@@ -304,7 +321,9 @@ fun CasaItem(casa: CasaDetallesDTO, onCasaSelected: (String) -> Unit, salirCasa:
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f).clickable { onCasaSelected(casa.id) }) {
+            Column(modifier = Modifier
+                .weight(1f)
+                .clickable { onCasaSelected(casa.id) }) {
                 Text(text = casa.nombre, style = MaterialTheme.typography.titleMedium)
                 Text(text = casa.direccion, style = MaterialTheme.typography.bodyMedium)
                 Text(text = casa.codigo, style = MaterialTheme.typography.bodyMedium)
@@ -319,26 +338,7 @@ fun CasaItem(casa: CasaDetallesDTO, onCasaSelected: (String) -> Unit, salirCasa:
         }
     }
 }
-@Composable
-fun SalirCasaDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_) },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(ACEPTAR)
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text(SALIR)
-            }
-        }
-    )
-}
+
 @Preview(showBackground = true)
 @Composable
 fun CasaPreview() {

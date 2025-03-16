@@ -54,11 +54,13 @@ import androidx.wear.compose.material.FractionalThreshold
 import androidx.wear.compose.material.rememberSwipeableState
 import androidx.wear.compose.material.swipeable
 import com.example.athometfgandroidcarloshernandez.common.Constantes
+import com.example.athometfgandroidcarloshernandez.common.Constantes.CONFIRMAR_BORRAR_CAJON
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.HabitacionDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.calendario.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.UsuarioInmuebles
+import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.ConfirmationDialog
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.utils.Selector
 import kotlin.math.roundToInt
 
@@ -239,6 +241,7 @@ fun SwipeToDeleteItem(
     val swipeableState = rememberSwipeableState(initialValue = 0)
     val swipeThreshold = 300f
     val anchors = mapOf(0f to 0, -swipeThreshold to 1)
+    var mostrarDialogo by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -274,9 +277,19 @@ fun SwipeToDeleteItem(
         }
         if (swipeableState.currentValue == 1) {
             LaunchedEffect(Unit) {
-                borrarCajon(cajon.id, cajon.idPropietario)
+                mostrarDialogo = true
             }
         }
+    }
+    if (mostrarDialogo) {
+        ConfirmationDialog(
+            text = CONFIRMAR_BORRAR_CAJON,
+            onDismiss = { mostrarDialogo = false },
+            onConfirm = {
+                borrarCajon(cajon.id, cajon.idPropietario)
+                mostrarDialogo = false
+            }
+        )
     }
 }
 @Composable

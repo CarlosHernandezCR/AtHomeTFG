@@ -3,6 +3,7 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
+    const val CONFIRMAR_BORRAR_CAJON = "¿Está seguro de borrar este cajón?"
     const val SALIR_DE_CASA = "Salir de Casa"
     const val ACEPTAR = "Aceptar"
     const val CREAR_ESTADO="Crear Estado"
@@ -16,7 +17,6 @@ object Constantes {
     const val IDCAJON: String = "idCajon"
     const val CAJON_BORRADO: String = "Cajón borrado correctamente"
     const val VOLVER: String = "Volver"
-    const val BLANCO: String = "#FFFFFF"
     const val SELECCIONAR_COLOR: String = "Seleccionar Color"
     const val INVITACION_COPIAR: String = "Copiar código de invitación"
     const val CODIGO_COPIADO: String = "Código copiado al portapapeles"
