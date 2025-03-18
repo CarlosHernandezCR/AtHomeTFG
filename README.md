@@ -5,7 +5,9 @@ ATHOME es una aplicación diseñada para mejorar la convivencia entre compañero
 Sus principales funcionalidades incluyen:  
 - **Estados de Usuario**: Los miembros del hogar pueden establecer su estado (en casa, fuera, durmiendo) y visualizar el de otros para facilitar la convivencia.  
 - **Reserva de Espacios**: Sistema para reservar zonas comunes, donde los miembros pueden votar para aceptar o rechazar una solicitud.  
-- **Inventario Personalizado**: Gestión de inmuebles y productos almacenados, con control de acceso a los cajones por parte de sus propietarios.
+- **Inventario Personalizado**: Gestión de inmuebles y productos almacenados, el control de almacén lo harán los propietarios de dichos cajones.
+- **Préstamo de productos**: Los usuarios podrán ver qué tienen el resto de usuarios en sus cajones para así enviar una petición de préstamo con el producto a prestar y su cantidad.
+- **Cesta de la compra**: los productos que se vayan eliminando de stock por su uso o préstamo se enviarán a un apartado de cesta de la compra donde el usuario podrá ver esos productos, quitarlos si no los quiere volver a compar o añadir nuevos.
 
 ---
 
