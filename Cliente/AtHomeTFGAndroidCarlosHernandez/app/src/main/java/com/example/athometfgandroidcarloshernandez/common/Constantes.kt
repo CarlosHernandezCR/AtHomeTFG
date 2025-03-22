@@ -3,6 +3,12 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
+    const val CANTIDAD = "CANTIDAD"
+    const val IMAGEN = "IMAGEN"
+    const val VER_CESTA = "Ver cesta"
+    const val AGREGAR_PRODUCTO = "Agregar producto"
+    const val DISMINUIR = "Disminuir"
+    const val AUMENTAR = "Aumentar"
     const val CONFIRMAR_BORRAR_CAJON = "¿Está seguro de borrar este cajón?"
     const val SALIR_DE_CASA = "Salir de Casa"
     const val ACEPTAR = "Aceptar"
