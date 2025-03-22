@@ -5,7 +5,7 @@ import com.example.athometfgandroidcarloshernandez.BuildConfig
 object Constantes {
     const val CANTIDAD = "CANTIDAD"
     const val IMAGEN = "IMAGEN"
-    const val VER_CESTA = "Ver cesta"
+    const val CESTA = "Cesta"
     const val AGREGAR_PRODUCTO = "Agregar producto"
     const val DISMINUIR = "Disminuir"
     const val AUMENTAR = "Aumentar"
@@ -56,7 +56,7 @@ object Constantes {
     const val AGREGAR: String = "Agregar"
     const val AGREGAR_HABITACION: String = "Añadir habitacion"
     const val NO_HAY_MUEBLE: String = "No hay muebles"
-    const val NO_HAY_CAJONES: String = "No hay cajones en este mueble"
+    const val NO_HAY_CAJONES: String = "No hay cajones aquí"
     const val FORMATER_HORA: String = "HH:mm"
     const val AGREGAR_MUEBLE: String = "Añadir mueble"
     const val AGREGAR_CAJON: String = "Añadir cajón"

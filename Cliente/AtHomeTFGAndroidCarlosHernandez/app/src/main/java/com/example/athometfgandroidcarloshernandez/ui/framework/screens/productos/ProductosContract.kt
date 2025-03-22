@@ -10,11 +10,13 @@ interface ProductosContract {
         data class CambiarCajon(val idCajon: String) : ProductosEvent()
         data class CargarProductos(val idCajon: String, val idPropietario: String, val idUsuario: String) : ProductosEvent()
         data class CambiarCantidad(val idProducto: String, val aumentar: Boolean) : ProductosEvent()
+        data class AgregarProducto(val nombre: String, val cantidad: String) : ProductosEvent()
         data object ErrorMostrado : ProductosEvent()
     }
 
     data class ProductosState(
-        val isLoading: Boolean = false,
+        val isLoading: Boolean,
+        val isLoadingCantidad: Boolean,
         val error: String? = null,
         val productos: List<ProductoDTO> = emptyList(),
         val muebleActual: String = "",

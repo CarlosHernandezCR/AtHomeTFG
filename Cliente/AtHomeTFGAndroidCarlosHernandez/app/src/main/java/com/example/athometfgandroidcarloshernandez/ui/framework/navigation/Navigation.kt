@@ -133,6 +133,9 @@ fun Navigation(
                     verCesta = {
                         navController.navigate("${ConstantesPantallas.CESTA}/$idUsuario")
                     },
+                    volver = {
+                        navController.popBackStack()
+                    },
                     showSnackbar = showSnackbar,
                     innerPadding = paddingValues
                 )
