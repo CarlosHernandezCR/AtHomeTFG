@@ -97,6 +97,7 @@ fun ProductosActivity(
             cajonActual = uiState.cajonActual,
             cajones = uiState.cajones,
             productos = uiState.productos,
+            productosCargando = uiState.productosCargando,
             cargando = uiState.isLoading,
             verCesta = { verCesta(idUsuario) },
             cambioMueble = {
@@ -136,6 +137,7 @@ fun PantallaProductos(
     cajonActual: String,
     cajones: List<CajonDTO>,
     productos: List<ProductoDTO>,
+    productosCargando: Map<String, Boolean>,
     cargando: Boolean,
     cambioMueble: (String) -> Unit = {},
     cambioCajon: (String) -> Unit = {},
@@ -178,7 +180,11 @@ fun PantallaProductos(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                ListaProductos(productos, cambiarCantidad)
+                ListaProductos(
+                    productos = productos,
+                    cambiarCantidad = cambiarCantidad,
+                    productosCargando = productosCargando
+                )
             }
         }
 
@@ -198,7 +204,8 @@ fun PantallaProductos(
 @Composable
 private fun ListaProductos(
     productos: List<ProductoDTO>,
-    cambiarCantidad: (String, Boolean) -> Unit
+    cambiarCantidad: (String, Boolean) -> Unit,
+    productosCargando: Map<String, Boolean>
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
@@ -207,7 +214,8 @@ private fun ListaProductos(
             ProductoItem(
                 producto = producto,
                 aumentar = { cambiarCantidad(producto.nombre, true) },
-                disminuir = { cambiarCantidad(producto.nombre, false) }
+                disminuir = { cambiarCantidad(producto.nombre, false) },
+                cargando = productosCargando[producto.nombre] == true
             )
         }
     }
@@ -312,7 +320,8 @@ fun AgregarProductoDialog(
 fun ProductoItem(
     producto: ProductoDTO,
     aumentar: () -> Unit,
-    disminuir: () -> Unit
+    disminuir: () -> Unit,
+    cargando: Boolean
 ) {
     Card(
         modifier = Modifier
@@ -342,25 +351,29 @@ fun ProductoItem(
                 textAlign = TextAlign.Center
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = disminuir) {
-                    Icon(
-                        imageVector = Icons.Default.Remove,
-                        contentDescription = DISMINUIR,
-                        tint = Color.Red
-                    )
-                }
+            if (cargando) {
+                Cargando()
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = disminuir) {
+                        Icon(
+                            imageVector = Icons.Default.Remove,
+                            contentDescription = DISMINUIR,
+                            tint = Color.Red
+                        )
+                    }
 
-                Text(text = "${producto.unidades}")
+                    Text(text = "${producto.unidades}")
 
-                IconButton(onClick = aumentar) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = AUMENTAR,
-                        tint = Color.Blue
-                    )
+                    IconButton(onClick = aumentar) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = AUMENTAR,
+                            tint = Color.Blue
+                        )
+                    }
                 }
             }
         }
@@ -397,6 +410,7 @@ fun PantallaProductosPreview() {
         ),
         cambioMueble = {},
         cambioCajon = {},
+        productosCargando = emptyMap(),
         cambiarCantidad = { _, _ -> },
         verCesta = {},
         agregarProducto = { _, _ -> },
