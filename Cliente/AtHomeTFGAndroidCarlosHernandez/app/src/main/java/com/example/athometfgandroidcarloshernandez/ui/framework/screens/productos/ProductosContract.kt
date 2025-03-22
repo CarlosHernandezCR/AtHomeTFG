@@ -15,8 +15,8 @@ interface ProductosContract {
     }
 
     data class ProductosState(
-        val isLoading: Boolean,
-        val isLoadingCantidad: Boolean,
+        val isLoading: Boolean= false,
+        val isLoadingCantidad: Boolean = false,
         val error: String? = null,
         val productos: List<ProductoDTO> = emptyList(),
         val muebleActual: String = "",

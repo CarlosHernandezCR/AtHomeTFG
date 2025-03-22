@@ -2,6 +2,7 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CambiarCantidadUseCase
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos.ProductosContract.ProductosEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,10 +29,10 @@ class ProductosViewModel @Inject constructor(
                 event.idPropietario,
                 event.idUsuario
             )
-
             is ProductosEvent.CambiarCantidad -> cambiarCantidad(event.idProducto, event.aumentar)
             is ProductosEvent.CambiarCajon -> TODO()
             is ProductosEvent.CambiarMueble -> TODO()
+            is ProductosEvent.AgregarProducto -> TODO()
         }
     }
 
