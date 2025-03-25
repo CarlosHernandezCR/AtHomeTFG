@@ -23,7 +23,7 @@ public class MuebleEntity {
     private @Size(max = 100)
     @NotNull String nombre;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = MuebleConstantes.ID_HABITACION, nullable = false)
     private HabitacionEntity idHabitacionEntity;
 

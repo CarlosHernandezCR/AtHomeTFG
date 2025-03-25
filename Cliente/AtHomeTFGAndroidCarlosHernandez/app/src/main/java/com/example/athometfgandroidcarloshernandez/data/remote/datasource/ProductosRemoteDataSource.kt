@@ -1,7 +1,6 @@
 package com.example.athometfgandroidcarloshernandez.data.remote.datasource
 
 import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarProductoRequestDTO
-import com.example.athometfgandroidcarloshernandez.data.model.request.CargarProductosRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.CargarProductosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.ProductosService
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
@@ -12,6 +11,6 @@ class ProductosRemoteDataSource @Inject constructor(
 ) :BaseApiResponse() {
     suspend fun cambiarCantidad(cambioProducto: CambiarProductoRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody { productosService.cambiarCantidad(cambioProducto) }
-    suspend fun cargarProductos(cargarProductos: CargarProductosRequestDTO): NetworkResult<CargarProductosResponseDTO> =
-        safeApiCall { productosService.cargarProductos(cargarProductos) }
+    suspend fun cargarProductos(idCajon: String): NetworkResult<CargarProductosResponseDTO> =
+        safeApiCall { productosService.cargarProductos(idCajon) }
 }

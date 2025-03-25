@@ -8,6 +8,7 @@ import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.CasaService
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.EventosService
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.InmueblesService
+import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.ProductosService
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.UsuarioService
 import dagger.Module
 import dagger.Provides
@@ -98,6 +99,10 @@ object NetworkModule {
     @Provides
     fun provideCasaService(retrofit: Retrofit): CasaService =
         retrofit.create(CasaService::class.java)
+    @Singleton
+    @Provides
+    fun provideProductosService(retrofit: Retrofit): ProductosService =
+        retrofit.create(ProductosService::class.java)
 
     @Singleton
     @Provides

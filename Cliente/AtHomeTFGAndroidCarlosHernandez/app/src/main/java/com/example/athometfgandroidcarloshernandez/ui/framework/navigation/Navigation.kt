@@ -116,7 +116,7 @@ fun Navigation(
                 InmueblesActivity(
                     idUsuario = idUsuario,
                     idCasa = idCasa,
-                    onCajonSeleccionado = { idCajon, idPropietario, idUsuario ->
+                    onCajonSeleccionado = { idCajon, idPropietario ->
                         navController.navigate("${ConstantesPantallas.PRODUCTOS}/$idCajon/$idPropietario/$idUsuario")
                     },
                     showSnackbar = showSnackbar

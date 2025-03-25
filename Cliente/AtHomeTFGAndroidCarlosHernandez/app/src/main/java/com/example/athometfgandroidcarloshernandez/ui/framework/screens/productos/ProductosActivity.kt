@@ -237,7 +237,7 @@ fun Cabecera() {
     ) {
         Text(
             text = Constantes.IMAGEN,
-            modifier = Modifier.weight(0.6f),
+            modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Bold
         )
         Text(
@@ -409,8 +409,9 @@ fun BotonAccion(texto: String, accion: () -> Unit) {
             .clickable { accion() }
             .padding(8.dp)
             .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 10.dp, vertical = 8.dp),
         color = Color.White,
+        style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center
     )
@@ -420,14 +421,14 @@ fun BotonAccion(texto: String, accion: () -> Unit) {
 @Composable
 fun PantallaProductosPreview() {
     PantallaProductos(
-        muebleActual = "",
+        muebleActual = "Nevera",
         muebles = listOf(MuebleDTO(id = "1", nombre = "Mueble 1")),
-        cajonActual = "",
+        cajonActual = "Cajon1",
         cajones = listOf(CajonDTO(id = "1", nombre = "Cajon 1")),
         productos = listOf(
-            ProductoDTO(nombre = "Producto 1", unidades = 1),
-            ProductoDTO(nombre = "Producto 2", unidades = 2),
-            ProductoDTO(nombre = "Producto 3", unidades = 3)
+            ProductoDTO(id="0",nombre = "Producto 1", unidades = 1),
+            ProductoDTO(id="0",nombre = "Producto 2", unidades = 2),
+            ProductoDTO(id="0",nombre = "Producto 3", unidades = 3)
         ),
         cambioMueble = {},
         cambioCajon = {},

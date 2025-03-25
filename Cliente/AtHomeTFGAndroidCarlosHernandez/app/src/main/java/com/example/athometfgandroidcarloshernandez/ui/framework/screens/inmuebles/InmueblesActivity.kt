@@ -70,7 +70,7 @@ import kotlin.math.roundToInt
 fun InmueblesActivity(
     idUsuario: String,
     idCasa: String,
-    onCajonSeleccionado: (String, String, idUsuario: String) -> Unit,
+    onCajonSeleccionado: (String, String) -> Unit,
     showSnackbar: (String) -> Unit = {},
     viewModel: InmueblesViewModel = hiltViewModel(),
 ) {
@@ -151,7 +151,7 @@ fun InmueblesPantalla(
     agregarCajon: (String, String) -> Unit,
     agregarMueble: (String) -> Unit = {},
     agregarHabitacion: (String) -> Unit = {},
-    onCajonSeleccionado: (String, String, String) -> Unit
+    onCajonSeleccionado: (String, String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
@@ -244,7 +244,7 @@ fun InmueblesPantalla(
 fun SwipeToDeleteItem(
     cajon: CajonDTO,
     borrarCajon: (String, String) -> Unit,
-    onCajonSeleccionado: (String, String, String) -> Unit
+    onCajonSeleccionado: (String, String) -> Unit
 ) {
     val swipeableState = rememberSwipeableState(initialValue = 0)
     val swipeThreshold = 300f
@@ -381,12 +381,12 @@ fun BotoneraMuebles(
 fun CajonItem(
     cajon: CajonDTO,
     propietario: String,
-    onCajonSeleccionado: (String, String, String) -> Unit
+    onCajonSeleccionado: (String, String) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onCajonSeleccionado(cajon.id, cajon.idPropietario,"") },
+            .clickable { onCajonSeleccionado(cajon.id, cajon.idPropietario) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -558,6 +558,6 @@ fun PreviewInmueblesActivity() {
         agregarCajon = { _, _ -> },
         agregarMueble = {},
         agregarHabitacion = {},
-        onCajonSeleccionado = { _, _, _ -> }
+        onCajonSeleccionado = { _, _ -> }
     )
 }

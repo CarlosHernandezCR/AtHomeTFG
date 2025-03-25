@@ -104,3 +104,8 @@ dependencies {
     // ColorPicker
     implementation(libs.colorpicker.compose)
 }
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}

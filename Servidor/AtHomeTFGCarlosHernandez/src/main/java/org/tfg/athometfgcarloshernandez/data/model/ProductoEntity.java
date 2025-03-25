@@ -22,9 +22,6 @@ public class ProductoEntity {
     @Column(name = ProductoConstantes.COLUMN_NOMBRE, nullable = false, length = 100)
     private @Size(max = 100) @NotNull String nombre;
 
-    @Column(name = ProductoConstantes.COLUMN_MARCA, length = 100)
-    private @Size(max = 100) String marca;
-
     @Column(name = ProductoConstantes.COLUMN_FOTO)
     private @Size(max = 255) String foto;
 }

@@ -28,6 +28,7 @@ public class ConstantesError {
     public static final String ERROR_VIVE_NO_ENCONTRADO = "No encontrado el usuario con ID y casa con ID ";
     public static final String EVENTO_NO_ENCONTRADO = "Evento no encontrado";
     public static final String YA_VOTADO = "Ya has votado";
+    public static final String CAJON_NO_ENCONTRADO = "Cajón no encontrado";
 
 
     private ConstantesError() {

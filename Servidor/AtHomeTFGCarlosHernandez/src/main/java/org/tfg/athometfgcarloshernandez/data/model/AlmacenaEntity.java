@@ -27,7 +27,7 @@ public class AlmacenaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = AlmacenaConstantes.COLUMN_ID_CAJON)
     private CajonEntity idCajon;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = AlmacenaConstantes.COLUMN_ID_PRODUCTOS)
     private ProductoEntity idProductos;
     @Column(name = AlmacenaConstantes.COLUMN_CANTIDAD)

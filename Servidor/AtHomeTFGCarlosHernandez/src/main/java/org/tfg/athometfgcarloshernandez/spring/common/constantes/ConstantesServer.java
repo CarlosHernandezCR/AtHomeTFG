@@ -5,10 +5,12 @@ public class ConstantesServer {
     
     public static final String CODIGO = "codigo";
     public static final String LOGINPATH = "/login";
+    public static final String PRODUCTOSPATH = "/productos";
     public static final String CASAPATH = "/casa";
     public static final String CALENDARIOPATH = "/calendario";
     public static final String INMUEBLESPATH = "/inmuebles";
     public static final String PANTALLA_CASA = "/pantallaEstados";
+    public static final String CARGAR_PRODUCTOS = "/cargarProductos";
     public static final String CAMBIAR_ESTADO = "/cambiarEstado";
     public static final String GET_EVENTOS_MES = "/getEventosMes";
     public static final String GET_EVENTOS_DIA = "/getEventosDia";
