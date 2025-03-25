@@ -28,4 +28,5 @@ object ConstantesPaths {
     const val BORRAR_CAJON= "inmuebles/borrarCajon"
     const val CREAR_ESTADO= "casa/crearEstado"
     const val CAMBIAR_CANTIDAD_PRODUCTO= "productos/cambiarCantidad"
+    const val CARGAR_PRODUCTOS= "productos/cargarProductos"
 }

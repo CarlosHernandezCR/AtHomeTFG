@@ -8,7 +8,7 @@ interface ProductosContract {
     sealed class ProductosEvent {
         data class CambiarMueble(val idMueble: String) : ProductosEvent()
         data class CambiarCajon(val idCajon: String) : ProductosEvent()
-        data class CargarProductos(val idCajon: String, val idPropietario: String, val idUsuario: String) : ProductosEvent()
+        data class CargarProductos(val idCajon: String) : ProductosEvent()
         data class CambiarCantidad(val idProducto: String, val aumentar: Boolean) : ProductosEvent()
         data class AgregarProducto(val nombre: String, val cantidad: String) : ProductosEvent()
         data object ErrorMostrado : ProductosEvent()

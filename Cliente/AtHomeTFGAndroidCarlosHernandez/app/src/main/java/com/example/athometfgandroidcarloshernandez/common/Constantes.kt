@@ -86,5 +86,6 @@ object Constantes {
     const val MUEBLE = "mueble"
     const val HABITACION = "habitacion"
     const val ESTA_SEGURO_DE_SALIR_DE_ESTA_CASA_ = "¿Está seguro de salir de esta casa?"
+    const val PEDIR_PRESTADO = "Pedir"
 
 }

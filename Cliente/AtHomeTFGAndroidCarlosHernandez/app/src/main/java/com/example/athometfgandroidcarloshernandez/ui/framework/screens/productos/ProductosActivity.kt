@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.AUMENTAR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.DISMINUIR
+import com.example.athometfgandroidcarloshernandez.common.Constantes.PEDIR_PRESTADO
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
@@ -70,21 +71,17 @@ fun ProductosActivity(
             viewModel.handleEvent(ProductosContract.ProductosEvent.ErrorMostrado)
         }
     }
-    LaunchedEffect(idCajon, idPropietario, idUsuario) {
-        idUsuario.let { idUsuario ->
-            idCajon.let { idCajon ->
-                idPropietario.let { idPropietario ->
-                    viewModel.handleEvent(
-                        ProductosContract.ProductosEvent.CargarProductos(
-                            idCajon,
-                            idPropietario,
-                            idUsuario
-                        )
-                    )
-                }
-            }
+    LaunchedEffect(idCajon) {
+        idCajon.let { idCajon ->
+            viewModel.handleEvent(
+                ProductosContract.ProductosEvent.CargarProductos(
+                    idCajon,
+                )
+            )
         }
     }
+
+    val esPropietario = idPropietario == idUsuario
 
     Column(
         modifier = Modifier
@@ -124,9 +121,12 @@ fun ProductosActivity(
                     ProductosContract.ProductosEvent.AgregarProducto(nombre, cantidad)
                 )
             },
-            volver = (volver)
+            volver = volver,
+            esPropietario = esPropietario,
+            pedirPrestado = { productoId ->
+                // TODO
+            }
         )
-
     }
 }
 
@@ -143,8 +143,10 @@ fun PantallaProductos(
     cambioCajon: (String) -> Unit = {},
     cambiarCantidad: (String, Boolean) -> Unit,
     verCesta: () -> Unit,
-    agregarProducto: (String,String) -> Unit,
-    volver: () -> Unit
+    agregarProducto: (String, String) -> Unit,
+    volver: () -> Unit,
+    esPropietario: Boolean,
+    pedirPrestado: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -183,11 +185,12 @@ fun PantallaProductos(
                 ListaProductos(
                     productos = productos,
                     cambiarCantidad = cambiarCantidad,
-                    productosCargando = productosCargando
+                    productosCargando = productosCargando,
+                    esPropietario = esPropietario,
+                    pedirPrestado = pedirPrestado
                 )
             }
         }
-
 
         BotoneraProductos(
             verCesta = verCesta,
@@ -197,7 +200,6 @@ fun PantallaProductos(
                 .fillMaxWidth()
                 .padding(16.dp)
         )
-
     }
 }
 
@@ -205,7 +207,9 @@ fun PantallaProductos(
 private fun ListaProductos(
     productos: List<ProductoDTO>,
     cambiarCantidad: (String, Boolean) -> Unit,
-    productosCargando: Map<String, Boolean>
+    productosCargando: Map<String, Boolean>,
+    esPropietario: Boolean,
+    pedirPrestado: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
@@ -215,7 +219,9 @@ private fun ListaProductos(
                 producto = producto,
                 aumentar = { cambiarCantidad(producto.nombre, true) },
                 disminuir = { cambiarCantidad(producto.nombre, false) },
-                cargando = productosCargando[producto.nombre] == true
+                cargando = productosCargando[producto.nombre] == true,
+                esPropietario = esPropietario,
+                pedirPrestado = { pedirPrestado(producto.nombre) }
             )
         }
     }
@@ -316,12 +322,15 @@ fun AgregarProductoDialog(
     )
 }
 
+
 @Composable
 fun ProductoItem(
     producto: ProductoDTO,
     aumentar: () -> Unit,
     disminuir: () -> Unit,
-    cargando: Boolean
+    cargando: Boolean,
+    esPropietario: Boolean,
+    pedirPrestado: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -330,49 +339,61 @@ fun ProductoItem(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(
+            Row(
                 modifier = Modifier
-                    .size(50.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(4.dp))
-            )
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .background(Color.Gray, shape = RoundedCornerShape(4.dp))
+                )
 
-            Spacer(modifier = Modifier.size(8.dp))
+                Spacer(modifier = Modifier.size(8.dp))
 
-            Text(
-                text = producto.nombre,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(2f),
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    text = producto.nombre,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(2f),
+                    textAlign = TextAlign.Center
+                )
 
-            if (cargando) {
-                Cargando()
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = disminuir) {
-                        Icon(
-                            imageVector = Icons.Default.Remove,
-                            contentDescription = DISMINUIR,
-                            tint = Color.Red
-                        )
-                    }
+                if (cargando) {
+                    Cargando()
+                } else {
+                    if (esPropietario) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = disminuir) {
+                                Icon(
+                                    imageVector = Icons.Default.Remove,
+                                    contentDescription = DISMINUIR,
+                                    tint = Color.Red
+                                )
+                            }
 
-                    Text(text = "${producto.unidades}")
+                            Text(text = "${producto.unidades}")
 
-                    IconButton(onClick = aumentar) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = AUMENTAR,
-                            tint = Color.Blue
-                        )
+                            IconButton(onClick = aumentar) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = AUMENTAR,
+                                    tint = Color.Blue
+                                )
+                            }
+                        }
+                    } else {
+                        TextButton(onClick = pedirPrestado) {
+                            Text(PEDIR_PRESTADO)
+                        }
                     }
                 }
             }
@@ -415,6 +436,8 @@ fun PantallaProductosPreview() {
         verCesta = {},
         agregarProducto = { _, _ -> },
         cargando = false,
-        volver = {}
+        volver = {},
+        esPropietario = false,
+        pedirPrestado = {}
     )
 }
