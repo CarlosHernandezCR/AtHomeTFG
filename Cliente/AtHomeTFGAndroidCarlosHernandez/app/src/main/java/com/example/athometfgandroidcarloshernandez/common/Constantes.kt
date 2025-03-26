@@ -21,6 +21,7 @@ object Constantes {
     const val VOTAR: String = "VOTAR"
     const val BORRAR: String= "Borrar"
     const val IDCAJON: String = "idCajon"
+    const val IDMUEBLE: String = "idMueble"
     const val CAJON_BORRADO: String = "Cajón borrado correctamente"
     const val VOLVER: String = "Volver"
     const val SELECCIONAR_COLOR: String = "Seleccionar Color"

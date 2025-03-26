@@ -14,11 +14,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class ProductosViewModel @Inject constructor(
     private val cambiarCantidadUseCase: CambiarCantidadUseCase,
-    private val cargarProductosUseCase: CargarProductosUseCase
+    private val cargarProductosUseCase: CargarProductosUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductosContract.ProductosState())
     val uiState: StateFlow<ProductosContract.ProductosState> = _uiState.asStateFlow()
@@ -26,45 +25,63 @@ class ProductosViewModel @Inject constructor(
     fun handleEvent(event: ProductosEvent) {
         when (event) {
             is ProductosEvent.ErrorMostrado -> _uiState.update { it.copy(error = null) }
-            is ProductosEvent.CargarProductos -> cargarProductos(
-                event.idCajon,
-            )
-
+            is ProductosEvent.CargarProductos -> cargarProductos(event.idCajon, primeraCarga = true)
             is ProductosEvent.CambiarCantidad -> cambiarCantidad(event.idProducto, event.aumentar)
-            is ProductosEvent.CambiarCajon -> TODO()
-            is ProductosEvent.CambiarMueble -> TODO()
+            is ProductosEvent.CambiarCajon -> cambiarCajon(event.idCajon)
+            is ProductosEvent.CambiarMueble -> cambiarMueble(event.idMueble)
             is ProductosEvent.AgregarProducto -> TODO()
         }
     }
 
-    private fun cargarProductos(idCajon: String) {
+    private fun cambiarCajon(cajonId: String) {
+        _uiState.update { it.copy(cajonActual = cajonId) }
+        _uiState.value.muebleActual.let { cargarProductos(cajonId, it) }
+    }
+
+    private fun cambiarMueble(muebleId: String) {
+        _uiState.update { it.copy(muebleActual = muebleId) }
+        _uiState.value.cajonActual.let { cargarProductos(it, muebleId) }
+    }
+
+    private fun cargarProductos(idCajon: String? = null, idMueble: String? = null, primeraCarga: Boolean = false) {
         viewModelScope.launch {
-            cargarProductosUseCase.invoke(idCajon).collect { result ->
+            cargarProductosUseCase.invoke(idCajon, idMueble).collect { result ->
                 when (result) {
-                    is NetworkResult.Success -> _uiState.update {
-                        it.copy(
-                            productos = result.data?.productos ?: emptyList(),
-                            cajones = result.data?.cajones?: emptyList(),
-                            muebles = result.data?.muebles?: emptyList(),
-                            cajonActual = result.data?.cajonActual ?: "",
-                            muebleActual = result.data?.muebleActual ?: "",
-                            isLoading = false
-                        )
-                    }
+                    is NetworkResult.Success -> {
+                        val muebles = result.data?.muebles ?: emptyList()
+                        val cajones = result.data?.cajones ?: emptyList()
+                        val productos = result.data?.productos ?: emptyList()
+                        val muebleActual = if (primeraCarga) muebles.getOrNull(0)?.id ?: "" else idMueble ?: _uiState.value.muebleActual
+                        val cajonActual = if (primeraCarga) cajones.getOrNull(0)?.id ?: "" else idCajon ?: _uiState.value.cajonActual
 
-                    is NetworkResult.Error -> _uiState.update {
-                        it.copy(
-                            error = result.message,
-                            isLoading = false
-                        )
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                muebles = muebles,
+                                cajones = cajones,
+                                muebleActual = muebleActual,
+                                cajonActual = cajonActual,
+                                productos = productos,
+                                isLoading = false
+                            )
+                        }
                     }
-
-                    is NetworkResult.Loading -> _uiState.update { it.copy(isLoading = true) }
+                    is NetworkResult.Error -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                error = result.message,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is NetworkResult.Loading -> {
+                        _uiState.update { currentState ->
+                            currentState.copy(isLoading = true)
+                        }
+                    }
                 }
             }
         }
     }
-
 
     private fun cambiarCantidad(idProducto: String, aumentar: Boolean) {
         val producto = _uiState.value.productos.find { it.nombre == idProducto } ?: return
@@ -97,6 +114,4 @@ class ProductosViewModel @Inject constructor(
         }
         _uiState.update { it.copy(productos = productosActualizados, isLoadingCantidad = false) }
     }
-
 }
-

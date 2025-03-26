@@ -13,10 +13,10 @@ import javax.inject.Inject
 class ProductosRepository @Inject constructor(
     private val remoteDataSource: ProductosRemoteDataSource
 ) {
-    fun cargarProductos(idCajon: String): Flow<NetworkResult<CargarProductosResponseDTO>> =
+    fun cargarProductos(idCajon: String?, idMueble: String?): Flow<NetworkResult<CargarProductosResponseDTO>> =
         flow {
             emit(NetworkResult.Loading())
-            val result = remoteDataSource.cargarProductos(idCajon)
+            val result = remoteDataSource.cargarProductos(idCajon, idMueble)
             emit(result)
         }.flowOn(Dispatchers.IO)
 

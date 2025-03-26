@@ -15,5 +15,5 @@ interface ProductosService {
     suspend fun cambiarCantidad(@Body cambiarProductoRequestDTO: CambiarProductoRequestDTO): Response<Void>
 
     @GET(ConstantesPaths.CARGAR_PRODUCTOS)
-    suspend fun cargarProductos(@Query(Constantes.IDCAJON) idCajon:String): Response<CargarProductosResponseDTO>
+    suspend fun cargarProductos(@Query(Constantes.IDCAJON) idCajon:String?,@Query(Constantes.IDMUEBLE) idMueble:String?): Response<CargarProductosResponseDTO>
 }

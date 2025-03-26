@@ -6,5 +6,5 @@ import javax.inject.Inject
 class CargarProductosUseCase @Inject constructor(
     private val productosRepository: ProductosRepository
 ){
-    operator fun invoke(idCajon:String) = productosRepository.cargarProductos(idCajon)
+    operator fun invoke(idCajon:String?,idMueble:String?) = productosRepository.cargarProductos(idCajon,idMueble)
 }

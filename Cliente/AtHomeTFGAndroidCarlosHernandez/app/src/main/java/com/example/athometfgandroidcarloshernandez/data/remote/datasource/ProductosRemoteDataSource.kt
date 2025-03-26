@@ -11,6 +11,6 @@ class ProductosRemoteDataSource @Inject constructor(
 ) :BaseApiResponse() {
     suspend fun cambiarCantidad(cambioProducto: CambiarProductoRequestDTO): NetworkResult<Boolean> =
         safeApiCallNoBody { productosService.cambiarCantidad(cambioProducto) }
-    suspend fun cargarProductos(idCajon: String): NetworkResult<CargarProductosResponseDTO> =
-        safeApiCall { productosService.cargarProductos(idCajon) }
+    suspend fun cargarProductos(idCajon: String?, idMueble: String?): NetworkResult<CargarProductosResponseDTO> =
+        safeApiCall { productosService.cargarProductos(idCajon,idMueble) }
 }
