@@ -517,7 +517,7 @@ fun ComboBoxPropietarios(
                     },
                     modifier = Modifier.border(
                         width = 2.dp,
-                        color = Color(android.graphics.Color.parseColor(item.color))
+                        color = Color(item.color.toColorInt())
                     )
                 )
             }
