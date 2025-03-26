@@ -153,30 +153,30 @@ fun PantallaProductos(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Selector(
-            valorActual = muebles.find { it.id == muebleActual } ?: MuebleDTO(
-                id = "",
-                nombre = Constantes.NO_HAY_MUEBLE
-            ),
-            opciones = muebles,
-            onCambio = { mueble -> cambioMueble(mueble.id) },
-            mostrarOpciones = { it.nombre }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Selector(
-            valorActual = cajones.find { it.id == cajonActual } ?: CajonDTO(
-                id = "",
-                nombre = Constantes.NO_HAY_CAJONES
-            ),
-            opciones = cajones,
-            onCambio = { cajon -> cambioCajon(cajon.id) },
-            mostrarOpciones = { it.nombre }
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Cabecera()
         if (cargando) {
             Cargando()
         } else {
+            Selector(
+                valorActual = muebles.find { it.id == muebleActual } ?: MuebleDTO(
+                    id = "",
+                    nombre = Constantes.NO_HAY_MUEBLE
+                ),
+                opciones = muebles,
+                onCambio = { mueble -> cambioMueble(mueble.id) },
+                mostrarOpciones = { it.nombre }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Selector(
+                valorActual = cajones.find { it.id == cajonActual } ?: CajonDTO(
+                    id = "",
+                    nombre = Constantes.NO_HAY_CAJONES
+                ),
+                opciones = cajones,
+                onCambio = { cajon -> cambioCajon(cajon.id) },
+                mostrarOpciones = { it.nombre }
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Cabecera()
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

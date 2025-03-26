@@ -46,6 +46,8 @@ class ProductosViewModel @Inject constructor(
                             productos = result.data?.productos ?: emptyList(),
                             cajones = result.data?.cajones?: emptyList(),
                             muebles = result.data?.muebles?: emptyList(),
+                            cajonActual = result.data?.cajonActual ?: "",
+                            muebleActual = result.data?.muebleActual ?: "",
                             isLoading = false
                         )
                     }

@@ -53,7 +53,7 @@ public class ProductosServicios {
                 .map(muebleMapper::toMuebleDTO)
                 .toList();
 
-        return new CargarProductosResponseDTO(productosDTO, cajonesDTO, mueblesDTO);
+        return new CargarProductosResponseDTO(productosDTO, cajonesDTO, mueblesDTO, mueble.getId().toString(), cajon.getId().toString());
     }
 
 }

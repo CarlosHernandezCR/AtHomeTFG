@@ -5,6 +5,8 @@ import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 
 data class CargarProductosResponseDTO (
+    val muebleActual: String = "",
+    val cajonActual: String = "",
     val productos: List<ProductoDTO> = emptyList(),
     val cajones: List<CajonDTO> = emptyList(),
     val muebles: List<MuebleDTO> = emptyList()
