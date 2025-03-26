@@ -199,40 +199,41 @@ class InmueblesViewModel @Inject constructor(
             getDatosHabitacionesUseCase.invoke(idCasa, habitacion, mueble).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
-                        _uiState.update {
-                            it.copy(
-                                idCasa = if (primeraCarga) idCasa else it.idCasa,
-                                habitaciones = result.data?.habitaciones ?: emptyList(),
-                                muebles = result.data?.muebles ?: emptyList(),
-                                cajones = if (result.data?.cajones.isNullOrEmpty()) {
-                                    listOf(CajonDTO(nombre = Constantes.NO_HAY_CAJONES, propietario = ""))
-                                } else {
-                                    result.data?.cajones ?: emptyList()
-                                },
-                                idHabitacionActual = if (result.data?.habitaciones.isNullOrEmpty()) {
-                                    Constantes.ANADE_HABITACION
-                                } else if (primeraCarga) {
-                                    result.data?.habitaciones?.get(0)?.id ?: ""
-                                } else {
-                                    habitacion ?: it.idHabitacionActual
-                                },
-                                muebleActual = if (primeraCarga || cambioHabitacion) {
-                                    if (result.data?.muebles.isNullOrEmpty()) {
-                                        Constantes.NO_HAY_MUEBLE
-                                    } else {
-                                        result.data?.muebles?.get(0)?.id ?: ""
-                                    }
-                                } else {
-                                    mueble ?: it.muebleActual
-                                },
+                        val habitaciones = result.data?.habitaciones ?: emptyList()
+                        val muebles = result.data?.muebles ?: emptyList()
+                        val cajones = if (result.data?.cajones.isNullOrEmpty()) {
+                            listOf(CajonDTO(nombre = Constantes.NO_HAY_CAJONES, propietario = ""))
+                        } else {
+                            result.data?.cajones ?: emptyList()
+                        }
+                        val idHabitacionActual = when {
+                            habitaciones.isEmpty() -> Constantes.ANADE_HABITACION
+                            primeraCarga -> habitaciones[0].id
+                            else -> habitacion ?: _uiState.value.idHabitacionActual
+                        }
+                        val muebleActual = when {
+                            primeraCarga || cambioHabitacion -> {
+                                if (muebles.isEmpty()) Constantes.NO_HAY_MUEBLE else muebles[0].id
+                            }
+                            else -> mueble ?: _uiState.value.muebleActual
+                        }
+
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                idCasa = if (primeraCarga) idCasa else currentState.idCasa,
+                                habitaciones = habitaciones,
+                                muebles = muebles,
+                                cajones = cajones,
+                                idHabitacionActual = idHabitacionActual,
+                                muebleActual = muebleActual,
                                 isLoading = false
                             )
                         }
                     }
 
                     is NetworkResult.Error -> {
-                        _uiState.update {
-                            it.copy(
+                        _uiState.update { currentState ->
+                            currentState.copy(
                                 mensaje = result.message ?: ConstantesError.GET_HABITACIONES_ERROR,
                                 isLoading = false
                             )
@@ -240,7 +241,9 @@ class InmueblesViewModel @Inject constructor(
                     }
 
                     is NetworkResult.Loading -> {
-                        _uiState.update { it.copy(isLoading = true) }
+                        _uiState.update { currentState ->
+                            currentState.copy(isLoading = true)
+                        }
                     }
                 }
             }
