@@ -77,7 +77,6 @@ fun InmueblesActivity(
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(idCasa) {
         viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarDatos(idCasa))
-        viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarUsuarios(idCasa))
     }
     LaunchedEffect(uiState.mensaje) {
         uiState.mensaje?.let { showSnackbar.invoke(it) }
@@ -132,7 +131,8 @@ fun InmueblesActivity(
                     )
                 )
             },
-            onCajonSeleccionado = onCajonSeleccionado
+            onCajonSeleccionado = onCajonSeleccionado,
+            cargarUsuarios = { viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarUsuarios(idCasa)) }
         )
     }
 }
@@ -151,12 +151,14 @@ fun InmueblesPantalla(
     agregarCajon: (String, String) -> Unit,
     agregarMueble: (String) -> Unit = {},
     agregarHabitacion: (String) -> Unit = {},
-    onCajonSeleccionado: (String, String) -> Unit
+    onCajonSeleccionado: (String, String) -> Unit,
+    cargarUsuarios: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
     var isCajon by remember { mutableStateOf(false) }
     val areHabitacionesEmpty = habitaciones.isEmpty()
+    var usuariosCargados by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -213,6 +215,13 @@ fun InmueblesPantalla(
                 modifier = Modifier
                     .weight(0.6f),
             )
+        }
+
+        LaunchedEffect(showDialog) {
+            if (showDialog && !usuariosCargados) {
+                cargarUsuarios()
+                usuariosCargados = true
+            }
         }
 
         if (showDialog) {
@@ -558,6 +567,7 @@ fun PreviewInmueblesActivity() {
         agregarCajon = { _, _ -> },
         agregarMueble = {},
         agregarHabitacion = {},
-        onCajonSeleccionado = { _, _ -> }
+        onCajonSeleccionado = { _, _ -> },
+        cargarUsuarios = {}
     )
 }
