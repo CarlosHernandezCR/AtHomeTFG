@@ -16,6 +16,5 @@ public class CargarProductosResponseDTO {
     private List<ProductoDTO> productos;
     private List<CajonDTO> cajones;
     private List<MuebleDTO> muebles;
-    private String muebleActual;
-    private String cajonActual;
+    private int idPropietario;
 }

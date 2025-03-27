@@ -35,12 +35,12 @@ class ProductosViewModel @Inject constructor(
 
     private fun cambiarCajon(cajonId: String) {
         _uiState.update { it.copy(cajonActual = cajonId) }
-        _uiState.value.muebleActual.let { cargarProductos(cajonId, it) }
+        _uiState.value.muebleActual.let { cargarProductos(idCajon = cajonId) }
     }
 
     private fun cambiarMueble(muebleId: String) {
         _uiState.update { it.copy(muebleActual = muebleId) }
-        _uiState.value.cajonActual.let { cargarProductos(it, muebleId) }
+        _uiState.value.cajonActual.let { cargarProductos(idMueble = muebleId) }
     }
 
     private fun cargarProductos(idCajon: String? = null, idMueble: String? = null, primeraCarga: Boolean = false) {
@@ -53,6 +53,7 @@ class ProductosViewModel @Inject constructor(
                         val productos = result.data?.productos ?: emptyList()
                         val muebleActual = if (primeraCarga) muebles.getOrNull(0)?.id ?: "" else idMueble ?: _uiState.value.muebleActual
                         val cajonActual = if (primeraCarga) cajones.getOrNull(0)?.id ?: "" else idCajon ?: _uiState.value.cajonActual
+                        val idPropietario = result.data?.idPropietario ?: ""
 
                         _uiState.update { currentState ->
                             currentState.copy(
@@ -61,6 +62,7 @@ class ProductosViewModel @Inject constructor(
                                 muebleActual = muebleActual,
                                 cajonActual = cajonActual,
                                 productos = productos,
+                                idPropietario = idPropietario,
                                 isLoading = false
                             )
                         }

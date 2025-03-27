@@ -23,6 +23,7 @@ interface ProductosContract {
         val muebles: List<MuebleDTO> = emptyList(),
         val cajonActual: String = "",
         val cajones: List<CajonDTO> = emptyList(),
-        val productosCargando: Map<String, Boolean> = emptyMap()
+        val productosCargando: Map<String, Boolean> = emptyMap(),
+        val idPropietario: String = ""
     )
 }

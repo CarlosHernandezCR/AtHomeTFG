@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,11 +52,11 @@ import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
+import java.util.Locale
 
 @Composable
 fun ProductosActivity(
     idCajon: String,
-    idPropietario: String,
     idUsuario: String,
     viewModel: ProductosViewModel = hiltViewModel(),
     verCesta: (idUsuario: String) -> Unit = {},
@@ -81,7 +82,7 @@ fun ProductosActivity(
         }
     }
 
-    val esPropietario = idPropietario == idUsuario
+    val esPropietario = uiState.idPropietario == idUsuario
 
     Column(
         modifier = Modifier
@@ -198,7 +199,6 @@ fun PantallaProductos(
             volver = volver,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         )
     }
 }
@@ -214,16 +214,24 @@ private fun ListaProductos(
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
-        items(productos) { producto ->
-            ProductoItem(
-                producto = producto,
-                aumentar = { cambiarCantidad(producto.nombre, true) },
-                disminuir = { cambiarCantidad(producto.nombre, false) },
-                cargando = productosCargando[producto.nombre] == true,
-                esPropietario = esPropietario,
-                pedirPrestado = { pedirPrestado(producto.nombre) }
+        if (productos.isEmpty()) item {
+            Text(
+                text = Constantes.NO_HAY_PRODUCTOS,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
             )
-        }
+        } else
+            items(productos) { producto ->
+                ProductoItem(
+                    producto = producto,
+                    aumentar = { cambiarCantidad(producto.nombre, true) },
+                    disminuir = { cambiarCantidad(producto.nombre, false) },
+                    cargando = productosCargando[producto.nombre] == true,
+                    esPropietario = esPropietario,
+                    pedirPrestado = { pedirPrestado(producto.nombre) }
+                )
+            }
     }
 }
 
@@ -232,13 +240,14 @@ fun Cabecera() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 15.dp, bottom = 8.dp),
+            .padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = Constantes.IMAGEN,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f),
-            fontWeight = FontWeight.Bold
+            textAlign = TextAlign.Center
         )
         Text(
             text = Constantes.NOMBRE.uppercase(),
@@ -249,10 +258,12 @@ fun Cabecera() {
         Text(
             text = Constantes.CANTIDAD,
             modifier = Modifier.weight(1.1f),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
     }
 }
+
 
 @Composable
 fun BotoneraProductos(
@@ -275,7 +286,7 @@ fun BotoneraProductos(
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         BotonAccion(texto = Constantes.VOLVER, accion = volver)
         BotonAccion(texto = Constantes.AGREGAR_PRODUCTO, accion = { showDialog = true })
@@ -305,8 +316,7 @@ fun AgregarProductoDialog(
                 TextField(
                     value = cantidad,
                     onValueChange = { cantidad = it },
-                    label = { Text(Constantes.CANTIDAD) }
-                )
+                    label = { Text(Constantes.CANTIDAD.lowercase(Locale.ROOT)) })
             }
         },
         confirmButton = {
@@ -321,8 +331,6 @@ fun AgregarProductoDialog(
         }
     )
 }
-
-
 @Composable
 fun ProductoItem(
     producto: ProductoDTO,
@@ -339,68 +347,67 @@ fun ProductoItem(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(start = 8.dp, end = 0.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
+            Spacer(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .background(Color.Gray, shape = RoundedCornerShape(4.dp))
-                )
+                    .size(50.dp)
+                    .background(Color.Gray, shape = RoundedCornerShape(4.dp))
+                    .weight(0.8f)
+            )
 
-                Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = producto.nombre,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(start = 15.dp)
+            )
 
-                Text(
-                    text = producto.nombre,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(2f),
-                    textAlign = TextAlign.Center
-                )
+            if (cargando) {
+                Cargando()
+            } else {
+                if (esPropietario) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.weight(1.1f)
+                    ) {
+                        IconButton(onClick = disminuir) {
+                            Icon(
+                                imageVector = Icons.Default.Remove,
+                                contentDescription = DISMINUIR,
+                                tint = Color.Red
+                            )
+                        }
 
-                if (cargando) {
-                    Cargando()
+                        Text(text = "${producto.unidades}")
+
+                        IconButton(onClick = aumentar) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = AUMENTAR,
+                                tint = Color.Blue
+                            )
+                        }
+                    }
                 } else {
-                    if (esPropietario) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(onClick = disminuir) {
-                                Icon(
-                                    imageVector = Icons.Default.Remove,
-                                    contentDescription = DISMINUIR,
-                                    tint = Color.Red
-                                )
-                            }
-
-                            Text(text = "${producto.unidades}")
-
-                            IconButton(onClick = aumentar) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = AUMENTAR,
-                                    tint = Color.Blue
-                                )
-                            }
-                        }
-                    } else {
-                        TextButton(onClick = pedirPrestado) {
-                            Text(PEDIR_PRESTADO)
-                        }
+                    TextButton(
+                        onClick = pedirPrestado,
+                        modifier = Modifier.weight(1.1f)
+                    ) {
+                        Text(PEDIR_PRESTADO)
                     }
                 }
             }
         }
     }
 }
-
 @Composable
 fun BotonAccion(texto: String, accion: () -> Unit) {
     Text(
@@ -410,8 +417,8 @@ fun BotonAccion(texto: String, accion: () -> Unit) {
             .padding(8.dp)
             .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 10.dp, vertical = 8.dp),
-        color = Color.White,
-        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onPrimary,
+        style = MaterialTheme.typography.bodyLarge,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center
     )
@@ -426,9 +433,9 @@ fun PantallaProductosPreview() {
         cajonActual = "Cajon1",
         cajones = listOf(CajonDTO(id = "1", nombre = "Cajon 1")),
         productos = listOf(
-            ProductoDTO(id="0",nombre = "Producto 1", unidades = 1),
-            ProductoDTO(id="0",nombre = "Producto 2", unidades = 2),
-            ProductoDTO(id="0",nombre = "Producto 3", unidades = 3)
+            ProductoDTO(id = "0", nombre = "Producto 1", unidades = 1),
+            ProductoDTO(id = "0", nombre = "Producto 2", unidades = 2),
+            ProductoDTO(id = "0", nombre = "Producto 3", unidades = 3)
         ),
         cambioMueble = {},
         cambioCajon = {},
@@ -438,7 +445,7 @@ fun PantallaProductosPreview() {
         agregarProducto = { _, _ -> },
         cargando = false,
         volver = {},
-        esPropietario = false,
+        esPropietario = true,
         pedirPrestado = {}
     )
 }

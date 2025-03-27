@@ -116,19 +116,17 @@ fun Navigation(
                 InmueblesActivity(
                     idUsuario = idUsuario,
                     idCasa = idCasa,
-                    onCajonSeleccionado = { idCajon, idPropietario ->
-                        navController.navigate("${ConstantesPantallas.PRODUCTOS}/$idCajon/$idPropietario/$idUsuario")
+                    onCajonSeleccionado = { idCajon ->
+                        navController.navigate("${ConstantesPantallas.PRODUCTOS}/$idCajon/$idUsuario")
                     },
                     showSnackbar = showSnackbar
                 )
             }
-            composable("${ConstantesPantallas.PRODUCTOS}/{idCajon}/{idPropietario}/{idUsuario}") { backStackEntry ->
+            composable("${ConstantesPantallas.PRODUCTOS}/{idCajon}/{idUsuario}") { backStackEntry ->
                 val idCajon = backStackEntry.arguments?.getString("idCajon") ?: "0"
-                val idPropietario = backStackEntry.arguments?.getString("idPropietario") ?: "0"
                 val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: "0"
                 ProductosActivity(
                     idCajon = idCajon,
-                    idPropietario = idPropietario,
                     idUsuario = idUsuario,
                     verCesta = {
                         navController.navigate("${ConstantesPantallas.CESTA}/$idUsuario")

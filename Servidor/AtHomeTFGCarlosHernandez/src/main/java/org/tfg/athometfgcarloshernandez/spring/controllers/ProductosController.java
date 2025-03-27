@@ -24,8 +24,9 @@ public class ProductosController {
     }
 
     @GetMapping(ConstantesServer.CARGAR_PRODUCTOS)
-    public ResponseEntity<CargarProductosResponseDTO> getProductos(@RequestParam String idCajon) {
-        return ResponseEntity.ok( productosServicios.getProductos(idCajon));
+    public ResponseEntity<CargarProductosResponseDTO> getProductos(@RequestParam(required = false) String idCajon,
+                                                                  @RequestParam(required = false) String idMueble) {
+        return ResponseEntity.ok( productosServicios.getProductos(idCajon, idMueble));
     }
 
 //    @PostMapping(ConstantesServer.CAMBIAR_ESTADO)
