@@ -30,18 +30,14 @@ class AuthAuthenticator @Inject constructor(
             when (val refreshRequest = refreshToken.let { refreshTokenUseCase.invoke(it) }) {
                 is NetworkResult.Success<*> -> {
                     refreshRequest.data?.let {
-                        val newAccessToken = it
-                        newAccessToken.let { it1: Any -> runBlocking { tokenManager.saveAccessToken(
-                            it1.toString()
-                        ) } }
+                        val newAccessToken = it.toString()
+                        runBlocking { tokenManager.saveAccessToken(newAccessToken) }
                         response.request.newBuilder()
-                            .header(Constantes.AUTHORIZATION, Constantes.BEARER + newAccessToken)
+                            .header(Constantes.AUTHORIZATION, "${Constantes.BEARER} $newAccessToken")
                             .build()
                     }
                 }
-                else -> {
-                    null
-                }
+                else -> null
             }
         }
         return result

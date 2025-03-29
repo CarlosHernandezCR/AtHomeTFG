@@ -33,15 +33,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal (HttpServletRequest request,
-                                     HttpServletResponse response ,
-                                     FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain)
             throws ServletException, IOException {
-        if (request.getRequestURI().equals(ConstantesServer.LOGINPATH) ||
-                request.getRequestURI().equals(ConstantesServer.REGISTERPATH) ||
-                request.getRequestURI().equals(ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO) ||
-                request.getRequestURI().equals(ConstantesServer.LOGINPATH + ConstantesServer.REFRESH_TOKEN_PATH) ||
-                request.getRequestURI().equals(ConstantesServer.OLVIDAR_CONTRASENA)) {
+        if (isExemptedPath(request.getRequestURI())) {
             chain.doFilter(request, response);
             return;
         }
@@ -51,21 +47,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
-        final String token = header.split(" ")[1].trim();
+
+        final String token = header.substring(7).trim();
         jwtTokenUtil.validarToken(token);
         UserDetails userDetails = userRepo.loadUserByUsername(jwtTokenUtil.getSubjectDesdeToken(token));
-        UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null,
-                userDetails == null ?
-                        List.of() : userDetails.getAuthorities()
+                userDetails == null ? List.of() : userDetails.getAuthorities()
         );
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-        );
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
+    }
 
+    private boolean isExemptedPath(String requestURI) {
+        return requestURI.equals(ConstantesServer.LOGINPATH) ||
+                requestURI.equals(ConstantesServer.REGISTERPATH) ||
+                requestURI.equals(ConstantesServer.REGISTERPATH + ConstantesServer.VALIDAR_USUARIO) ||
+                requestURI.equals(ConstantesServer.LOGINPATH + ConstantesServer.REFRESH_TOKEN_PATH) ||
+                requestURI.equals(ConstantesServer.OLVIDAR_CONTRASENA);
     }
 
 }

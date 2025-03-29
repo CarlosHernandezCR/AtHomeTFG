@@ -28,5 +28,5 @@ interface CasaService {
     suspend fun salirCasa(@Body salirCasaRequestDTO: SalirCasaRequestDTO): Response<Void>
 
     @GET(ConstantesPaths.ESTADOS)
-    suspend fun getDatosCasa(@Query(Constantes.IDUSUARIO) idUsuario: String,@Query(Constantes.IDCASA) idCasa: String, @Query(Constantes.TOKEN) token: String): Response<PantallaEstadosResponseDTO>
+    suspend fun getDatosCasa(@Query(Constantes.IDUSUARIO) idUsuario: String,@Query(Constantes.IDCASA) idCasa: String): Response<PantallaEstadosResponseDTO>
 }

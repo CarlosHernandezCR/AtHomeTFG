@@ -25,6 +25,7 @@ public class ConstantesSpring {
     public static final String MAIL_DEBUG = "mail.debug";
     public static final String IDUSUARIO= "idUsuario";
     public static final String IDCASA = "idCasa";
+    public static final String AUTHORIZATION = "Authorization";
 
     private ConstantesSpring() {
     }

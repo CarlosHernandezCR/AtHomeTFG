@@ -5,6 +5,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -121,7 +123,9 @@ public class TokensTools {
     }
 
     public Jws<Claims> parseToken(String token) {
+        Logger logger = LoggerFactory.getLogger(TokensTools.class);
         try {
+            token = removeBearerPrefix(token);
             return Jwts.parserBuilder()
                     .setSigningKey(security.readCertificateFromKeyStoreServer().getPublicKey())
                     .build()
@@ -137,6 +141,13 @@ public class TokensTools {
         } catch (ExpiredJwtException e) {
             throw new CustomedException(ConstantesError.TOKEN_EXPIRADO);
         }
+    }
+
+    private String removeBearerPrefix(String token) {
+        if (token.startsWith(ConstantesSpring.BEARER)) {
+            return token.substring(7);
+        }
+        return token;
     }
 
     public String getSubjectDesdeToken(String token) {
