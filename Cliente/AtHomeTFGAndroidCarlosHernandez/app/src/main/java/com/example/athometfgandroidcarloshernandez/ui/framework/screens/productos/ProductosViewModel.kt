@@ -2,7 +2,11 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.athometfgandroidcarloshernandez.common.ConstantesError.ERROR_NUMERO_ENTERO
+import com.example.athometfgandroidcarloshernandez.common.ConstantesError.NOMBRE_CANTIDAD_OBLIGATORIO
+import com.example.athometfgandroidcarloshernandez.common.ConstantesError.PRODUCTO_EXISTENTE
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
+import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.AgregarProductoUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CambiarCantidadUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CargarProductosUseCase
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos.ProductosContract.ProductosEvent
@@ -18,6 +22,7 @@ import javax.inject.Inject
 class ProductosViewModel @Inject constructor(
     private val cambiarCantidadUseCase: CambiarCantidadUseCase,
     private val cargarProductosUseCase: CargarProductosUseCase,
+    private val agregarProductoUseCase: AgregarProductoUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductosContract.ProductosState())
     val uiState: StateFlow<ProductosContract.ProductosState> = _uiState.asStateFlow()
@@ -29,7 +34,42 @@ class ProductosViewModel @Inject constructor(
             is ProductosEvent.CambiarCantidad -> cambiarCantidad(event.idProducto, event.aumentar)
             is ProductosEvent.CambiarCajon -> cambiarCajon(event.idCajon)
             is ProductosEvent.CambiarMueble -> cambiarMueble(event.idMueble)
-            is ProductosEvent.AgregarProducto -> TODO()
+            is ProductosEvent.AgregarProducto -> agregarProducto(event.nombre, event.cantidad)
+        }
+    }
+
+    private fun agregarProducto(nombre: String, cantidad: String) {
+        if (nombre.isBlank() || cantidad.isBlank()) {
+            _uiState.update { it.copy(error = NOMBRE_CANTIDAD_OBLIGATORIO) }
+            return
+        }else if (!cantidad.matches(Regex("\\d+"))) {
+            _uiState.update { it.copy(error = ERROR_NUMERO_ENTERO) }
+            return
+        }else{
+            val nuevaCantidad = cantidad.toInt()
+            val productoExistente = _uiState.value.productos.find { it.nombre == nombre }
+            if (productoExistente != null) {
+                _uiState.update { it.copy(error = PRODUCTO_EXISTENTE) }
+                return
+            }
+            viewModelScope.launch {
+                agregarProductoUseCase.invoke(nombre, nuevaCantidad, _uiState.value.cajonActual).collect { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            val productosActualizados = _uiState.value.productos + result.data!!
+                            _uiState.update {
+                                it.copy(
+                                    productos = productosActualizados,
+                                    isLoadingCantidad = false
+                                )
+                            }
+                        }
+                        is NetworkResult.Error -> _uiState.update { it.
+                                copy(error = result.message, isLoadingCantidad = false) }
+                        is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
+                    }
+                }
+            }
         }
     }
 

@@ -62,8 +62,8 @@ public class ProductosServicios {
     private CargarProductosResponseDTO getCargarProductosResponseDTO(List<MuebleEntity> muebles, List<CajonEntity> cajones, List<AlmacenaEntity> almacenado,int idPropietario) {
         List<ProductoDTO> productosDTO = almacenado.stream()
                 .map(almacenaEntity -> new ProductoDTO(
-                        almacenaEntity.getIdProductos().getId().toString(),
-                        almacenaEntity.getIdProductos().getNombre(),
+                        almacenaEntity.getId().toString(),
+                        almacenaEntity.getNombre(),
                         almacenaEntity.getCantidad()))
                 .toList();
 
@@ -78,4 +78,12 @@ public class ProductosServicios {
         return new CargarProductosResponseDTO(productosDTO, cajonesDTO, mueblesDTO, idPropietario);
     }
 
+    public ProductoDTO agregarProducto(String nombre, Integer cantidad, String idCajon) {
+        CajonEntity cajonEntity = cajonesRepository.findById(Integer.parseInt(idCajon))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.CAJON_NO_ENCONTRADO));
+        AlmacenaEntity almacenaEntity = new AlmacenaEntity(0,cajonEntity, nombre, cantidad);
+        return almacenaRepository.save(almacenaEntity).getId() != null ?
+                new ProductoDTO(almacenaEntity.getId().toString(), almacenaEntity.getNombre(), almacenaEntity.getCantidad()) :
+                null;
+    }
 }

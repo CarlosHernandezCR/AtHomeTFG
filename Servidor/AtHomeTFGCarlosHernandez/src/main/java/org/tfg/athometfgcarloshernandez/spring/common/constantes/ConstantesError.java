@@ -12,7 +12,7 @@ public class ConstantesError {
     public static final String ERROR_IO = "Error de entrada/salida (IO)";
     public static final String ERROR_KEYSTORE = "Error en la keystore";
     public static final String ERROR_ALGORITHM = "Error en el algoritmo";
-    public static final String ERROR_INICIAR_SESION_CON_NOMBRE = "Error al iniciar sesión con el nombre: ";
+    public static final String ERROR_INICIAR_SESION_CON_NOMBRE = "Error al iniciar sesión con el NOMBRE: ";
     public static final String CORREO_NO_ENCONTRADO = "Correo no encontrado: ";
     public static final String TELEFONO_NO_ENCONTRADO = "Teléfono no encontrado: ";
     public static final String NOMBRE_NO_ENCONTRADO = "Nombre no encontrado: ";

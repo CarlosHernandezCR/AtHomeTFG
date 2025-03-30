@@ -1,5 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.repositories
 
+import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarProductoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarProductoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.CargarProductosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.datasource.ProductosRemoteDataSource
@@ -13,7 +15,21 @@ import javax.inject.Inject
 class ProductosRepository @Inject constructor(
     private val remoteDataSource: ProductosRemoteDataSource
 ) {
-    fun cargarProductos(idCajon: String?, idMueble: String?): Flow<NetworkResult<CargarProductosResponseDTO>> =
+    fun agregarProducto(
+        nombre: String,
+        cantidad: Int,
+        idcajon: String
+    ): Flow<NetworkResult<ProductoDTO>> =
+        flow {
+            emit(NetworkResult.Loading())
+            val result = remoteDataSource.agregarProducto(AgregarProductoRequestDTO(nombre, cantidad, idcajon))
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+
+    fun cargarProductos(
+        idCajon: String?,
+        idMueble: String?
+    ): Flow<NetworkResult<CargarProductosResponseDTO>> =
         flow {
             emit(NetworkResult.Loading())
             val result = remoteDataSource.cargarProductos(idCajon, idMueble)
@@ -23,7 +39,8 @@ class ProductosRepository @Inject constructor(
     fun cambiarCantidad(idProducto: String, cantidad: Int): Flow<NetworkResult<Boolean>> =
         flow {
             emit(NetworkResult.Loading())
-            val result = remoteDataSource.cambiarCantidad(CambiarProductoRequestDTO(idProducto, cantidad))
+            val result =
+                remoteDataSource.cambiarCantidad(CambiarProductoRequestDTO(idProducto, cantidad))
             emit(result)
         }.flowOn(Dispatchers.IO)
 }

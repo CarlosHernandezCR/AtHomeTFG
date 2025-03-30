@@ -4,6 +4,7 @@ import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
     const val NO_HAY_PRODUCTOS: String = "No hay productos"
+    const val CANTIDAD_MINUS: String = "Cantidad"
     const val CANTIDAD = "CANTIDAD"
     const val IMAGEN = "IMAGEN"
     const val CESTA = "Cesta"
@@ -34,7 +35,6 @@ object Constantes {
     const val UNIRSE = "Unirse"
     const val DIRECCION = "Dirección"
     const val CODIGO_POSTAL = "Código Postal"
-    const val TOKEN: String = "token"
     const val REGISTRO: String = "REGISTRO"
     const val TELEFONO: String = "Telefono"
     const val CONFIRMAR_REGISTRO: String = "Confirme el registro con el correo que le acabamos de enviar."

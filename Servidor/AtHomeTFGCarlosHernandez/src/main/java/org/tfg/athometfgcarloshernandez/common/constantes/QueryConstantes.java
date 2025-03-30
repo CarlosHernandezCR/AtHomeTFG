@@ -1,7 +1,7 @@
 package org.tfg.athometfgcarloshernandez.common.constantes;
 
 public class QueryConstantes {
-    public static final String FIND_USUARIOS_BY_CASA = "SELECT u.id , u.nombre, u.correo, u.telefono, u.color " +
+    public static final String FIND_USUARIOS_BY_CASA = "SELECT u.id , u.NOMBRE, u.correo, u.telefono, u.color " +
             "FROM usuario u " +
             "JOIN vive v ON u.id = v.id_usuario " +
             "WHERE v.id_casa = :idCasa";

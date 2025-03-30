@@ -52,7 +52,6 @@ import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
-import java.util.Locale
 
 @Composable
 fun ProductosActivity(
@@ -194,6 +193,7 @@ fun PantallaProductos(
         }
 
         BotoneraProductos(
+            esPropietario = esPropietario,
             verCesta = verCesta,
             agregarProducto = agregarProducto,
             volver = volver,
@@ -267,6 +267,7 @@ fun Cabecera() {
 
 @Composable
 fun BotoneraProductos(
+    esPropietario: Boolean,
     verCesta: () -> Unit,
     agregarProducto: (String, String) -> Unit,
     volver: () -> Unit,
@@ -289,7 +290,7 @@ fun BotoneraProductos(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         BotonAccion(texto = Constantes.VOLVER, accion = volver)
-        BotonAccion(texto = Constantes.AGREGAR_PRODUCTO, accion = { showDialog = true })
+        if (esPropietario) BotonAccion(texto = Constantes.AGREGAR_PRODUCTO, accion = { showDialog = true })
         BotonAccion(texto = Constantes.CESTA, accion = verCesta)
     }
 }
@@ -316,7 +317,7 @@ fun AgregarProductoDialog(
                 TextField(
                     value = cantidad,
                     onValueChange = { cantidad = it },
-                    label = { Text(Constantes.CANTIDAD.lowercase(Locale.ROOT)) })
+                    label = { Text(Constantes.CANTIDAD_MINUS)})
             }
         },
         confirmButton = {

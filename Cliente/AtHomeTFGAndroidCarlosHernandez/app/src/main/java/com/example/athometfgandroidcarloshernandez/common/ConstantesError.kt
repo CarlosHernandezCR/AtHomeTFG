@@ -1,6 +1,10 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val NO_ES_PROPIETARIO: String = "No eres propietario de este cajón"
+    const val NOMBRE_CANTIDAD_OBLIGATORIO = "Nombre y cantidad son obligatorios"
+    const val ERROR_NUMERO_ENTERO = "La cantidad debe ser un número entero"
+    const val PRODUCTO_EXISTENTE = "El producto ya existe"
     const val ERROR_CODIGO : String = "Código inválido"
     const val ERROR_USUARIO_NO_ENCONTRADO: String = "Usuario no encontrado"
     const val ERROR_NO_CONFIRMADO: String = "Usuario no validado, confirme el correo"
