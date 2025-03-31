@@ -86,4 +86,11 @@ public class ProductosServicios {
                 new ProductoDTO(almacenaEntity.getId().toString(), almacenaEntity.getNombre(), almacenaEntity.getCantidad()) :
                 null;
     }
+
+    public void cambiarCantidadProducto(String idProducto, Integer cantidad) {
+        AlmacenaEntity almacenaEntity = almacenaRepository.findById(Integer.parseInt(idProducto))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.PRODUCTO_NO_ENCONTRADO));
+        almacenaEntity.setCantidad(cantidad);
+        almacenaRepository.save(almacenaEntity);
+    }
 }

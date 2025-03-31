@@ -5,8 +5,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -122,9 +120,7 @@ public class TokensTools {
         return generarAccessToken(subject, idUsuario);
     }
 
-    public Jws<Claims> parseToken(String token) {
-        Logger logger = LoggerFactory.getLogger(TokensTools.class);
-        try {
+    public Jws<Claims> parseToken(String token) {try {
             token = removeBearerPrefix(token);
             return Jwts.parserBuilder()
                     .setSigningKey(security.readCertificateFromKeyStoreServer().getPublicKey())

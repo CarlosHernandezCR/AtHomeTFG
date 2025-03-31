@@ -141,7 +141,7 @@ fun PantallaProductos(
     cargando: Boolean,
     cambioMueble: (String) -> Unit = {},
     cambioCajon: (String) -> Unit = {},
-    cambiarCantidad: (String, Boolean) -> Unit,
+    cambiarCantidad: (Int, Boolean) -> Unit,
     verCesta: () -> Unit,
     agregarProducto: (String, String) -> Unit,
     volver: () -> Unit,
@@ -157,7 +157,7 @@ fun PantallaProductos(
             Cargando()
         } else {
             Selector(
-                valorActual = muebles.find { it.id == muebleActual } ?: MuebleDTO(
+                valorActual = muebles.find { it.nombre == muebleActual } ?: MuebleDTO(
                     id = "",
                     nombre = Constantes.NO_HAY_MUEBLE
                 ),
@@ -167,7 +167,7 @@ fun PantallaProductos(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Selector(
-                valorActual = cajones.find { it.id == cajonActual } ?: CajonDTO(
+                valorActual = cajones.find { it.nombre == cajonActual } ?: CajonDTO(
                     id = "",
                     nombre = Constantes.NO_HAY_CAJONES
                 ),
@@ -206,7 +206,7 @@ fun PantallaProductos(
 @Composable
 private fun ListaProductos(
     productos: List<ProductoDTO>,
-    cambiarCantidad: (String, Boolean) -> Unit,
+    cambiarCantidad: (Int, Boolean) -> Unit,
     productosCargando: Map<String, Boolean>,
     esPropietario: Boolean,
     pedirPrestado: (String) -> Unit
@@ -225,8 +225,8 @@ private fun ListaProductos(
             items(productos) { producto ->
                 ProductoItem(
                     producto = producto,
-                    aumentar = { cambiarCantidad(producto.nombre, true) },
-                    disminuir = { cambiarCantidad(producto.nombre, false) },
+                    aumentar = { cambiarCantidad(producto.id, true) },
+                    disminuir = { cambiarCantidad(producto.id, false) },
                     cargando = productosCargando[producto.nombre] == true,
                     esPropietario = esPropietario,
                     pedirPrestado = { pedirPrestado(producto.nombre) }
@@ -434,9 +434,9 @@ fun PantallaProductosPreview() {
         cajonActual = "Cajon1",
         cajones = listOf(CajonDTO(id = "1", nombre = "Cajon 1")),
         productos = listOf(
-            ProductoDTO(id = "0", nombre = "Producto 1", unidades = 1),
-            ProductoDTO(id = "0", nombre = "Producto 2", unidades = 2),
-            ProductoDTO(id = "0", nombre = "Producto 3", unidades = 3)
+            ProductoDTO(id = 0, nombre = "Producto 1", unidades = 1),
+            ProductoDTO(id = 0, nombre = "Producto 2", unidades = 2),
+            ProductoDTO(id = 0, nombre = "Producto 3", unidades = 3)
         ),
         cambioMueble = {},
         cambioCajon = {},

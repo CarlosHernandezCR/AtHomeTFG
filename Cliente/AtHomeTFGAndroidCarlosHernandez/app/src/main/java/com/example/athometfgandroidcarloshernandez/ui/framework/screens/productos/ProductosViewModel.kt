@@ -42,31 +42,34 @@ class ProductosViewModel @Inject constructor(
         if (nombre.isBlank() || cantidad.isBlank()) {
             _uiState.update { it.copy(error = NOMBRE_CANTIDAD_OBLIGATORIO) }
             return
-        }else if (!cantidad.matches(Regex("\\d+"))) {
+        } else if (!cantidad.matches(Regex("\\d+"))) {
             _uiState.update { it.copy(error = ERROR_NUMERO_ENTERO) }
             return
-        }else{
+        } else {
             val nuevaCantidad = cantidad.toInt()
             val productoExistente = _uiState.value.productos.find { it.nombre == nombre }
+            val cajon = _uiState.value.cajones.find { it.nombre == _uiState.value.cajonActual }
             if (productoExistente != null) {
                 _uiState.update { it.copy(error = PRODUCTO_EXISTENTE) }
                 return
             }
             viewModelScope.launch {
-                agregarProductoUseCase.invoke(nombre, nuevaCantidad, _uiState.value.cajonActual).collect { result ->
-                    when (result) {
-                        is NetworkResult.Success -> {
-                            val productosActualizados = _uiState.value.productos + result.data!!
-                            _uiState.update {
-                                it.copy(
-                                    productos = productosActualizados,
-                                    isLoadingCantidad = false
-                                )
+                if (cajon != null) {
+                    agregarProductoUseCase.invoke(nombre, nuevaCantidad, cajon.id).collect { result ->
+                        when (result) {
+                            is NetworkResult.Success -> {
+                                val productosActualizados = _uiState.value.productos + result.data!!
+                                _uiState.update {
+                                    it.copy(
+                                        productos = productosActualizados,
+                                        isLoadingCantidad = false
+                                    )
+                                }
                             }
+
+                            is NetworkResult.Error -> _uiState.update { it.copy(error = result.message, isLoadingCantidad = false) }
+                            is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
                         }
-                        is NetworkResult.Error -> _uiState.update { it.
-                                copy(error = result.message, isLoadingCantidad = false) }
-                        is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
                     }
                 }
             }
@@ -91,10 +94,9 @@ class ProductosViewModel @Inject constructor(
                         val muebles = result.data?.muebles ?: emptyList()
                         val cajones = result.data?.cajones ?: emptyList()
                         val productos = result.data?.productos ?: emptyList()
-                        val muebleActual = if (primeraCarga) muebles.getOrNull(0)?.id ?: "" else idMueble ?: _uiState.value.muebleActual
-                        val cajonActual = if (primeraCarga) cajones.getOrNull(0)?.id ?: "" else idCajon ?: _uiState.value.cajonActual
+                        val muebleActual = if (primeraCarga) muebles.getOrNull(0)?.nombre ?: "" else muebles.find { it.id == idMueble }?.nombre ?: _uiState.value.muebleActual
                         val idPropietario = result.data?.idPropietario ?: ""
-
+                        val cajonActual = cajones.find { it.id == idCajon }?.nombre ?: _uiState.value.cajonActual
                         _uiState.update { currentState ->
                             currentState.copy(
                                 muebles = muebles,
@@ -125,8 +127,8 @@ class ProductosViewModel @Inject constructor(
         }
     }
 
-    private fun cambiarCantidad(idProducto: String, aumentar: Boolean) {
-        val producto = _uiState.value.productos.find { it.nombre == idProducto } ?: return
+    private fun cambiarCantidad(idProducto: Int, aumentar: Boolean) {
+        val producto = _uiState.value.productos.find { it.id == idProducto } ?: return
         val nuevaCantidad = if (aumentar) producto.unidades + 1 else maxOf(0, producto.unidades - 1)
 
         viewModelScope.launch {
@@ -146,12 +148,12 @@ class ProductosViewModel @Inject constructor(
         }
     }
 
-    private fun actualizarLista(idProducto: String, nuevaCantidad: Int) {
+    private fun actualizarLista(idProducto: Int, nuevaCantidad: Int) {
         val productosActualizados = if (nuevaCantidad == 0) {
-            _uiState.value.productos.filter { it.nombre != idProducto }
+            _uiState.value.productos.filter { it.id != idProducto }
         } else {
             _uiState.value.productos.map { producto ->
-                if (producto.nombre == idProducto) producto.copy(unidades = nuevaCantidad) else producto
+                if (producto.id == idProducto) producto.copy(unidades = nuevaCantidad) else producto
             }
         }
         _uiState.update { it.copy(productos = productosActualizados, isLoadingCantidad = false) }

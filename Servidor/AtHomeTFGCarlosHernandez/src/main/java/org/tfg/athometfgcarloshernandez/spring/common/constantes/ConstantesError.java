@@ -29,6 +29,7 @@ public class ConstantesError {
     public static final String EVENTO_NO_ENCONTRADO = "Evento no encontrado";
     public static final String YA_VOTADO = "Ya has votado";
     public static final String CAJON_NO_ENCONTRADO = "Cajón no encontrado";
+    public static final String PRODUCTO_NO_ENCONTRADO = "Producto no encontrado";
 
 
     private ConstantesError() {

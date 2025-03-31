@@ -2,7 +2,7 @@ package com.example.athometfgandroidcarloshernandez.data.repositories
 
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarProductoRequestDTO
-import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarProductoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarCantidadProductoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.CargarProductosResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.datasource.ProductosRemoteDataSource
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
@@ -36,11 +36,11 @@ class ProductosRepository @Inject constructor(
             emit(result)
         }.flowOn(Dispatchers.IO)
 
-    fun cambiarCantidad(idProducto: String, cantidad: Int): Flow<NetworkResult<Boolean>> =
+    fun cambiarCantidad(idProducto: Int, cantidad: Int): Flow<NetworkResult<Boolean>> =
         flow {
             emit(NetworkResult.Loading())
             val result =
-                remoteDataSource.cambiarCantidad(CambiarProductoRequestDTO(idProducto, cantidad))
+                remoteDataSource.cambiarCantidad(CambiarCantidadProductoRequestDTO(idProducto, cantidad))
             emit(result)
         }.flowOn(Dispatchers.IO)
 }

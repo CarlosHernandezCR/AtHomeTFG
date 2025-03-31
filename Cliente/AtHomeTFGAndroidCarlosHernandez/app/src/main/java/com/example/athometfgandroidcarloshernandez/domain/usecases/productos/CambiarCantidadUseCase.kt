@@ -7,5 +7,5 @@ import javax.inject.Inject
 class CambiarCantidadUseCase @Inject constructor(
     private val productosRepository: ProductosRepository
 ){
-    operator fun invoke(idProducto:String, cantidad:Int) = productosRepository.cambiarCantidad(idProducto,cantidad)
+    operator fun invoke(idProducto:Int, cantidad:Int) = productosRepository.cambiarCantidad(idProducto,cantidad)
 }

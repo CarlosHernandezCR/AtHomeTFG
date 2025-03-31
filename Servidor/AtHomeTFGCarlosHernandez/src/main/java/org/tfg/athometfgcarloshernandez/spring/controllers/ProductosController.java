@@ -35,5 +35,11 @@ public class ProductosController {
         return ResponseEntity.ok( productosServicios.agregarProducto(agregarProductoRequestDTO.getNombre(),
                 agregarProductoRequestDTO.getCantidad(), agregarProductoRequestDTO.getIdCajon()));
     }
+    @PostMapping(ConstantesServer.CAMBIAR_CANTIDAD)
+    public ResponseEntity<Void> cambiarCantidadProducto(@RequestBody CambiarCantidadProductoRequestDTO agregarProductoRequestDTO) {
+        productosServicios.cambiarCantidadProducto(agregarProductoRequestDTO.getIdProducto(),
+                agregarProductoRequestDTO.getCantidad());
+        return ResponseEntity.ok().build();
+    }
 
 }

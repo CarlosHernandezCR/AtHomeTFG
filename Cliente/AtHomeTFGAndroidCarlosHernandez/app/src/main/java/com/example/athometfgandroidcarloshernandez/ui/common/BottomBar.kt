@@ -63,16 +63,18 @@ fun BottomBar(
                                     ConstantesPantallas.CASA,
                                     ConstantesPantallas.CALENDARIO,
                                     ConstantesPantallas.INMUEBLES
-                                )) {
+                                )
+                            ) {
                                 "${screen.route}/$idUsuario/$idCasa"
-                            }  else {
+                            } else {
                                 "${screen.route}/$idUsuario"
                             }
 
                             navController.navigate(route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
-                                    inclusive = true
+                                    saveState = true
                                 }
+                                restoreState = true
                                 launchSingleTop = true
                             }
                         }

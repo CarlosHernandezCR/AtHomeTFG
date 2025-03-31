@@ -65,7 +65,6 @@ import com.example.athometfgandroidcarloshernandez.ui.common.ConfirmationDialog
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.UsuarioInmuebles
 import kotlin.math.roundToInt
-
 @Composable
 fun InmueblesActivity(
     idUsuario: String,
@@ -77,6 +76,7 @@ fun InmueblesActivity(
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(idCasa) {
         viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarDatos(idCasa))
+        viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarUsuarios(idCasa))
     }
     LaunchedEffect(uiState.mensaje) {
         uiState.mensaje?.let { showSnackbar.invoke(it) }
@@ -158,7 +158,6 @@ fun InmueblesPantalla(
     var dialogTitle by remember { mutableStateOf("") }
     var isCajon by remember { mutableStateOf(false) }
     val areHabitacionesEmpty = habitaciones.isEmpty()
-    var usuariosCargados by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -217,13 +216,6 @@ fun InmueblesPantalla(
             )
         }
 
-        LaunchedEffect(showDialog) {
-            if (showDialog && !usuariosCargados) {
-                cargarUsuarios()
-                usuariosCargados = true
-            }
-        }
-
         if (showDialog) {
             DialogNuevoElemento(
                 title = dialogTitle,
@@ -244,6 +236,61 @@ fun InmueblesPantalla(
                 },
                 onDismiss = { showDialog = false }
             )
+        }
+    }
+}
+@Composable
+fun DialogNuevoElemento(
+    title: String,
+    usuarios: List<UsuarioInmuebles> = emptyList(),
+    onConfirm: (String, String?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var itemName by remember { mutableStateOf("") }
+    var selectedUsuario by remember { mutableStateOf<UsuarioInmuebles?>(null) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(text = title, style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = itemName,
+                    onValueChange = { itemName = it },
+                    label = { Text(Constantes.NOMBRE) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (usuarios.isNotEmpty() && title == Constantes.AGREGAR_CAJON) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ComboBoxPropietarios(
+                        items = usuarios,
+                        selectedItem = selectedUsuario?.nombre ?: "",
+                        titulo = Constantes.PROPIETARIO,
+                        onItemSelected = { name ->
+                            selectedUsuario = usuarios.find { it.nombre == name }
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(Constantes.SALIR)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { onConfirm(itemName, selectedUsuario?.id) }) {
+                        Text(Constantes.AGREGAR)
+                    }
+                }
+            }
         }
     }
 }
@@ -410,62 +457,6 @@ fun CajonItem(
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.Gray
             )
-        }
-    }
-}
-
-@Composable
-fun DialogNuevoElemento(
-    title: String,
-    usuarios: List<UsuarioInmuebles> = emptyList(),
-    onConfirm: (String, String?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var itemName by remember { mutableStateOf("") }
-    var selectedUsuario by remember { mutableStateOf<UsuarioInmuebles?>(null) }
-
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = MaterialTheme.colorScheme.background,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(text = title, style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(8.dp))
-                TextField(
-                    value = itemName,
-                    onValueChange = { itemName = it },
-                    label = { Text(Constantes.NOMBRE) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                if (usuarios.isNotEmpty() && title != Constantes.AGREGAR_HABITACION && title != Constantes.AGREGAR_MUEBLE) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ComboBoxPropietarios(
-                        items = usuarios,
-                        selectedItem = selectedUsuario?.nombre ?: "",
-                        titulo = Constantes.PROPIETARIO,
-                        onItemSelected = { name ->
-                            selectedUsuario = usuarios.find { it.nombre == name }
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(Constantes.SALIR)
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = { onConfirm(itemName, selectedUsuario?.id) }) {
-                        Text(Constantes.AGREGAR)
-                    }
-                }
-            }
         }
     }
 }
