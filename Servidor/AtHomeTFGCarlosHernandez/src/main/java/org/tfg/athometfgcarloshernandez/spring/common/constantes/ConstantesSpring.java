@@ -2,7 +2,7 @@ package org.tfg.athometfgcarloshernandez.spring.common.constantes;
 
 public class ConstantesSpring {
     public static final String ME = "me";
-    public static final int CADUCIDAD_CODIGO = 300;
+    public static final int CADUCIDAD_CODIGO = 10;
     public static final int CADUCIDAD_CODIGO_REFRESH = 3000;
     public static final String BEARER = "Bearer ";
     public static final String KEY_STORE_PATH = "${application.security.key-store-path}";

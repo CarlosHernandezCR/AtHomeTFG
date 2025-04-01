@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
     @ExceptionHandler(YaVotadoException.class)
-    public ResponseEntity<String> handleBadUserException(YaVotadoException ex) {
+    public ResponseEntity<String> handleBadUserException() {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ConstantesError.YA_VOTADO);
     }
@@ -28,12 +28,12 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<String> handleBadUserException(TokenException ex) {
-        return ResponseEntity.status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ConstantesError.TOKEN_EXPIRADO);
     }
     @ExceptionHandler(ErrorLoginException.class)
     public ResponseEntity<String> handleBadUserException(ErrorLoginException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ConstantesError.ERROR_INICIAR_SESION);
     }
 
