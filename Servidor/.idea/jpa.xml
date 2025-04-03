@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JpaBuddyIdeaProjectConfig">
-    <option name="reLastEntityCreationPackage" value="InHomeTFGCarlosHernandez/src/main/java/org/tfg/inhometfgcarloshernandez/data/model" />
-    <option name="reverseEngineeringLastDbConnectionId" value="af184965-2f9c-47a7-84be-811eeffe3612__InHouseTFG" />
+    <option name="reLastEntityCreationPackage" value="AtHomeTFGCarlosHernandez/src/main/java/org/tfg/athometfgcarloshernandez/data/model" />
+    <option name="reverseEngineeringLastDbConnectionId" value="474fecee-ddb4-423f-99c1-18aef6d2b18c__Carlos_Hernandez_AtHomeTFG" />
   </component>
 </project>

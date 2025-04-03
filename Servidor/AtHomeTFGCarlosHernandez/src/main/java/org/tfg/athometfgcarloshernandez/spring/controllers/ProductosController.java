@@ -3,15 +3,11 @@ package org.tfg.athometfgcarloshernandez.spring.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tfg.athometfgcarloshernandez.domain.servicios.CasaServicios;
 import org.tfg.athometfgcarloshernandez.domain.servicios.ProductosServicios;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.model.ProductoDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.request.*;
-import org.tfg.athometfgcarloshernandez.spring.model.response.CambiarEstadoResponseDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CargarProductosResponseDTO;
-import org.tfg.athometfgcarloshernandez.spring.model.response.GetCasasResponseDTO;
-import org.tfg.athometfgcarloshernandez.spring.model.response.PantallaEstadosResponseDTO;
 
 @RestController
 @RequestMapping({ConstantesServer.PRODUCTOSPATH})
