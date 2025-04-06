@@ -1,8 +1,13 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -37,19 +43,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.AUMENTAR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.DISMINUIR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.PEDIR_PRESTADO
+import com.example.athometfgandroidcarloshernandez.common.Constantes.SELECCIONAR_IMAGEN
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
-import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
 
@@ -116,9 +129,9 @@ fun ProductosActivity(
                     ProductosContract.ProductosEvent.CambiarCantidad(idProducto, aumentar)
                 )
             },
-            agregarProducto = { nombre, cantidad ->
+            agregarProducto = { nombre, cantidad, imagen ->
                 viewModel.handleEvent(
-                    ProductosContract.ProductosEvent.AgregarProducto(nombre, cantidad)
+                    ProductosContract.ProductosEvent.AgregarProducto(nombre, cantidad, imagen)
                 )
             },
             volver = volver,
@@ -136,14 +149,14 @@ fun PantallaProductos(
     muebles: List<MuebleDTO>,
     cajonActual: String,
     cajones: List<CajonDTO>,
-    productos: List<ProductoDTO>,
+    productos: List<ProductosContract.Producto>,
     productosCargando: Map<String, Boolean>,
     cargando: Boolean,
     cambioMueble: (String) -> Unit = {},
     cambioCajon: (String) -> Unit = {},
     cambiarCantidad: (Int, Boolean) -> Unit,
     verCesta: () -> Unit,
-    agregarProducto: (String, String) -> Unit,
+    agregarProducto: (String, String, String) -> Unit,
     volver: () -> Unit,
     esPropietario: Boolean,
     pedirPrestado: (String) -> Unit
@@ -205,7 +218,7 @@ fun PantallaProductos(
 
 @Composable
 private fun ListaProductos(
-    productos: List<ProductoDTO>,
+    productos: List<ProductosContract.Producto>,
     cambiarCantidad: (Int, Boolean) -> Unit,
     productosCargando: Map<String, Boolean>,
     esPropietario: Boolean,
@@ -269,7 +282,7 @@ fun Cabecera() {
 fun BotoneraProductos(
     esPropietario: Boolean,
     verCesta: () -> Unit,
-    agregarProducto: (String, String) -> Unit,
+    agregarProducto: (String, String, String) -> Unit,
     volver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -278,8 +291,8 @@ fun BotoneraProductos(
     if (showDialog) {
         AgregarProductoDialog(
             onDismiss = { showDialog = false },
-            onConfirm = { nombre, cantidad ->
-                agregarProducto(nombre, cantidad)
+            onConfirm = { nombre, cantidad, imagen ->
+                agregarProducto(nombre, cantidad,imagen)
                 showDialog = false
             }
         )
@@ -298,10 +311,42 @@ fun BotoneraProductos(
 @Composable
 fun AgregarProductoDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String, String) -> Unit
+    onConfirm: (String, String, String) -> Unit
 ) {
+    val context = LocalContext.current
     var nombre by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
+    var imagenBytes by remember { mutableStateOf<ByteArray?>(null) }
+
+    val cropLauncher = rememberLauncherForActivityResult(
+        contract = CropImageContract()
+    ) { result ->
+        if (result.isSuccessful) {
+            val uri = result.uriContent
+            uri?.let {
+                val inputStream = context.contentResolver.openInputStream(it)
+                imagenBytes = inputStream?.readBytes()
+            }
+        }
+    }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            cropLauncher.launch(
+                CropImageContractOptions(
+                    it,
+                    CropImageOptions().apply {
+                        aspectRatioX = 1
+                        aspectRatioY = 1
+                        fixAspectRatio = true
+                        guidelines = CropImageView.Guidelines.ON
+                    }
+                )
+            )
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -317,11 +362,22 @@ fun AgregarProductoDialog(
                 TextField(
                     value = cantidad,
                     onValueChange = { cantidad = it },
-                    label = { Text(Constantes.CANTIDAD_MINUS)})
+                    label = { Text(Constantes.CANTIDAD_MINUS) }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }) {
+                    Text(SELECCIONAR_IMAGEN)
+                }
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(nombre, cantidad) }) {
+            TextButton(onClick = {
+                onConfirm(nombre, cantidad, imagenBytes.toString())
+            }) {
                 Text(Constantes.AGREGAR)
             }
         },
@@ -332,13 +388,16 @@ fun AgregarProductoDialog(
         }
     )
 }
+
+
+
 @Composable
 fun ProductoItem(
-    producto: ProductoDTO,
-    aumentar: () -> Unit,
-    disminuir: () -> Unit,
+    producto: ProductosContract.Producto,
     cargando: Boolean,
     esPropietario: Boolean,
+    aumentar: () -> Unit,
+    disminuir: () -> Unit,
     pedirPrestado: () -> Unit
 ) {
     Card(
@@ -355,12 +414,32 @@ fun ProductoItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(4.dp))
-                    .weight(0.8f)
-            )
+            if (producto.imagen != null) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .weight(0.8f)
+                ) {
+                    Image(
+                        bitmap = producto.imagen,
+                        contentDescription = producto.nombre,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(RoundedCornerShape(4.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+
+                }
+            } else {
+                Spacer(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .background(Color.Gray, shape = RoundedCornerShape(4.dp))
+                        .weight(0.8f)
+                )
+            }
+
 
             Text(
                 text = producto.nombre,
@@ -434,19 +513,19 @@ fun PantallaProductosPreview() {
         cajonActual = "Cajon1",
         cajones = listOf(CajonDTO(id = "1", nombre = "Cajon 1")),
         productos = listOf(
-            ProductoDTO(id = 0, nombre = "Producto 1", unidades = 1),
-            ProductoDTO(id = 0, nombre = "Producto 2", unidades = 2),
-            ProductoDTO(id = 0, nombre = "Producto 3", unidades = 3)
+            ProductosContract.Producto(id = 0, nombre = "Producto 1", unidades = 1, imagen = null),
+            ProductosContract.Producto(id = 0, nombre = "Producto 2", unidades = 2, imagen = null),
+            ProductosContract.Producto(id = 0, nombre = "Producto 3", unidades = 3, imagen = null)
         ),
         cambioMueble = {},
         cambioCajon = {},
         productosCargando = emptyMap(),
         cambiarCantidad = { _, _ -> },
         verCesta = {},
-        agregarProducto = { _, _ -> },
+        agregarProducto = { _, _, _ -> },
         cargando = false,
         volver = {},
         esPropietario = true,
-        pedirPrestado = {}
+        pedirPrestado = {},
     )
 }
