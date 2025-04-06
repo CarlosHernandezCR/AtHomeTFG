@@ -135,7 +135,7 @@ public class TokensTools {
         } catch (NoSuchAlgorithmException e) {
             throw new CustomedException(ConstantesError.ERROR_ALGORITHM);
         } catch (ExpiredJwtException e) {
-            throw new CustomedException(ConstantesError.TOKEN_EXPIRADO);
+            throw new TokenException(ConstantesError.TOKEN_EXPIRADO);
         }
     }
 

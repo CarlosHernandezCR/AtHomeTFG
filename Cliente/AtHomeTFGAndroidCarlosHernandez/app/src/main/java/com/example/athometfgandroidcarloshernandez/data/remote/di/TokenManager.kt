@@ -25,6 +25,24 @@ import javax.inject.Singleton
 class TokenManager @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
+    private val okHttpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }).build()
+    }
+
+    private val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constantes.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+    }
+
+    private val userService: UsuarioService by lazy {
+        retrofit.create(UsuarioService::class.java)
+    }
+
     companion object {
         private val ACCESS_TOKEN = stringPreferencesKey(Constantes.ACCESS_TOKEN)
         private val REFRESH_TOKEN = stringPreferencesKey(Constantes.REFRESH_TOKEN)
@@ -75,31 +93,24 @@ class TokenManager @Inject constructor(
     }
 
     suspend fun refreshToken(refreshToken: String): NetworkResult<AccessTokenResponseDTO> {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        val okHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constantes.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build()
-
-        val userService = retrofit.create(UsuarioService::class.java)
-
-        val response = userService.refreshToken(refreshToken)
-        return if (response.isSuccessful) {
-            val body = response.body()
-            if (body != null) {
-                saveAccessToken(body.accessToken)
-                NetworkResult.Success(body)
+        return try {
+            val response = userService.refreshToken(refreshToken)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    saveAccessToken(body.accessToken)
+                    NetworkResult.Success(body)
+                } else {
+                    NetworkResult.Error(ConstantesError.ERROR_REFRESCAR_TOKEN)
+                }
             } else {
-                NetworkResult.Error(ConstantesError.ERROR_REFRESCAR_TOKEN)
+                NetworkResult.Error("${response.code()} ${response.message()}")
             }
-        } else {
-            NetworkResult.Error("${response.code()} ${response.message()}")
+        } catch (e: Exception) {
+            NetworkResult.Error(ConstantesError.BASE_DE_DATOS_ERROR)
         }
     }
+
 
     suspend fun deleteRefreshToken() {
         context.dataStore.edit { preferences ->
