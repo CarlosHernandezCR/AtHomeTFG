@@ -31,4 +31,6 @@ public class AlmacenaEntity {
     private String nombre;
     @Column(name = AlmacenaConstantes.COLUMN_CANTIDAD)
     private Integer cantidad;
+    @Column(name = AlmacenaConstantes.COLUMN_IMAGEN)
+    private String imagen;
 }

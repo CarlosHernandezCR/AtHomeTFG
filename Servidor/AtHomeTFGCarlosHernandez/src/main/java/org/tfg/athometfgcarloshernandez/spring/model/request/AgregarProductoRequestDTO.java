@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AgregarProductoRequestDTO {
-    private String idCajon;
     private String nombre;
     private Integer cantidad;
+    private String imagen;
+    private String idCajon;
 }

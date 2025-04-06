@@ -29,7 +29,7 @@ public class ProductosController {
     @PostMapping(ConstantesServer.AGREGAR_PRODUTO)
     public ResponseEntity<ProductoDTO> agregarProducto(@RequestBody AgregarProductoRequestDTO agregarProductoRequestDTO) {
         return ResponseEntity.ok( productosServicios.agregarProducto(agregarProductoRequestDTO.getNombre(),
-                agregarProductoRequestDTO.getCantidad(), agregarProductoRequestDTO.getIdCajon()));
+                agregarProductoRequestDTO.getCantidad(),agregarProductoRequestDTO.getImagen(), agregarProductoRequestDTO.getIdCajon()));
     }
     @PostMapping(ConstantesServer.CAMBIAR_CANTIDAD)
     public ResponseEntity<Void> cambiarCantidadProducto(@RequestBody CambiarCantidadProductoRequestDTO agregarProductoRequestDTO) {

@@ -1,6 +1,8 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object ConstantesError {
+    const val ERROR_DECODIFICAR_IMAGEN = "Error al decodificar la imagen"
+    const val IMAGEN_OBLIGATORIA = "Suba una foto del producto"
     const val NO_ES_PROPIETARIO: String = "No eres propietario de este cajón"
     const val NOMBRE_CANTIDAD_OBLIGATORIO = "Nombre y cantidad son obligatorios"
     const val ERROR_NUMERO_ENTERO = "La cantidad debe ser un número entero"

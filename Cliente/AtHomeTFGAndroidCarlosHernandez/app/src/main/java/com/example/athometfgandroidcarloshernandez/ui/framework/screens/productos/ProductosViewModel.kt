@@ -1,10 +1,17 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos
 
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.athometfgandroidcarloshernandez.common.ConstantesError.ERROR_DECODIFICAR_IMAGEN
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.ERROR_NUMERO_ENTERO
+import com.example.athometfgandroidcarloshernandez.common.ConstantesError.IMAGEN_OBLIGATORIA
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.NOMBRE_CANTIDAD_OBLIGATORIO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.PRODUCTO_EXISTENTE
+import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.AgregarProductoUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CambiarCantidadUseCase
@@ -34,18 +41,23 @@ class ProductosViewModel @Inject constructor(
             is ProductosEvent.CambiarCantidad -> cambiarCantidad(event.idProducto, event.aumentar)
             is ProductosEvent.CambiarCajon -> cambiarCajon(event.idCajon)
             is ProductosEvent.CambiarMueble -> cambiarMueble(event.idMueble)
-            is ProductosEvent.AgregarProducto -> agregarProducto(event.nombre, event.cantidad)
+            is ProductosEvent.AgregarProducto -> agregarProducto(event.nombre, event.cantidad, event.imagen)
+            is ProductosEvent.DecodeBase64ToImageBitmap -> decodeBase64ToImageBitmap(event.imagenSinDeco)
         }
     }
 
-    private fun agregarProducto(nombre: String, cantidad: String) {
+    private fun agregarProducto(nombre: String, cantidad: String, imagen: String) {
         if (nombre.isBlank() || cantidad.isBlank()) {
             _uiState.update { it.copy(error = NOMBRE_CANTIDAD_OBLIGATORIO) }
             return
         } else if (!cantidad.matches(Regex("\\d+"))) {
             _uiState.update { it.copy(error = ERROR_NUMERO_ENTERO) }
             return
-        } else {
+        } else if (imagen.isBlank()){
+            _uiState.update { it.copy(error = IMAGEN_OBLIGATORIA) }
+            return
+        }
+        else {
             val nuevaCantidad = cantidad.toInt()
             val productoExistente = _uiState.value.productos.find { it.nombre == nombre }
             val cajon = _uiState.value.cajones.find { it.nombre == _uiState.value.cajonActual }
@@ -55,10 +67,10 @@ class ProductosViewModel @Inject constructor(
             }
             viewModelScope.launch {
                 if (cajon != null) {
-                    agregarProductoUseCase.invoke(nombre, nuevaCantidad, cajon.id).collect { result ->
+                    agregarProductoUseCase.invoke(nombre, nuevaCantidad, imagen, cajon.id).collect { result ->
                         when (result) {
                             is NetworkResult.Success -> {
-                                val productosActualizados = _uiState.value.productos + result.data!!
+                                val productosActualizados = _uiState.value.productos + productoDTOtoProducto(listOf(result.data!!))
                                 _uiState.update {
                                     it.copy(
                                         productos = productosActualizados,
@@ -103,7 +115,7 @@ class ProductosViewModel @Inject constructor(
                                 cajones = cajones,
                                 muebleActual = muebleActual,
                                 cajonActual = cajonActual,
-                                productos = productos,
+                                productos = productoDTOtoProducto(productos),
                                 idPropietario = idPropietario,
                                 isLoading = false
                             )
@@ -158,4 +170,30 @@ class ProductosViewModel @Inject constructor(
         }
         _uiState.update { it.copy(productos = productosActualizados, isLoadingCantidad = false) }
     }
+
+    private fun productoDTOtoProducto(productosDTO: List<ProductoDTO>): List<ProductosContract.Producto> {
+        return productosDTO.map { productoDTO ->
+            ProductosContract.Producto(
+                id = productoDTO.id,
+                nombre = productoDTO.nombre,
+                unidades = productoDTO.unidades,
+                imagen = productoDTO.imagen?.let { decodeBase64ToImageBitmap(it) }
+            )
+        }
+    }
+
+    private fun decodeBase64ToImageBitmap(base64: String): ImageBitmap? {
+        return try {
+            val imageBytes = Base64.decode(base64, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(
+                    error = ERROR_DECODIFICAR_IMAGEN,
+                )
+            }
+            null
+        }
+    }
+
 }

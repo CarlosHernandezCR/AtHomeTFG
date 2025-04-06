@@ -4,4 +4,5 @@ data class ProductoDTO (
     val id:Int,
     val nombre:String,
     val unidades:Int,
+    val imagen:String?
 )

@@ -11,4 +11,5 @@ public class ProductoDTO {
     private String id;
     private String nombre;
     private int unidades;
+    private String imagen;
 }

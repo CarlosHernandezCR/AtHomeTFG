@@ -18,11 +18,12 @@ class ProductosRepository @Inject constructor(
     fun agregarProducto(
         nombre: String,
         cantidad: Int,
+        imagen:String,
         idcajon: String
     ): Flow<NetworkResult<ProductoDTO>> =
         flow {
             emit(NetworkResult.Loading())
-            val result = remoteDataSource.agregarProducto(AgregarProductoRequestDTO(nombre, cantidad, idcajon))
+            val result = remoteDataSource.agregarProducto(AgregarProductoRequestDTO(nombre, cantidad, imagen, idcajon))
             emit(result)
         }.flowOn(Dispatchers.IO)
 
