@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -107,6 +108,7 @@ class TokenManager @Inject constructor(
                 NetworkResult.Error("${response.code()} ${response.message()}")
             }
         } catch (e: Exception) {
+            Timber.e(e)
             NetworkResult.Error(ConstantesError.BASE_DE_DATOS_ERROR)
         }
     }

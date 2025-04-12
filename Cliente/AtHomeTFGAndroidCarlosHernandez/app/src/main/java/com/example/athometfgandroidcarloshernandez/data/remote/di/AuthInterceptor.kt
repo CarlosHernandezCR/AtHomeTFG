@@ -12,16 +12,18 @@ class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
 
-        val isTokenRequest = request.url.encodedPath in listOf(ConstantesPaths.LOGIN_URL, ConstantesPaths.REFRESH_TOKEN_URL)
+        val isTokenRequest = request.url.encodedPath in listOf(
+            ConstantesPaths.LOGIN_URL,
+            ConstantesPaths.REFRESH_TOKEN_URL
+        )
 
         if (!isTokenRequest) {
             val accessToken = runBlocking { tokenManager.getAccessToken().firstOrNull() }
             request = request.newBuilder()
-                .header(Constantes.AUTHORIZATION, Constantes.BEARER + accessToken)
-                .build()
+                .header(Constantes.AUTHORIZATION, "${Constantes.BEARER} $accessToken").build()
         }
         val response = chain.proceed(request)
-        if (response.code == 401) {
+        if (response.code == 403) {
             synchronized(this) {
                 val currentAccessToken = runBlocking { tokenManager.getAccessToken().firstOrNull() }
                 if (request.header(Constantes.AUTHORIZATION) != null && currentAccessToken != null) {
@@ -34,14 +36,10 @@ class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
                             val newAccessToken = newAccessTokenResponse.data?.accessToken
                             newAccessToken?.let {
                                 runBlocking { tokenManager.saveAccessToken(newAccessToken) }
-                                request = request.newBuilder()
-                                    .header(
-                                        Constantes.AUTHORIZATION,
-                                        Constantes.BEARER + newAccessToken
-                                    )
+                                val newRequest = request.newBuilder()
+                                    .header(Constantes.AUTHORIZATION, "${Constantes.BEARER} $newAccessToken")
                                     .build()
-                                val newResponse = chain.proceed(request)
-                                return newResponse
+                                return chain.proceed(newRequest)
                             }
                         }
                     }

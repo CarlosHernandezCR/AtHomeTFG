@@ -117,7 +117,11 @@ public class TokensTools {
         Jws<Claims> claimsJws = parseToken(refreshToken);
         String subject = claimsJws.getBody().getSubject();
         int idUsuario = claimsJws.getBody().get(ConstantesSpring.IDUSUARIO, Integer.class);
-        return generarAccessToken(subject, idUsuario);
+        int idCasa = claimsJws.getBody().get(ConstantesSpring.IDCASA, Integer.class);
+        if (idCasa == 0) {
+            return generateRefreshToken(subject, idUsuario);
+        }
+        return generarAccessTokenConCasa(subject, idUsuario, idCasa);
     }
 
     public Jws<Claims> parseToken(String token) {try {

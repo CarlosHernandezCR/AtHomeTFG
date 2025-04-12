@@ -28,12 +28,12 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<String> handleBadUserException(TokenException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ConstantesError.TOKEN_EXPIRADO);
     }
     @ExceptionHandler(ErrorLoginException.class)
     public ResponseEntity<String> handleBadUserException(ErrorLoginException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ConstantesError.ERROR_INICIAR_SESION);
     }
 
