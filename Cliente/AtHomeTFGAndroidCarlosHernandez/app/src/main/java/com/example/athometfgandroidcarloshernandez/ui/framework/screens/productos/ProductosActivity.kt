@@ -1,5 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,12 +47,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -59,12 +63,17 @@ import com.canhub.cropper.CropImageView
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.AUMENTAR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.DISMINUIR
+import com.example.athometfgandroidcarloshernandez.common.Constantes.ELEGIR_IMAGEN
+import com.example.athometfgandroidcarloshernandez.common.Constantes.JPG
 import com.example.athometfgandroidcarloshernandez.common.Constantes.PEDIR_PRESTADO
-import com.example.athometfgandroidcarloshernandez.common.Constantes.SELECCIONAR_IMAGEN
+import com.example.athometfgandroidcarloshernandez.common.Constantes.QUITAR_FOTO
+import com.example.athometfgandroidcarloshernandez.common.Constantes.TEMP_IMAGE_FILE_NAME
+import com.example.athometfgandroidcarloshernandez.common.Constantes.TOMAR_FOTO
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
+import java.io.File
 
 @Composable
 fun ProductosActivity(
@@ -292,7 +301,7 @@ fun BotoneraProductos(
         AgregarProductoDialog(
             onDismiss = { showDialog = false },
             onConfirm = { nombre, cantidad, imagen ->
-                agregarProducto(nombre, cantidad,imagen)
+                agregarProducto(nombre, cantidad, imagen)
                 showDialog = false
             }
         )
@@ -303,10 +312,14 @@ fun BotoneraProductos(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         BotonAccion(texto = Constantes.VOLVER, accion = volver)
-        if (esPropietario) BotonAccion(texto = Constantes.AGREGAR_PRODUCTO, accion = { showDialog = true })
+        if (esPropietario) BotonAccion(
+            texto = Constantes.AGREGAR_PRODUCTO,
+            accion = { showDialog = true })
         BotonAccion(texto = Constantes.CESTA, accion = verCesta)
     }
 }
+
+
 
 @Composable
 fun AgregarProductoDialog(
@@ -348,6 +361,28 @@ fun AgregarProductoDialog(
         }
     }
 
+    val imageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val takePhotoLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            imageUri.value?.let { uri ->
+                cropLauncher.launch(
+                    CropImageContractOptions(
+                        uri,
+                        CropImageOptions().apply {
+                            aspectRatioX = 1
+                            aspectRatioY = 1
+                            fixAspectRatio = true
+                            guidelines = CropImageView.Guidelines.ON
+                        }
+                    )
+                )
+            }
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = Constantes.AGREGAR_PRODUCTO) },
@@ -365,22 +400,67 @@ fun AgregarProductoDialog(
                     label = { Text(Constantes.CANTIDAD_MINUS) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = {
-                    photoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }) {
-                    Text(SELECCIONAR_IMAGEN)
+                if (imagenBytes == null) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = {
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }
+                        ) {
+                            Text(ELEGIR_IMAGEN)
+                        }
+
+                        Button(
+                            onClick = {
+                                val photoUri = FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.provider",
+                                    File.createTempFile(TEMP_IMAGE_FILE_NAME, JPG, context.cacheDir).apply {
+                                        createNewFile()
+                                        deleteOnExit()
+                                    }
+                                )
+                                imageUri.value = photoUri
+                                takePhotoLauncher.launch(photoUri)
+                            }
+                        ) {
+                            Text(TOMAR_FOTO)
+                        }
+                    }
+                } else {
+                    imagenBytes?.let {
+                        val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            imagenBytes = null
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(QUITAR_FOTO)
+                    }
                 }
             }
         },
         confirmButton = {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                TextButton(onClick = {
-                    onConfirm(nombre, cantidad, imagenBytes.toString())
-                }) {
-                    Text(Constantes.AGREGAR)
-                }
+            TextButton(onClick = {
+                onConfirm(nombre, cantidad, imagenBytes.toString())
+            }) {
+                Text(Constantes.AGREGAR)
             }
         },
         dismissButton = {
@@ -490,6 +570,7 @@ fun ProductoItem(
         }
     }
 }
+
 @Composable
 fun BotonAccion(texto: String, accion: () -> Unit) {
     Text(

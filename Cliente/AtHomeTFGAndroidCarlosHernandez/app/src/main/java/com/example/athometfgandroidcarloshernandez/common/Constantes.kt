@@ -3,8 +3,11 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
-    const val IMAGEN_DEL_PRODUCTO = "Imagen del producto"
-    const val SELECCIONAR_IMAGEN = "Seleccionar Imagen"
+    const val TEMP_IMAGE_FILE_NAME = "temp_image"
+    const val JPG = ".jpg"
+    const val QUITAR_FOTO = "Quitar foto"
+    const val TOMAR_FOTO = "Tomar Foto"
+    const val ELEGIR_IMAGEN = "Elegir Imagen"
     const val NO_HAY_PRODUCTOS: String = "No hay productos"
     const val CANTIDAD_MINUS: String = "Cantidad"
     const val CANTIDAD = "CANTIDAD"
@@ -16,14 +19,14 @@ object Constantes {
     const val CONFIRMAR_BORRAR_CAJON = "¿Está seguro de borrar este cajón?"
     const val SALIR_DE_CASA = "Salir de Casa"
     const val ACEPTAR = "Aceptar"
-    const val CREAR_ESTADO="Crear Estado"
+    const val CREAR_ESTADO = "Crear Estado"
     const val NUEVO_ESTADO = "Nuevo estado"
     const val AMARILLO: String = "#FFFF00"
     const val VERDE: String = "#00FF00"
     const val ROJO: String = "#FF0000"
     const val BASE_URL: String = BuildConfig.BASE_URL
     const val VOTAR: String = "VOTAR"
-    const val BORRAR: String= "Borrar"
+    const val BORRAR: String = "Borrar"
     const val IDCAJON: String = "idCajon"
     const val IDMUEBLE: String = "idMueble"
     const val CAJON_BORRADO: String = "Cajón borrado correctamente"
@@ -39,7 +42,8 @@ object Constantes {
     const val CODIGO_POSTAL = "Código Postal"
     const val REGISTRO: String = "REGISTRO"
     const val TELEFONO: String = "Telefono"
-    const val CONFIRMAR_REGISTRO: String = "Confirme el registro con el correo que le acabamos de enviar."
+    const val CONFIRMAR_REGISTRO: String =
+        "Confirme el registro con el correo que le acabamos de enviar."
     const val ANADE_HABITACION: String = "Añade una Habitacion"
     const val SIN_USUARIOS: String = "No hay usuarios en esta casa"
     const val NO_HAY_CASAS: String = "No hay casas registradas"
