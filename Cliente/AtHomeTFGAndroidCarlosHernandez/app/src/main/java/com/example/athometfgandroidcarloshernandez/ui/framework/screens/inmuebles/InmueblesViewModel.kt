@@ -291,7 +291,8 @@ class InmueblesViewModel @Inject constructor(
                                 cajones = cajones,
                                 idHabitacionActual = idHabitacionActual,
                                 idMuebleActual = muebleActual,
-                                isLoading = false
+                                isLoading = false,
+                                loadingCajones = false
                             )
                         }
                     }
@@ -306,8 +307,14 @@ class InmueblesViewModel @Inject constructor(
                     }
 
                     is NetworkResult.Loading -> {
-                        _uiState.update { currentState ->
-                            currentState.copy(isLoading = true)
+                        if(primeraCarga){
+                            _uiState.update { currentState ->
+                                currentState.copy(isLoading = true)
+                            }
+                        }else{
+                            _uiState.update { currentState ->
+                                currentState.copy(loadingCajones = true)
+                            }
                         }
                     }
                 }

@@ -17,6 +17,7 @@ interface InmueblesContract {
         var idMuebleActual: String = Constantes.NADA,
         var mensaje: String? = null,
         var isLoading: Boolean = false,
+        var loadingCajones: Boolean = false
     )
 
     data class UsuarioInmuebles(val id: String, val nombre: String, val color: String)

@@ -65,6 +65,7 @@ import com.example.athometfgandroidcarloshernandez.ui.common.ConfirmationDialog
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.inmuebles.InmueblesContract.UsuarioInmuebles
 import kotlin.math.roundToInt
+
 @Composable
 fun InmueblesActivity(
     idUsuario: String,
@@ -92,6 +93,7 @@ fun InmueblesActivity(
             muebles = uiState.muebles,
             cajones = uiState.cajones,
             usuarios = uiState.usuarios,
+            cargandoCajones = uiState.loadingCajones,
             cambioHabitacion = {
                 viewModel.handleEvent(
                     InmueblesContract.InmueblesEvent.CambioHabitacion(
@@ -132,7 +134,6 @@ fun InmueblesActivity(
                 )
             },
             onCajonSeleccionado = onCajonSeleccionado,
-            cargarUsuarios = { viewModel.handleEvent(InmueblesContract.InmueblesEvent.CargarUsuarios(idCasa)) }
         )
     }
 }
@@ -145,6 +146,7 @@ fun InmueblesPantalla(
     muebles: List<MuebleDTO>,
     cajones: List<CajonDTO>,
     usuarios: List<UsuarioInmuebles> = emptyList(),
+    cargandoCajones: Boolean,
     cambioHabitacion: (String) -> Unit = {},
     cambioMueble: (String) -> Unit = {},
     borrarCajon: (String, String) -> Unit = { _, _ -> },
@@ -152,7 +154,6 @@ fun InmueblesPantalla(
     agregarMueble: (String) -> Unit = {},
     agregarHabitacion: (String) -> Unit = {},
     onCajonSeleccionado: (String) -> Unit,
-    cargarUsuarios: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
@@ -197,21 +198,31 @@ fun InmueblesPantalla(
             LazyColumn(
                 modifier = Modifier.weight(2f)
             ) {
-                if(cajones.isEmpty()){
-                    item {
-                        Text(
-                            text = Constantes.NO_HAY_CAJONES,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+                when {
+                    cargandoCajones -> {
+                        item {
+                            Cargando()
+                        }
                     }
-                } else {
-                    items(cajones) { item ->
-                        SwipeToDeleteItem(
-                            cajon = item,
-                            borrarCajon = borrarCajon,
-                            onCajonSeleccionado = onCajonSeleccionado
-                        )
+
+                    cajones.isEmpty() -> {
+                        item {
+                            Text(
+                                text = Constantes.NO_HAY_CAJONES,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
+
+                    else -> {
+                        items(cajones) { item ->
+                            SwipeToDeleteItem(
+                                cajon = item,
+                                borrarCajon = borrarCajon,
+                                onCajonSeleccionado = onCajonSeleccionado
+                            )
+                        }
                     }
                 }
             }
@@ -249,6 +260,7 @@ fun InmueblesPantalla(
         }
     }
 }
+
 @Composable
 fun DialogNuevoElemento(
     title: String,
@@ -563,12 +575,12 @@ fun PreviewInmueblesActivity() {
         muebleActual = "Armario",
         muebles = muebles,
         cajones = cajones,
+        cargandoCajones = false,
         cambioHabitacion = {},
         cambioMueble = {},
         agregarCajon = { _, _ -> },
         agregarMueble = {},
         agregarHabitacion = {},
         onCajonSeleccionado = { _ -> },
-        cargarUsuarios = {}
     )
 }
