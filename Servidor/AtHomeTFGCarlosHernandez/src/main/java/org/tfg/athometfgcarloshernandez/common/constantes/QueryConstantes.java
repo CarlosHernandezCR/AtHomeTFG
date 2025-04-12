@@ -13,6 +13,7 @@ public class QueryConstantes {
     public static final String FIND_ESTADOS_USUARIO_POR_ID_USUARIO = "SELECT eu.estadoEntity.descripcion FROM EstadosUsuarioEntity eu WHERE eu.usuarioEntity.id= :idUsuario";
 
     public static final String FIND_CASAS_POR_USUARIO_ID = "SELECT c FROM CasaEntity c JOIN ViveEntity v ON c.id = v.casaEntity.id WHERE v.usuarioEntity.id = :idUsuario";
+    public static final String FIND_BY_ID_WITH_CAJON_AND_PROPIETARIO = "SELECT a FROM AlmacenaEntity a JOIN FETCH a.idCajon c JOIN FETCH c.propietario WHERE a.id = :id";
 
     private QueryConstantes() {
     }

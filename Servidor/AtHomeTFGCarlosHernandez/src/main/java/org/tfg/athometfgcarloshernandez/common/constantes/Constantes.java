@@ -10,6 +10,7 @@ public class Constantes {
     public static final String VOTACION_ACEPTADA = "Votación aceptada";
     public static final String FORMATO_FECHA = "dd-MM-yyyy";
     public static final String ERROR_AL_ENVIAR_EMAIL_A = "Error al enviar email a {}: {}";
+    public static final String id = "id";
 
     private Constantes() {
     }

@@ -24,7 +24,7 @@ public class AlmacenaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = AlmacenaConstantes.COLUMN_ID, nullable = false)
     private Integer id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = AlmacenaConstantes.COLUMN_ID_CAJON)
     private CajonEntity idCajon;
     @JoinColumn(name = AlmacenaConstantes.NOMBRE)

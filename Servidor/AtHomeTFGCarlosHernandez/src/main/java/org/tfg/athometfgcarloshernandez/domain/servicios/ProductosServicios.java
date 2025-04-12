@@ -1,6 +1,7 @@
 package org.tfg.athometfgcarloshernandez.domain.servicios;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tfg.athometfgcarloshernandez.data.model.AlmacenaEntity;
@@ -91,9 +92,12 @@ public class ProductosServicios {
                 null;
     }
 
+    @Transactional
     public void cambiarCantidadProducto(String idProducto, Integer cantidad) {
-        AlmacenaEntity almacenaEntity = almacenaRepository.findById(Integer.parseInt(idProducto))
+        AlmacenaEntity almacenaEntity = almacenaRepository.findByIdWithCajonAndPropietario(Integer.parseInt(idProducto))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.PRODUCTO_NO_ENCONTRADO));
+        Hibernate.initialize(almacenaEntity.getIdCajon().getPropietario());
+
         CestaEntity cestaEntity = cestaRepository.getByIdUsuarioAndNombre(almacenaEntity.getIdCajon().getPropietario(), almacenaEntity.getNombre());
 
         if (cantidad == 0) {
