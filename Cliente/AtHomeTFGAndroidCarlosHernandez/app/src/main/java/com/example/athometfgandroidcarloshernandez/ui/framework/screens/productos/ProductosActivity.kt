@@ -375,10 +375,12 @@ fun AgregarProductoDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                onConfirm(nombre, cantidad, imagenBytes.toString())
-            }) {
-                Text(Constantes.AGREGAR)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                TextButton(onClick = {
+                    onConfirm(nombre, cantidad, imagenBytes.toString())
+                }) {
+                    Text(Constantes.AGREGAR)
+                }
             }
         },
         dismissButton = {

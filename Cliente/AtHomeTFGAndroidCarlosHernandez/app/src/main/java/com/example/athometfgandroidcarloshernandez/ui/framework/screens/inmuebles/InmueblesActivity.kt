@@ -197,12 +197,22 @@ fun InmueblesPantalla(
             LazyColumn(
                 modifier = Modifier.weight(2f)
             ) {
-                items(cajones) { item ->
-                    SwipeToDeleteItem(
-                        cajon = item,
-                        borrarCajon = borrarCajon,
-                        onCajonSeleccionado = onCajonSeleccionado
-                    )
+                if(cajones.isEmpty()){
+                    item {
+                        Text(
+                            text = Constantes.NO_HAY_CAJONES,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                } else {
+                    items(cajones) { item ->
+                        SwipeToDeleteItem(
+                            cajon = item,
+                            borrarCajon = borrarCajon,
+                            onCajonSeleccionado = onCajonSeleccionado
+                        )
+                    }
                 }
             }
 
