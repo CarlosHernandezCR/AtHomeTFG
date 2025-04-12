@@ -88,7 +88,7 @@ fun InmueblesActivity(
         InmueblesPantalla(
             habitacionActual = uiState.idHabitacionActual,
             habitaciones = uiState.habitaciones,
-            muebleActual = uiState.muebleActual,
+            muebleActual = uiState.idMuebleActual,
             muebles = uiState.muebles,
             cajones = uiState.cajones,
             usuarios = uiState.usuarios,

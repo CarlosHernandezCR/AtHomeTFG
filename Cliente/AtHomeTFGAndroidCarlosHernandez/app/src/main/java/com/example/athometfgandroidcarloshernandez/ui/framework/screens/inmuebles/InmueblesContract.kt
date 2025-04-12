@@ -14,7 +14,7 @@ interface InmueblesContract {
         val cajones: List<CajonDTO> = emptyList(),
         val usuarios: List<UsuarioInmuebles> = emptyList(),
         var idHabitacionActual: String = Constantes.NADA,
-        var muebleActual: String = Constantes.NADA,
+        var idMuebleActual: String = Constantes.NADA,
         var mensaje: String? = null,
         var isLoading: Boolean = false,
     )

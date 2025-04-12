@@ -44,16 +44,20 @@ class InmueblesViewModel @Inject constructor(
             is InmueblesEvent.CambioMueble -> cambiarMueble(event.muebleId)
             is InmueblesEvent.AgregarHabitacion -> agregarHabitacion(event.habitacion)
             is InmueblesEvent.CargarUsuarios -> cargarUsuarios(event.idCasa)
-            is InmueblesEvent.BorrarCajon -> borrarCajon(event.idCajon, event.idUsuario, event.idPropietario)
+            is InmueblesEvent.BorrarCajon -> borrarCajon(
+                event.idCajon,
+                event.idUsuario,
+                event.idPropietario
+            )
         }
     }
 
-    private fun borrarCajon(idCajon: String,idUsuario:String, idPropietario: String) {
-        if (idUsuario != idPropietario){
+    private fun borrarCajon(idCajon: String, idUsuario: String, idPropietario: String) {
+        if (idUsuario != idPropietario) {
             _uiState.update { it.copy(mensaje = ConstantesError.NO_SE_PUEDE_BORRAR_CAJON) }
             return
         }
-        if(idCajon.isEmpty()){
+        if (idCajon.isEmpty()) {
             _uiState.update { it.copy(mensaje = ConstantesError.NO_HAY_CAJON_QUE_BORRAR) }
             return
         }
@@ -71,10 +75,11 @@ class InmueblesViewModel @Inject constructor(
                             cargarDatos(
                                 idCasa = it,
                                 habitacion = _uiState.value.idHabitacionActual,
-                                mueble = _uiState.value.muebleActual
+                                mueble = _uiState.value.idMuebleActual
                             )
                         }
                     }
+
                     is NetworkResult.Error -> {
                         _uiState.update {
                             it.copy(
@@ -83,6 +88,7 @@ class InmueblesViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is NetworkResult.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
                     }
@@ -140,7 +146,8 @@ class InmueblesViewModel @Inject constructor(
                         is NetworkResult.Error -> {
                             _uiState.update {
                                 it.copy(
-                                    mensaje = result.message ?: ConstantesError.ERROR_AGREGAR_HABITACION,
+                                    mensaje = result.message
+                                        ?: ConstantesError.ERROR_AGREGAR_HABITACION,
                                     isLoading = false
                                 )
                             }
@@ -156,32 +163,89 @@ class InmueblesViewModel @Inject constructor(
     }
 
     private fun agregarMueble(mueble: String) {
+        if(_uiState.value.idHabitacionActual == Constantes.ANADE_HABITACION){
+            _uiState.update { it.copy(mensaje = ConstantesError.NO_HAY_HABITACIONES_PARA_MUEBLE) }
+            return
+        }
         viewModelScope.launch {
             _uiState.value.idCasa.let { idCasa ->
-                agregarMuebleUseCase.invoke(idCasa, _uiState.value.idHabitacionActual, mueble).collect { result ->
-                    when (result) {
-                        is NetworkResult.Success -> {
-                            _uiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    mensaje = Constantes.MUEBLE_AGREGADO
-                                )
+                agregarMuebleUseCase.invoke(idCasa, _uiState.value.idHabitacionActual, mueble)
+                    .collect { result ->
+                        when (result) {
+                            is NetworkResult.Success -> {
+                                _uiState.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        mensaje = Constantes.MUEBLE_AGREGADO
+                                    )
+                                }
+                                cargarDatos(idCasa, _uiState.value.idHabitacionActual)
                             }
-                            cargarDatos(idCasa, _uiState.value.idHabitacionActual)
-                        }
 
-                        is NetworkResult.Error -> {
-                            _uiState.update {
-                                it.copy(
-                                    mensaje = result.message ?: ConstantesError.ERROR_AGREGAR_MUEBLE,
-                                    isLoading = false
-                                )
+                            is NetworkResult.Error -> {
+                                _uiState.update {
+                                    it.copy(
+                                        mensaje = result.message
+                                            ?: ConstantesError.ERROR_AGREGAR_MUEBLE,
+                                        isLoading = false
+                                    )
+                                }
+                            }
+
+                            is NetworkResult.Loading -> {
+                                _uiState.update { it.copy(isLoading = true) }
                             }
                         }
+                    }
+            }
+        }
+    }
 
-                        is NetworkResult.Loading -> {
-                            _uiState.update { it.copy(isLoading = true) }
+    private fun agregarCajon(cajon: String, idPropietario: String) {
+        if(_uiState.value.idHabitacionActual == Constantes.NO_HAY_MUEBLE){
+            _uiState.update { it.copy(mensaje = ConstantesError.NO_HAY_HABITACIONES_PARA_MUEBLE) }
+            return
+        }
+        if(_uiState.value.idMuebleActual == Constantes.NO_HAY_MUEBLE){
+            _uiState.update { it.copy(mensaje = ConstantesError.NO_HAY_HABITACIONES_PARA_MUEBLE) }
+            return
+        }
+        viewModelScope.launch {
+            agregarCajonUseCase.invoke(
+                _uiState.value.idCasa,
+                _uiState.value.idHabitacionActual,
+                _uiState.value.idMuebleActual,
+                cajon,
+                idPropietario
+            ).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                mensaje = Constantes.CAJON_AGREGADO
+                            )
                         }
+                        _uiState.value.idCasa.let {
+                            cargarDatos(
+                                idCasa = it,
+                                habitacion = _uiState.value.idHabitacionActual,
+                                mueble = _uiState.value.idMuebleActual
+                            )
+                        }
+                    }
+
+                    is NetworkResult.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                mensaje = result.message ?: ConstantesError.ERROR_AGREGAR_CAJON,
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is NetworkResult.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
                     }
                 }
             }
@@ -215,7 +279,8 @@ class InmueblesViewModel @Inject constructor(
                             primeraCarga || cambioHabitacion -> {
                                 if (muebles.isEmpty()) Constantes.NO_HAY_MUEBLE else muebles[0].id
                             }
-                            else -> mueble ?: _uiState.value.muebleActual
+
+                            else -> mueble ?: _uiState.value.idMuebleActual
                         }
 
                         _uiState.update { currentState ->
@@ -225,7 +290,7 @@ class InmueblesViewModel @Inject constructor(
                                 muebles = muebles,
                                 cajones = cajones,
                                 idHabitacionActual = idHabitacionActual,
-                                muebleActual = muebleActual,
+                                idMuebleActual = muebleActual,
                                 isLoading = false
                             )
                         }
@@ -250,52 +315,9 @@ class InmueblesViewModel @Inject constructor(
         }
     }
 
-    private fun agregarCajon(cajon: String, idPropietario: String) {
-        viewModelScope.launch {
-            agregarCajonUseCase.invoke(
-                _uiState.value.idCasa,
-                _uiState.value.idHabitacionActual,
-                _uiState.value.muebleActual,
-                cajon,
-                idPropietario
-            ).collect { result ->
-                when (result) {
-                    is NetworkResult.Success -> {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                mensaje = Constantes.CAJON_AGREGADO
-                            )
-                        }
-                        _uiState.value.idCasa.let {
-                            cargarDatos(
-                                idCasa = it,
-                                habitacion = _uiState.value.idHabitacionActual,
-                                mueble = _uiState.value.muebleActual
-                            )
-                        }
-                    }
-
-                    is NetworkResult.Error -> {
-                        _uiState.update {
-                            it.copy(
-                                mensaje = result.message ?: ConstantesError.ERROR_AGREGAR_CAJON,
-                                isLoading = false
-                            )
-                        }
-                    }
-
-                    is NetworkResult.Loading -> {
-                        _uiState.update { it.copy(isLoading = true) }
-                    }
-                }
-            }
-        }
-    }
-
 
     private fun cambiarMueble(mueble: String) {
-        _uiState.update { it.copy(muebleActual = mueble) }
+        _uiState.update { it.copy(idMuebleActual = mueble) }
         _uiState.value.idCasa.let { cargarDatos(it, _uiState.value.idHabitacionActual, mueble) }
     }
 
