@@ -2,6 +2,7 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.product
 
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -63,7 +64,7 @@ import com.canhub.cropper.CropImageView
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.Constantes.AUMENTAR
 import com.example.athometfgandroidcarloshernandez.common.Constantes.DISMINUIR
-import com.example.athometfgandroidcarloshernandez.common.Constantes.ELEGIR_IMAGEN
+import com.example.athometfgandroidcarloshernandez.common.Constantes.ELEGIR_FOTO
 import com.example.athometfgandroidcarloshernandez.common.Constantes.JPG
 import com.example.athometfgandroidcarloshernandez.common.Constantes.PEDIR_PRESTADO
 import com.example.athometfgandroidcarloshernandez.common.Constantes.QUITAR_FOTO
@@ -412,7 +413,7 @@ fun AgregarProductoDialog(
                                 )
                             }
                         ) {
-                            Text(ELEGIR_IMAGEN)
+                            Text(ELEGIR_FOTO)
                         }
 
                         Button(
@@ -440,7 +441,8 @@ fun AgregarProductoDialog(
                             contentDescription = null,
                             modifier = Modifier
                                 .size(100.dp)
-                                .clip(RoundedCornerShape(8.dp)),
+                                .clip(RoundedCornerShape(8.dp))
+                                .align(Alignment.CenterHorizontally),
                             contentScale = ContentScale.Crop
                         )
                     }
@@ -458,7 +460,8 @@ fun AgregarProductoDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                onConfirm(nombre, cantidad, imagenBytes.toString())
+                val imagenBase64 = imagenBytes?.let { Base64.encodeToString(it, Base64.DEFAULT) } ?: ""
+                onConfirm(nombre, cantidad, imagenBase64)
             }) {
                 Text(Constantes.AGREGAR)
             }

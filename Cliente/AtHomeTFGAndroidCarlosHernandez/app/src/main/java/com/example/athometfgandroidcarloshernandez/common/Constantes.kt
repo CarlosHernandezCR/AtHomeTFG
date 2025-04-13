@@ -7,7 +7,7 @@ object Constantes {
     const val JPG = ".jpg"
     const val QUITAR_FOTO = "Quitar foto"
     const val TOMAR_FOTO = "Tomar Foto"
-    const val ELEGIR_IMAGEN = "Elegir Imagen"
+    const val ELEGIR_FOTO = "Elegir Foto"
     const val NO_HAY_PRODUCTOS: String = "No hay productos"
     const val CANTIDAD_MINUS: String = "Cantidad"
     const val CANTIDAD = "CANTIDAD"
