@@ -95,12 +95,15 @@ fun ProductosActivity(
         }
     }
     LaunchedEffect(idCajon) {
-        idCajon.let { idCajon ->
-            viewModel.handleEvent(
-                ProductosContract.ProductosEvent.CargarProductos(
-                    idCajon,
+        if(!uiState.primerCargado) {
+            idCajon.let { idCajon ->
+                viewModel.handleEvent(
+                    ProductosContract.ProductosEvent.CargarProductos(
+                        idCajon,
+                    )
                 )
-            )
+            }
+            viewModel.handleEvent(ProductosContract.ProductosEvent.PrimerCargado)
         }
     }
 

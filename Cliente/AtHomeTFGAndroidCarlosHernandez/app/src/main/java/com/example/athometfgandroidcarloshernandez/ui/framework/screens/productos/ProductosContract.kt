@@ -6,6 +6,7 @@ import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 
 interface ProductosContract {
     sealed class ProductosEvent {
+        data object PrimerCargado : ProductosEvent()
         data class CambiarMueble(val idMueble: String) : ProductosEvent()
         data class CambiarCajon(val idCajon: String) : ProductosEvent()
         data class CargarProductos(val idCajon: String) : ProductosEvent()
@@ -16,6 +17,7 @@ interface ProductosContract {
     }
 
     data class ProductosState(
+        val primerCargado: Boolean = false,
         val isLoading: Boolean= false,
         val isLoadingCantidad: Boolean = false,
         val error: String? = null,

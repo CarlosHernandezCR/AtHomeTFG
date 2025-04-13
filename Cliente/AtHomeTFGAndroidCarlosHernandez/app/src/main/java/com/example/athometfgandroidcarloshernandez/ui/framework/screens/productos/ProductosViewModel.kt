@@ -43,6 +43,7 @@ class ProductosViewModel @Inject constructor(
             is ProductosEvent.CambiarMueble -> cambiarMueble(event.idMueble)
             is ProductosEvent.AgregarProducto -> agregarProducto(event.nombre, event.cantidad, event.imagen)
             is ProductosEvent.DecodeBase64ToImageBitmap -> decodeBase64ToImageBitmap(event.imagenSinDeco)
+            ProductosEvent.PrimerCargado -> _uiState.update { it.copy(primerCargado = true) }
         }
     }
 
