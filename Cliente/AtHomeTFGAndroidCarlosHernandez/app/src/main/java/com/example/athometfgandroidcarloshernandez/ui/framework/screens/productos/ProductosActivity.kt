@@ -504,13 +504,13 @@ fun ProductoItem(
                     modifier = Modifier
                         .size(50.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .weight(0.8f)
+                        .weight(0.6f)
                 ) {
                     Image(
                         bitmap = producto.imagen,
                         contentDescription = producto.nombre,
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(60.dp)
                             .clip(RoundedCornerShape(4.dp)),
                         contentScale = ContentScale.Crop
                     )
@@ -521,7 +521,7 @@ fun ProductoItem(
                     modifier = Modifier
                         .size(50.dp)
                         .background(Color.Gray, shape = RoundedCornerShape(4.dp))
-                        .weight(0.8f)
+                        .weight(0.6f)
                 )
             }
 
@@ -532,7 +532,7 @@ fun ProductoItem(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(2f)
-                    .padding(start = 15.dp)
+                    .padding(start = 30.dp)
             )
 
             if (cargando) {
@@ -542,6 +542,7 @@ fun ProductoItem(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1.1f)
+                            .padding(start = 7.dp)
                     ) {
                         IconButton(onClick = disminuir) {
                             Icon(
