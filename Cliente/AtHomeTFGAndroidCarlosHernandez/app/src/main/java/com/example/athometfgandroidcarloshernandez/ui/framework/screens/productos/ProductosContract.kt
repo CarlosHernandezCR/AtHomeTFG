@@ -11,7 +11,7 @@ interface ProductosContract {
         data class CambiarCajon(val idCajon: String) : ProductosEvent()
         data class CargarProductos(val idCajon: String) : ProductosEvent()
         data class CambiarCantidad(val idProducto: Int, val aumentar: Boolean) : ProductosEvent()
-        data class AgregarProducto(val nombre: String, val cantidad: String, val imagen: String) : ProductosEvent()
+        data class AgregarProducto(val nombre: String, val cantidad: String, val imagen: ByteArray) : ProductosEvent()
         data class DecodeBase64ToImageBitmap(val imagenSinDeco: String) : ProductosEvent()
         data object ErrorMostrado : ProductosEvent()
     }

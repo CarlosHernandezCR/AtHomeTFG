@@ -2,7 +2,6 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.product
 
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -169,7 +168,7 @@ fun PantallaProductos(
     cambioCajon: (String) -> Unit = {},
     cambiarCantidad: (Int, Boolean) -> Unit,
     verCesta: () -> Unit,
-    agregarProducto: (String, String, String) -> Unit,
+    agregarProducto: (String, String, ByteArray) -> Unit,
     volver: () -> Unit,
     esPropietario: Boolean,
     pedirPrestado: (String) -> Unit
@@ -295,7 +294,7 @@ fun Cabecera() {
 fun BotoneraProductos(
     esPropietario: Boolean,
     verCesta: () -> Unit,
-    agregarProducto: (String, String, String) -> Unit,
+    agregarProducto: (String, String, ByteArray) -> Unit,
     volver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -328,7 +327,7 @@ fun BotoneraProductos(
 @Composable
 fun AgregarProductoDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String, String, String) -> Unit
+    onConfirm: (String, String, ByteArray) -> Unit
 ) {
     val context = LocalContext.current
     var nombre by remember { mutableStateOf("") }
@@ -463,8 +462,7 @@ fun AgregarProductoDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                val imagenBase64 = imagenBytes?.let { Base64.encodeToString(it, Base64.DEFAULT) } ?: ""
-                onConfirm(nombre, cantidad, imagenBase64)
+                onConfirm(nombre, cantidad, imagenBytes?: byteArrayOf())
             }) {
                 Text(Constantes.AGREGAR)
             }

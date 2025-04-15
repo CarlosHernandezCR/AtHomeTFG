@@ -3,6 +3,9 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
+    const val TEXT_PLAIN = "text/plain"
+    const val IMAGE_JPEG = "image/jpeg"
+    const val IMAGEN_JPG = "imagen.jpg"
     const val TEMP_IMAGE_FILE_NAME = "temp_image"
     const val JPG = ".jpg"
     const val QUITAR_FOTO = "Quitar foto"

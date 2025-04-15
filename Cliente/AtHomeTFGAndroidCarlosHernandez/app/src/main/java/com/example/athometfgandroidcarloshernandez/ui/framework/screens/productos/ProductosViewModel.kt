@@ -41,24 +41,28 @@ class ProductosViewModel @Inject constructor(
             is ProductosEvent.CambiarCantidad -> cambiarCantidad(event.idProducto, event.aumentar)
             is ProductosEvent.CambiarCajon -> cambiarCajon(event.idCajon)
             is ProductosEvent.CambiarMueble -> cambiarMueble(event.idMueble)
-            is ProductosEvent.AgregarProducto -> agregarProducto(event.nombre, event.cantidad, event.imagen)
+            is ProductosEvent.AgregarProducto -> agregarProducto(
+                event.nombre,
+                event.cantidad,
+                event.imagen
+            )
+
             is ProductosEvent.DecodeBase64ToImageBitmap -> decodeBase64ToImageBitmap(event.imagenSinDeco)
             ProductosEvent.PrimerCargado -> _uiState.update { it.copy(primerCargado = true) }
         }
     }
 
-    private fun agregarProducto(nombre: String, cantidad: String, imagen: String) {
+    private fun agregarProducto(nombre: String, cantidad: String, imagen: ByteArray) {
         if (nombre.isBlank() || cantidad.isBlank()) {
             _uiState.update { it.copy(error = NOMBRE_CANTIDAD_OBLIGATORIO) }
             return
         } else if (!cantidad.matches(Regex("\\d+"))) {
             _uiState.update { it.copy(error = ERROR_NUMERO_ENTERO) }
             return
-        } else if (imagen.isBlank()){
+        } else if (imagen.isEmpty()) {
             _uiState.update { it.copy(error = IMAGEN_OBLIGATORIA) }
             return
-        }
-        else {
+        } else {
             val nuevaCantidad = cantidad.toInt()
             val productoExistente = _uiState.value.productos.find { it.nombre == nombre }
             val cajon = _uiState.value.cajones.find { it.nombre == _uiState.value.cajonActual }
@@ -67,11 +71,12 @@ class ProductosViewModel @Inject constructor(
                 return
             }
             viewModelScope.launch {
-                if (cajon != null) {
-                    agregarProductoUseCase.invoke(nombre, nuevaCantidad, imagen, cajon.id).collect { result ->
+                agregarProductoUseCase.invoke(nombre, nuevaCantidad, imagen, cajon!!.id)
+                    .collect { result ->
                         when (result) {
                             is NetworkResult.Success -> {
-                                val productosActualizados = _uiState.value.productos + productoDTOtoProducto(listOf(result.data!!))
+                                val productosActualizados =
+                                    _uiState.value.productos + productoDTOtoProducto(listOf(result.data!!))
                                 _uiState.update {
                                     it.copy(
                                         productos = productosActualizados,
@@ -80,11 +85,16 @@ class ProductosViewModel @Inject constructor(
                                 }
                             }
 
-                            is NetworkResult.Error -> _uiState.update { it.copy(error = result.message, isLoadingCantidad = false) }
+                            is NetworkResult.Error -> _uiState.update {
+                                it.copy(
+                                    error = result.message,
+                                    isLoadingCantidad = false
+                                )
+                            }
+
                             is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
                         }
                     }
-                }
             }
         }
     }
@@ -99,7 +109,11 @@ class ProductosViewModel @Inject constructor(
         _uiState.value.cajonActual.let { cargarProductos(idMueble = muebleId) }
     }
 
-    private fun cargarProductos(idCajon: String? = null, idMueble: String? = null, primeraCarga: Boolean = false) {
+    private fun cargarProductos(
+        idCajon: String? = null,
+        idMueble: String? = null,
+        primeraCarga: Boolean = false
+    ) {
         viewModelScope.launch {
             cargarProductosUseCase.invoke(idCajon, idMueble).collect { result ->
                 when (result) {
@@ -107,9 +121,12 @@ class ProductosViewModel @Inject constructor(
                         val muebles = result.data?.muebles ?: emptyList()
                         val cajones = result.data?.cajones ?: emptyList()
                         val productos = result.data?.productos ?: emptyList()
-                        val muebleActual = if (primeraCarga) muebles.getOrNull(0)?.nombre ?: "" else muebles.find { it.id == idMueble }?.nombre ?: _uiState.value.muebleActual
+                        val muebleActual = if (primeraCarga) muebles.getOrNull(0)?.nombre
+                            ?: "" else muebles.find { it.id == idMueble }?.nombre
+                            ?: _uiState.value.muebleActual
                         val idPropietario = result.data?.idPropietario ?: ""
-                        val cajonActual = cajones.find { it.id == idCajon }?.nombre ?: _uiState.value.cajonActual
+                        val cajonActual =
+                            cajones.find { it.id == idCajon }?.nombre ?: _uiState.value.cajonActual
                         _uiState.update { currentState ->
                             currentState.copy(
                                 muebles = muebles,
@@ -122,6 +139,7 @@ class ProductosViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is NetworkResult.Error -> {
                         _uiState.update { currentState ->
                             currentState.copy(
@@ -130,6 +148,7 @@ class ProductosViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is NetworkResult.Loading -> {
                         _uiState.update { currentState ->
                             currentState.copy(isLoading = true)

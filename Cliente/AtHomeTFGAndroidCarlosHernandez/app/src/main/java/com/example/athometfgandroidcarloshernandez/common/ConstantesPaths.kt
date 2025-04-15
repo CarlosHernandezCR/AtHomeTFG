@@ -1,6 +1,9 @@
 package com.example.athometfgandroidcarloshernandez.common
 
 object ConstantesPaths {
+    const val NOMBRE_QUERY = "nombre"
+    const val CANTIDAD_QUERY = "cantidad"
+    const val IDCAJON_QUERY = "idCajon"
     const val ANIO_QUERY = "anio"
     const val MES_QUERY = "mes"
     const val DIA_QUERY = "dia"
