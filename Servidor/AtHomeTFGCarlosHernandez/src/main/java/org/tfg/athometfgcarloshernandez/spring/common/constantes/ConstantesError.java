@@ -30,6 +30,7 @@ public class ConstantesError {
     public static final String YA_VOTADO = "Ya has votado";
     public static final String CAJON_NO_ENCONTRADO = "Cajón no encontrado";
     public static final String PRODUCTO_NO_ENCONTRADO = "Producto no encontrado";
+    public static final String ERROR_BASE_DATOS = "Error en la base de datos";
 
 
     private ConstantesError() {

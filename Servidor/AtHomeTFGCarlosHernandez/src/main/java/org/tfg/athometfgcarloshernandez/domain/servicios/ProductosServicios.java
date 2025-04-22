@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.tfg.athometfgcarloshernandez.data.dao.GuardadoDeImagenDao;
 import org.tfg.athometfgcarloshernandez.data.model.AlmacenaEntity;
 import org.tfg.athometfgcarloshernandez.data.model.CajonEntity;
 import org.tfg.athometfgcarloshernandez.data.model.CestaEntity;
@@ -33,6 +35,7 @@ public class ProductosServicios {
     private final CestaRepository cestaRepository;
     private final MuebleMapper muebleMapper;
     private final CajonMappers cajonMappers;
+    private final GuardadoDeImagenDao guardadoDeImagenDao;
 
     @Transactional
     public CargarProductosResponseDTO getProductos(String idCajon, String idMueble) {
@@ -83,13 +86,18 @@ public class ProductosServicios {
         return new CargarProductosResponseDTO(productosDTO, cajonesDTO, mueblesDTO, idPropietario);
     }
 
-    public ProductoDTO agregarProducto(String nombre, Integer cantidad, String imagen, String idCajon) {
+    public ProductoDTO agregarProducto(String nombre, Integer cantidad, MultipartFile imagen, String idCajon) {
         CajonEntity cajonEntity = cajonesRepository.findById(Integer.parseInt(idCajon))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.CAJON_NO_ENCONTRADO));
-        AlmacenaEntity almacenaEntity = new AlmacenaEntity(0, cajonEntity, nombre, cantidad, imagen);
-        return almacenaRepository.save(almacenaEntity).getId() != null ?
-                new ProductoDTO(almacenaEntity.getId().toString(), almacenaEntity.getNombre(), almacenaEntity.getCantidad(), almacenaEntity.getImagen()) :
-                null;
+        String rutaImagen = guardadoDeImagenDao.guardarImagen(imagen);
+        AlmacenaEntity almacenaEntity = new AlmacenaEntity(0, cajonEntity, nombre, cantidad, rutaImagen);
+        almacenaEntity = almacenaRepository.save(almacenaEntity);
+        return new ProductoDTO(
+                almacenaEntity.getId().toString(),
+                almacenaEntity.getNombre(),
+                almacenaEntity.getCantidad(),
+                almacenaEntity.getImagen()
+        );
     }
 
     @Transactional

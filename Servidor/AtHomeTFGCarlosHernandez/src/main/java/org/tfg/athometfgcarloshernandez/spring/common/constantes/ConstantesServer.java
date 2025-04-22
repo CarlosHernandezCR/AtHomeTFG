@@ -2,7 +2,11 @@
 package org.tfg.athometfgcarloshernandez.spring.common.constantes;
 
 public class ConstantesServer {
-    
+
+    public static final String NOMBRE = "nombre";
+    public static final String CANTIDAD = "cantidad";
+    public static final String ID_CAJON = "idCajon";
+    public static final String IMAGEN = "imagen";
     public static final String CODIGO = "codigo";
     public static final String LOGINPATH = "/login";
     public static final String PRODUCTOSPATH = "/productos";
