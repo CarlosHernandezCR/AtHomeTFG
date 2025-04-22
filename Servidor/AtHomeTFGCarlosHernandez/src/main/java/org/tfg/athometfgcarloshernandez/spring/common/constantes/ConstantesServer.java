@@ -62,6 +62,7 @@ public class ConstantesServer {
     public static final String SALIR_CASA = "/salirCasa";
     public static final String AGREGAR_PRODUTO = "/agregarProducto";
     public static final String CAMBIAR_CANTIDAD = "/cambiarCantidad";
+    public static final String CARGAR_IMAGEN = "/cargarImagen";
 
 
     private ConstantesServer() {

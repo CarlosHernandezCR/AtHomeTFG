@@ -1,16 +1,25 @@
 package org.tfg.athometfgcarloshernandez.spring.controllers;
 
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
 import org.tfg.athometfgcarloshernandez.domain.servicios.ProductosServicios;
+import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.model.ProductoDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.request.*;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CargarProductosResponseDTO;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer.*;
+import static org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesSpring.APPLICATION_OCTET_STREAM;
 
 @RestController
 @RequestMapping({ConstantesServer.PRODUCTOSPATH})
@@ -45,5 +54,20 @@ public class ProductosController {
                 agregarProductoRequestDTO.getCantidad());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping(ConstantesServer.CARGAR_IMAGEN)
+    public ResponseEntity<Resource> cargarImagen(@RequestParam String nombre) {
+        try {
+            Resource imagen = productosServicios.cargarImagen(nombre);
+            String contentType = Files.probeContentType(Paths.get(imagen.getFile().getAbsolutePath()));
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType != null ? contentType : APPLICATION_OCTET_STREAM))
+                    .body(imagen);
+        } catch (IOException e) {
+            throw new CustomedException(ConstantesError.ERROR_MANDAR_IMAGEN);
+        }
+    }
+
 
 }

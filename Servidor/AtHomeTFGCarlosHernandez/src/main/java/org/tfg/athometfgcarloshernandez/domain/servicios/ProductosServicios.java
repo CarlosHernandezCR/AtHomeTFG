@@ -1,5 +1,6 @@
 package org.tfg.athometfgcarloshernandez.domain.servicios;
 
+import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.tfg.athometfgcarloshernandez.spring.model.MuebleDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.ProductoDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CargarProductosResponseDTO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,5 +131,9 @@ public class ProductosServicios {
 
         almacenaEntity.setCantidad(cantidad);
         almacenaRepository.save(almacenaEntity);
+    }
+
+    public Resource cargarImagen(String nombre) {
+        return guardadoDeImagenDao.cargarImagen(nombre);
     }
 }

@@ -27,6 +27,7 @@ public class ConstantesSpring {
     public static final String IDCASA = "idCasa";
     public static final String AUTHORIZATION = "Authorization";
     public static final String IMAGE_STORE_PATH = "${application.image.store-path}";
+    public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
     private ConstantesSpring() {
     }
