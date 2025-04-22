@@ -16,9 +16,9 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
     @ExceptionHandler(YaVotadoException.class)
-    public ResponseEntity<String> handleBadUserException() {
+    public ResponseEntity<String> handleBadUserException(YaVotadoException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ConstantesError.YA_VOTADO);
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -34,7 +34,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ErrorLoginException.class)
     public ResponseEntity<String> handleBadUserException(ErrorLoginException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ConstantesError.ERROR_INICIAR_SESION);
+                .body(ex.getMessage());
     }
-
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<String> handleBadUserException(DatabaseException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ex.getMessage());
+    }
 }
