@@ -24,7 +24,9 @@ jwt= "3.18.2"
 runtimeLivedata = "1.6.7"
 fuentes="1.7.6"
 composeMaterial = "1.4.0"
+coil = "2.6.0"
 [libraries]
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "fuentes" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }

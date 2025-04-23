@@ -105,6 +105,8 @@ dependencies {
     implementation(libs.colorpicker.compose)
     //Cropping
     implementation(libs.android.image.cropper)
+    //Coil
+    implementation(libs.coil.compose)
 
 }
 java {
