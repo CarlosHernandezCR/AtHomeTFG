@@ -1,6 +1,5 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos
 
-import androidx.compose.ui.graphics.ImageBitmap
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 
@@ -12,7 +11,6 @@ interface ProductosContract {
         data class CargarProductos(val idCajon: String) : ProductosEvent()
         data class CambiarCantidad(val idProducto: Int, val aumentar: Boolean) : ProductosEvent()
         data class AgregarProducto(val nombre: String, val cantidad: String, val imagen: ByteArray) : ProductosEvent()
-        data class DecodeBase64ToImageBitmap(val imagenSinDeco: String) : ProductosEvent()
         data object ErrorMostrado : ProductosEvent()
     }
 
@@ -34,6 +32,6 @@ interface ProductosContract {
         val id: Int,
         val nombre: String,
         val unidades: Int,
-        val imagen: ImageBitmap?
+        val imagen: String?
     )
 }

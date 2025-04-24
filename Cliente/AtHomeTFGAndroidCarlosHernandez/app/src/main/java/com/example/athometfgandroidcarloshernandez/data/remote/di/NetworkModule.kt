@@ -46,8 +46,8 @@ object NetworkModule {
             .Builder()
             .readTimeout(Constantes.TIMEOUT, TimeUnit.SECONDS)
             .connectTimeout(Constantes.TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(loggingInterceptor) // Logging primero
-            .addInterceptor(authenticatorInterceptor) // AuthInterceptor después
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(authenticatorInterceptor)
             .authenticator(authAuthenticator)
             .build()
     }

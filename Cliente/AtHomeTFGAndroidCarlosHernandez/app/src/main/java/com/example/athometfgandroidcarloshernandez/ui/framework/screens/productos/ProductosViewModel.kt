@@ -46,8 +46,6 @@ class ProductosViewModel @Inject constructor(
                 event.cantidad,
                 event.imagen
             )
-
-            is ProductosEvent.DecodeBase64ToImageBitmap -> decodeBase64ToImageBitmap(event.imagenSinDeco)
             ProductosEvent.PrimerCargado -> _uiState.update { it.copy(primerCargado = true) }
         }
     }
@@ -197,23 +195,8 @@ class ProductosViewModel @Inject constructor(
                 id = productoDTO.id,
                 nombre = productoDTO.nombre,
                 unidades = productoDTO.unidades,
-                imagen = productoDTO.imagen?.let { decodeBase64ToImageBitmap(it) }
+                imagen = productoDTO.imagen
             )
         }
     }
-
-    private fun decodeBase64ToImageBitmap(base64: String): ImageBitmap? {
-        return try {
-            val imageBytes = Base64.decode(base64, Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
-        } catch (e: Exception) {
-            _uiState.update {
-                it.copy(
-                    error = ERROR_DECODIFICAR_IMAGEN,
-                )
-            }
-            null
-        }
-    }
-
 }

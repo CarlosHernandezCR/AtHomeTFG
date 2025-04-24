@@ -56,6 +56,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -69,6 +71,7 @@ import com.example.athometfgandroidcarloshernandez.common.Constantes.PEDIR_PREST
 import com.example.athometfgandroidcarloshernandez.common.Constantes.QUITAR_FOTO
 import com.example.athometfgandroidcarloshernandez.common.Constantes.TEMP_IMAGE_FILE_NAME
 import com.example.athometfgandroidcarloshernandez.common.Constantes.TOMAR_FOTO
+import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
 import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
@@ -94,7 +97,7 @@ fun ProductosActivity(
         }
     }
     LaunchedEffect(idCajon) {
-        if(!uiState.primerCargado) {
+        if (!uiState.primerCargado) {
             idCajon.let { idCajon ->
                 viewModel.handleEvent(
                     ProductosContract.ProductosEvent.CargarProductos(
@@ -323,7 +326,6 @@ fun BotoneraProductos(
 }
 
 
-
 @Composable
 fun AgregarProductoDialog(
     onDismiss: () -> Unit,
@@ -423,10 +425,11 @@ fun AgregarProductoDialog(
                                 val photoUri = FileProvider.getUriForFile(
                                     context,
                                     "${context.packageName}.provider",
-                                    File.createTempFile(TEMP_IMAGE_FILE_NAME, JPG, context.cacheDir).apply {
-                                        createNewFile()
-                                        deleteOnExit()
-                                    }
+                                    File.createTempFile(TEMP_IMAGE_FILE_NAME, JPG, context.cacheDir)
+                                        .apply {
+                                            createNewFile()
+                                            deleteOnExit()
+                                        }
                                 )
                                 imageUri.value = photoUri
                                 takePhotoLauncher.launch(photoUri)
@@ -462,7 +465,7 @@ fun AgregarProductoDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                onConfirm(nombre, cantidad, imagenBytes?: byteArrayOf())
+                onConfirm(nombre, cantidad, imagenBytes ?: byteArrayOf())
             }) {
                 Text(Constantes.AGREGAR)
             }
@@ -474,7 +477,6 @@ fun AgregarProductoDialog(
         }
     )
 }
-
 
 
 @Composable
@@ -507,15 +509,17 @@ fun ProductoItem(
                         .clip(RoundedCornerShape(4.dp))
                         .weight(0.6f)
                 ) {
-                    Image(
-                        bitmap = producto.imagen,
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(Constantes.BASE_URL+ConstantesPaths.CARGAR_IMAGEN+producto.imagen)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = producto.nombre,
                         modifier = Modifier
                             .size(60.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
-
                 }
             } else {
                 Spacer(
@@ -542,7 +546,8 @@ fun ProductoItem(
                 if (esPropietario) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.weight(1.1f)
+                        modifier = Modifier
+                            .weight(1.1f)
                             .padding(start = 7.dp)
                     ) {
                         IconButton(onClick = disminuir) {

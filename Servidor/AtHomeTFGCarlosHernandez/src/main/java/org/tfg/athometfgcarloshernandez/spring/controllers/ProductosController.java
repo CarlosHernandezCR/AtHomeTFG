@@ -60,7 +60,6 @@ public class ProductosController {
         try {
             Resource imagen = productosServicios.cargarImagen(nombre);
             String contentType = Files.probeContentType(Paths.get(imagen.getFile().getAbsolutePath()));
-
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType != null ? contentType : APPLICATION_OCTET_STREAM))
                     .body(imagen);
