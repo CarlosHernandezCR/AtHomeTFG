@@ -2,6 +2,7 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.product
 
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
+import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 
 interface ProductosContract {
     sealed class ProductosEvent {
@@ -19,7 +20,7 @@ interface ProductosContract {
         val isLoading: Boolean= false,
         val isLoadingCantidad: Boolean = false,
         val error: String? = null,
-        val productos: List<Producto> = emptyList(),
+        val productos: List<ProductoDTO> = emptyList(),
         val muebleActual: String = "",
         val muebles: List<MuebleDTO> = emptyList(),
         val cajonActual: String = "",
@@ -28,10 +29,4 @@ interface ProductosContract {
         val idPropietario: String = ""
     )
 
-    data class Producto(
-        val id: Int,
-        val nombre: String,
-        val unidades: Int,
-        val imagen: String?
-    )
 }
