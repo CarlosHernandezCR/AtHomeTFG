@@ -1,17 +1,12 @@
 package com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos
 
-import android.graphics.BitmapFactory
-import android.util.Base64
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.athometfgandroidcarloshernandez.common.ConstantesError.ERROR_DECODIFICAR_IMAGEN
+import coil.ImageLoader
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.ERROR_NUMERO_ENTERO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.IMAGEN_OBLIGATORIA
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.NOMBRE_CANTIDAD_OBLIGATORIO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.PRODUCTO_EXISTENTE
-import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.AgregarProductoUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CambiarCantidadUseCase
@@ -29,7 +24,9 @@ import javax.inject.Inject
 class ProductosViewModel @Inject constructor(
     private val cambiarCantidadUseCase: CambiarCantidadUseCase,
     private val cargarProductosUseCase: CargarProductosUseCase,
-    private val agregarProductoUseCase: AgregarProductoUseCase
+    private val agregarProductoUseCase: AgregarProductoUseCase,
+    val imageLoader: ImageLoader
+
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductosContract.ProductosState())
     val uiState: StateFlow<ProductosContract.ProductosState> = _uiState.asStateFlow()
@@ -74,7 +71,7 @@ class ProductosViewModel @Inject constructor(
                         when (result) {
                             is NetworkResult.Success -> {
                                 val productosActualizados =
-                                    _uiState.value.productos + productoDTOtoProducto(listOf(result.data!!))
+                                    _uiState.value.productos + listOf(result.data!!)
                                 _uiState.update {
                                     it.copy(
                                         productos = productosActualizados,
@@ -131,7 +128,7 @@ class ProductosViewModel @Inject constructor(
                                 cajones = cajones,
                                 muebleActual = muebleActual,
                                 cajonActual = cajonActual,
-                                productos = productoDTOtoProducto(productos),
+                                productos = productos,
                                 idPropietario = idPropietario,
                                 isLoading = false
                             )
@@ -187,16 +184,5 @@ class ProductosViewModel @Inject constructor(
             }
         }
         _uiState.update { it.copy(productos = productosActualizados, isLoadingCantidad = false) }
-    }
-
-    private fun productoDTOtoProducto(productosDTO: List<ProductoDTO>): List<ProductosContract.Producto> {
-        return productosDTO.map { productoDTO ->
-            ProductosContract.Producto(
-                id = productoDTO.id,
-                nombre = productoDTO.nombre,
-                unidades = productoDTO.unidades,
-                imagen = productoDTO.imagen
-            )
-        }
     }
 }

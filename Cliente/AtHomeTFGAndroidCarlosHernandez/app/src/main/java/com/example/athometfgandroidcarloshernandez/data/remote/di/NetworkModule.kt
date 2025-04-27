@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import coil.ImageLoader
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.CasaService
 import com.example.athometfgandroidcarloshernandez.data.remote.apiServices.EventosService
@@ -51,6 +52,22 @@ object NetworkModule {
             .authenticator(authAuthenticator)
             .build()
     }
+
+    @Singleton
+    @Provides
+    fun provideImageLoader(
+        @ApplicationContext context: Context,
+        authenticatorInterceptor: AuthInterceptor
+    ): ImageLoader {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authenticatorInterceptor)
+            .build()
+
+        return ImageLoader.Builder(context)
+            .okHttpClient(client)
+            .build()
+    }
+
 
     @Singleton
     @Provides

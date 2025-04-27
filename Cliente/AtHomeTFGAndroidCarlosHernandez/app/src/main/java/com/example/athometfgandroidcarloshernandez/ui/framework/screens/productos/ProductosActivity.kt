@@ -56,8 +56,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -74,6 +74,7 @@ import com.example.athometfgandroidcarloshernandez.common.Constantes.TOMAR_FOTO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths
 import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
 import com.example.athometfgandroidcarloshernandez.data.model.MuebleDTO
+import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.ui.common.Cargando
 import com.example.athometfgandroidcarloshernandez.ui.common.Selector
 import java.io.File
@@ -153,7 +154,8 @@ fun ProductosActivity(
             esPropietario = esPropietario,
             pedirPrestado = { productoId ->
                 // TODO
-            }
+            },
+            imageLoader = viewModel.imageLoader
         )
     }
 }
@@ -164,7 +166,7 @@ fun PantallaProductos(
     muebles: List<MuebleDTO>,
     cajonActual: String,
     cajones: List<CajonDTO>,
-    productos: List<ProductosContract.Producto>,
+    productos: List<ProductoDTO>,
     productosCargando: Map<String, Boolean>,
     cargando: Boolean,
     cambioMueble: (String) -> Unit = {},
@@ -174,7 +176,8 @@ fun PantallaProductos(
     agregarProducto: (String, String, ByteArray) -> Unit,
     volver: () -> Unit,
     esPropietario: Boolean,
-    pedirPrestado: (String) -> Unit
+    pedirPrestado: (String) -> Unit,
+    imageLoader: ImageLoader
 ) {
     Column(
         modifier = Modifier
@@ -215,7 +218,8 @@ fun PantallaProductos(
                     cambiarCantidad = cambiarCantidad,
                     productosCargando = productosCargando,
                     esPropietario = esPropietario,
-                    pedirPrestado = pedirPrestado
+                    pedirPrestado = pedirPrestado,
+                    imageLoader = imageLoader
                 )
             }
         }
@@ -233,11 +237,12 @@ fun PantallaProductos(
 
 @Composable
 private fun ListaProductos(
-    productos: List<ProductosContract.Producto>,
+    productos: List<ProductoDTO>,
     cambiarCantidad: (Int, Boolean) -> Unit,
     productosCargando: Map<String, Boolean>,
     esPropietario: Boolean,
-    pedirPrestado: (String) -> Unit
+    pedirPrestado: (String) -> Unit,
+    imageLoader: ImageLoader
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
@@ -257,7 +262,8 @@ private fun ListaProductos(
                     disminuir = { cambiarCantidad(producto.id, false) },
                     cargando = productosCargando[producto.nombre] == true,
                     esPropietario = esPropietario,
-                    pedirPrestado = { pedirPrestado(producto.nombre) }
+                    pedirPrestado = { pedirPrestado(producto.nombre) },
+                    imageLoader = imageLoader
                 )
             }
     }
@@ -481,12 +487,13 @@ fun AgregarProductoDialog(
 
 @Composable
 fun ProductoItem(
-    producto: ProductosContract.Producto,
+    producto: ProductoDTO,
     cargando: Boolean,
     esPropietario: Boolean,
     aumentar: () -> Unit,
     disminuir: () -> Unit,
-    pedirPrestado: () -> Unit
+    pedirPrestado: () -> Unit,
+    imageLoader: ImageLoader
 ) {
     Card(
         modifier = Modifier
@@ -510,15 +517,9 @@ fun ProductoItem(
                         .weight(0.6f)
                 ) {
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(Constantes.BASE_URL+ConstantesPaths.CARGAR_IMAGEN+producto.imagen)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = producto.nombre,
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(RoundedCornerShape(4.dp)),
-                        contentScale = ContentScale.Crop,
+                        model = Constantes.BASE_URL + ConstantesPaths.CARGAR_IMAGEN + producto.imagen,
+                        contentDescription = null,
+                        imageLoader = imageLoader
                     )
                 }
             } else {
@@ -606,9 +607,9 @@ fun PantallaProductosPreview() {
         cajonActual = "Cajon1",
         cajones = listOf(CajonDTO(id = "1", nombre = "Cajon 1")),
         productos = listOf(
-            ProductosContract.Producto(id = 0, nombre = "Producto 1", unidades = 1, imagen = null),
-            ProductosContract.Producto(id = 0, nombre = "Producto 2", unidades = 2, imagen = null),
-            ProductosContract.Producto(id = 0, nombre = "Producto 3", unidades = 3, imagen = null)
+            ProductoDTO(id = 0, nombre = "Producto 1", unidades = 1, imagen = null),
+            ProductoDTO(id = 0, nombre = "Producto 2", unidades = 2, imagen = null),
+            ProductoDTO(id = 0, nombre = "Producto 3", unidades = 3, imagen = null)
         ),
         cambioMueble = {},
         cambioCajon = {},
@@ -619,6 +620,7 @@ fun PantallaProductosPreview() {
         cargando = false,
         volver = {},
         esPropietario = true,
+        imageLoader = ImageLoader(LocalContext.current),
         pedirPrestado = {},
     )
 }
