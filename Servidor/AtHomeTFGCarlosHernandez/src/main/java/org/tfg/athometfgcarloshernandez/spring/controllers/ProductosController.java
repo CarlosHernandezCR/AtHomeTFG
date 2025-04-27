@@ -56,17 +56,23 @@ public class ProductosController {
     }
 
     @GetMapping(ConstantesServer.CARGAR_IMAGEN)
-    public ResponseEntity<Resource> cargarImagen(@RequestParam String nombre) {
+    public ResponseEntity<byte[]> cargarImagen(@PathVariable String nombre) {
         try {
             Resource imagen = productosServicios.cargarImagen(nombre);
             String contentType = Files.probeContentType(Paths.get(imagen.getFile().getAbsolutePath()));
+            if (contentType == null) {
+                contentType = APPLICATION_OCTET_STREAM;
+            }
+            byte[] imagenBytes = imagen.getInputStream().readAllBytes();
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType != null ? contentType : APPLICATION_OCTET_STREAM))
-                    .body(imagen);
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(imagenBytes);
+
         } catch (IOException e) {
             throw new CustomedException(ConstantesError.ERROR_MANDAR_IMAGEN);
         }
     }
+
 
 
 }

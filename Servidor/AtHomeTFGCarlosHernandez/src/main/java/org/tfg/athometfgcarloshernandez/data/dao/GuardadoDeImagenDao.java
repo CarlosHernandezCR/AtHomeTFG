@@ -23,12 +23,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GuardadoDeImagenDao {
 
-    private Path directorioUploads = null;
-    public GuardadoDeImagenDao(@Value(ConstantesSpring.IMAGE_STORE_PATH) String imageStorePath) {
-        this.directorioUploads = Paths.get(imageStorePath).toAbsolutePath().normalize();
-    }
+    @Value(ConstantesSpring.IMAGE_STORE_PATH)
+    private String imageStorePath;
 
     public String guardarImagen(MultipartFile imagen) {
+        Path directorioUploads =  Paths.get(imageStorePath).toAbsolutePath().normalize();
         try {
             Files.createDirectories(directorioUploads);
             String nombreArchivo = UUID.randomUUID() + "_" + imagen.getOriginalFilename();
@@ -40,7 +39,8 @@ public class GuardadoDeImagenDao {
         }
     }
     public Resource cargarImagen(String nombre) {
-            Path imagePath = directorioUploads.resolve(nombre).normalize();
+        Path directorioUploads =  Paths.get(imageStorePath).toAbsolutePath().normalize();
+        Path imagePath = directorioUploads.resolve(nombre).normalize();
             try {
                 Resource resource = new UrlResource(imagePath.toUri());
                 if (!resource.exists()) {
@@ -53,6 +53,8 @@ public class GuardadoDeImagenDao {
     }
 
     public void eliminarImagen(String nombre) {
+        Path directorioUploads =  Paths.get(imageStorePath).toAbsolutePath().normalize();
+
         try {
             Path imagePath = directorioUploads.resolve(nombre).normalize();
             Files.deleteIfExists(imagePath);
