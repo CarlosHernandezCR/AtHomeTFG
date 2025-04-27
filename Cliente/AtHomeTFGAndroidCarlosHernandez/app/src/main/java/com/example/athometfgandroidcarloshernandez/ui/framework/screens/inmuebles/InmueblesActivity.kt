@@ -133,7 +133,9 @@ fun InmueblesActivity(
                     )
                 )
             },
-            onCajonSeleccionado = onCajonSeleccionado,
+            onCajonSeleccionado = {
+                if(it != "") onCajonSeleccionado(it)
+            },
         )
     }
 }

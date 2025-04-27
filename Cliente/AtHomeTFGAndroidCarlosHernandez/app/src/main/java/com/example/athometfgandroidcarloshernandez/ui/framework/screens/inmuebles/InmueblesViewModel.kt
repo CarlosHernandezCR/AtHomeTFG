@@ -245,7 +245,7 @@ class InmueblesViewModel @Inject constructor(
                     }
 
                     is NetworkResult.Loading -> {
-                        _uiState.update { it.copy(isLoading = true) }
+                        _uiState.update { it.copy(loadingCajones = true) }
                     }
                 }
             }
