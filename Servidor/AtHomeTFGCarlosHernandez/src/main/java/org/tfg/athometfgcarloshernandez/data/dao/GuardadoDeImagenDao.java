@@ -27,7 +27,7 @@ public class GuardadoDeImagenDao {
     private String imageStorePath;
 
     public String guardarImagen(MultipartFile imagen) {
-        Path directorioUploads =  Paths.get(imageStorePath).toAbsolutePath().normalize();
+        Path directorioUploads = Paths.get(imageStorePath).toAbsolutePath().normalize();
         try {
             Files.createDirectories(directorioUploads);
             String nombreArchivo = UUID.randomUUID() + "_" + imagen.getOriginalFilename();
