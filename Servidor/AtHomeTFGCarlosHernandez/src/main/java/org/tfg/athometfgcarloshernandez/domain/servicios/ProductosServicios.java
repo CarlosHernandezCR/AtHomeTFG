@@ -54,12 +54,14 @@ public class ProductosServicios {
         } else if (idCajon == null) {
             MuebleEntity mueble = mueblesRepository.findById(Integer.parseInt(idMueble))
                     .orElseThrow(() -> new NotFoundException(ConstantesError.MUEBLE_NO_ENCONTRADO));
+            List<MuebleEntity> muebles = new ArrayList<>();
+            muebles.add(mueble);
             List<CajonEntity> cajones = cajonesRepository.findByMuebleEntity(mueble);
             List<AlmacenaEntity> almacenado = new ArrayList<>();
             if (!cajones.isEmpty()) {
                 almacenado = almacenaRepository.findByIdCajon(cajones.get(0));
             }
-            return getCargarProductosResponseDTO(new ArrayList<>(), cajones, almacenado, cajones.get(0).getPropietario().getId());
+            return getCargarProductosResponseDTO(muebles, cajones, almacenado,0);
         } else {
             CajonEntity cajon = cajonesRepository.findById(Integer.parseInt(idCajon))
                     .orElseThrow(() -> new NotFoundException(ConstantesError.CAJON_NO_ENCONTRADO));
@@ -84,7 +86,6 @@ public class ProductosServicios {
         List<MuebleDTO> mueblesDTO = muebles.stream()
                 .map(muebleMapper::toMuebleDTO)
                 .toList();
-
         return new CargarProductosResponseDTO(productosDTO, cajonesDTO, mueblesDTO, idPropietario);
     }
 
