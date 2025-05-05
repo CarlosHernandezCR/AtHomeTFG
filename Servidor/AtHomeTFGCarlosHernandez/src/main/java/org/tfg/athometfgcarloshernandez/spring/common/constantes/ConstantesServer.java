@@ -63,6 +63,7 @@ public class ConstantesServer {
     public static final String AGREGAR_PRODUTO = "/agregarProducto";
     public static final String CAMBIAR_CANTIDAD = "/cambiarCantidad";
     public static final String CARGAR_IMAGEN = "/cargarImagen/{nombre}";
+    public static final String AGREGAR_CAJON_CON_MUEBLE = "/agregarCajonConMueble";
 
 
     private ConstantesServer() {

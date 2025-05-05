@@ -7,14 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.tfg.athometfgcarloshernandez.data.dao.GuardadoDeImagenDao;
-import org.tfg.athometfgcarloshernandez.data.model.AlmacenaEntity;
-import org.tfg.athometfgcarloshernandez.data.model.CajonEntity;
-import org.tfg.athometfgcarloshernandez.data.model.CestaEntity;
-import org.tfg.athometfgcarloshernandez.data.model.MuebleEntity;
-import org.tfg.athometfgcarloshernandez.data.repositories.AlmacenaRepository;
-import org.tfg.athometfgcarloshernandez.data.repositories.CajonesRepository;
-import org.tfg.athometfgcarloshernandez.data.repositories.CestaRepository;
-import org.tfg.athometfgcarloshernandez.data.repositories.MueblesRepository;
+import org.tfg.athometfgcarloshernandez.data.model.*;
+import org.tfg.athometfgcarloshernandez.data.repositories.*;
 import org.tfg.athometfgcarloshernandez.domain.errores.NotFoundException;
 import org.tfg.athometfgcarloshernandez.domain.model.mappers.CajonMappers;
 import org.tfg.athometfgcarloshernandez.domain.model.mappers.MuebleMapper;
@@ -38,6 +32,7 @@ public class ProductosServicios {
     private final MuebleMapper muebleMapper;
     private final CajonMappers cajonMappers;
     private final GuardadoDeImagenDao guardadoDeImagenDao;
+    private final UsuarioRepository usuarioRepository;
 
     @Transactional
     public CargarProductosResponseDTO getProductos(String idCajon, String idMueble) {
@@ -136,5 +131,15 @@ public class ProductosServicios {
 
     public Resource cargarImagen(String nombre) {
         return guardadoDeImagenDao.cargarImagen(nombre);
+    }
+
+    public CajonDTO agregarCajonConMueble(String idMueble, String nombre, Integer idPropietario) {
+        MuebleEntity muebleEntity = mueblesRepository.findById(Integer.parseInt(idMueble))
+                .orElseThrow(() -> new NotFoundException(ConstantesError.MUEBLE_NO_ENCONTRADO));
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(idPropietario)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.USUARIO_NO_ENCONTRADO));
+        CajonEntity cajonEntity = new CajonEntity(0, nombre, usuarioEntity, muebleEntity);
+        cajonEntity = cajonesRepository.save(cajonEntity);
+        return cajonMappers.cajonEntityToCajonDTO(cajonEntity);
     }
 }

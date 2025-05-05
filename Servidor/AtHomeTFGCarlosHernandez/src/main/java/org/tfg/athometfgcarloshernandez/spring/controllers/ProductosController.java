@@ -10,6 +10,7 @@ import org.tfg.athometfgcarloshernandez.domain.errores.CustomedException;
 import org.tfg.athometfgcarloshernandez.domain.servicios.ProductosServicios;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError;
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
+import org.tfg.athometfgcarloshernandez.spring.model.CajonDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.ProductoDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.request.*;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CargarProductosResponseDTO;
@@ -72,7 +73,13 @@ public class ProductosController {
             throw new CustomedException(ConstantesError.ERROR_MANDAR_IMAGEN);
         }
     }
-
+    @PostMapping(ConstantesServer.AGREGAR_CAJON_CON_MUEBLE)
+    public ResponseEntity<CajonDTO> agregarCajon(@RequestBody AgregarCajonConMuebleRequestDTO agregarCajonConMuebleRequestDTO) {
+        return ResponseEntity.ok(
+                productosServicios.agregarCajonConMueble(agregarCajonConMuebleRequestDTO.getIdMueble(),
+                        agregarCajonConMuebleRequestDTO.getNombre(),
+                        agregarCajonConMuebleRequestDTO.getIdPropietario()));
+    }
 
 
 }
