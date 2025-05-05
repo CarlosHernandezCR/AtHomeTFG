@@ -1,11 +1,11 @@
 package org.tfg.athometfgcarloshernandez.spring.model.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class AgregarCajonConMuebleRequestDTO {
     private String idMueble;
