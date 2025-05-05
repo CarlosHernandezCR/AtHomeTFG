@@ -22,6 +22,7 @@ object ConstantesPaths {
     const val AGREGAR_HABITACION = "inmuebles/agregarHabitacion"
     const val AGREGAR_MUEBLE = "inmuebles/agregarMueble"
     const val AGREGAR_CAJON = "inmuebles/agregarCajon"
+    const val AGREGAR_CAJON_CON_MUEBLE = "inmuebles/agregarCajonConMueble"
     const val GET_USUARIOS="inmuebles/getUsuarios"
     const val REFRESH_TOKEN="login/refreshToken"
     const val GET_CASAS="casa/getCasas"

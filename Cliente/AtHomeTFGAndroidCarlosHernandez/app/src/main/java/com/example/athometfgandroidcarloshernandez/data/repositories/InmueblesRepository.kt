@@ -1,5 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.repositories
 
+import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCajonConMuebleRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCajonRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarHabitacionRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarMuebleRequestDTO
@@ -39,6 +41,12 @@ class InmueblesRepository @Inject constructor(
     fun borrarCajon(idCajon:String): Flow<NetworkResult<Boolean>> = flow {
         emit(NetworkResult.Loading())
         val result = remoteDataSource.borrarCajon(idCajon)
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    fun agregarCajonConMueble(idMueble:String,nombre:String,idPropietario:String): Flow<NetworkResult<CajonDTO>> = flow {
+        emit(NetworkResult.Loading())
+        val result = remoteDataSource.agregarCajonConMueble(AgregarCajonConMuebleRequestDTO(idMueble, nombre, idPropietario))
         emit(result)
     }.flowOn(Dispatchers.IO)
 }

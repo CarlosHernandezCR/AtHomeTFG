@@ -8,6 +8,7 @@ import com.example.athometfgandroidcarloshernandez.common.ConstantesError.IMAGEN
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.NOMBRE_CANTIDAD_OBLIGATORIO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.PRODUCTO_EXISTENTE
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
+import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.AgregarCajonUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.AgregarProductoUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CambiarCantidadUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CargarProductosUseCase
@@ -25,8 +26,8 @@ class ProductosViewModel @Inject constructor(
     private val cambiarCantidadUseCase: CambiarCantidadUseCase,
     private val cargarProductosUseCase: CargarProductosUseCase,
     private val agregarProductoUseCase: AgregarProductoUseCase,
+    private val agregarCajonUseCase: AgregarCajonUseCase,
     val imageLoader: ImageLoader
-
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductosContract.ProductosState())
     val uiState: StateFlow<ProductosContract.ProductosState> = _uiState.asStateFlow()
@@ -44,8 +45,43 @@ class ProductosViewModel @Inject constructor(
                 event.imagen
             )
             ProductosEvent.PrimerCargado -> _uiState.update { it.copy(primerCargado = true) }
+            is ProductosEvent.AgregarCajon -> agregarCajon(event.nombre, event.idUsuario)
         }
     }
+
+    private fun agregarCajon(nombre: String, idUsuario: String) {
+        if (nombre.isBlank()) {
+            _uiState.update { it.copy(error = NOMBRE_CANTIDAD_OBLIGATORIO) }
+            return
+        } else {
+            viewModelScope.launch {
+                agregarCajonUseCase.invoke(uiState.value.muebleActual,nombre, idUsuario).collect { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            val cajonesActualizados = _uiState.value.cajones + listOf(result.data!!)
+                            _uiState.update {
+                                it.copy(
+                                    cajones = cajonesActualizados,
+                                    isLoadingCantidad = false
+                                )
+                            }
+                            cambiarCajon(result.data!!.id)
+                        }
+
+                        is NetworkResult.Error -> _uiState.update {
+                            it.copy(
+                                error = result.message,
+                                isLoadingCantidad = false
+                            )
+                        }
+
+                        is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun agregarProducto(nombre: String, cantidad: String, imagen: ByteArray) {
         if (nombre.isBlank() || cantidad.isBlank()) {

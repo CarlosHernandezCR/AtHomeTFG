@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -54,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
@@ -110,8 +113,12 @@ fun ProductosActivity(
         }
     }
 
-    val esPropietario = uiState.idPropietario == idUsuario
-
+    val estadoCajon = when {
+        uiState.idPropietario == "0" -> 0
+        uiState.idPropietario != idUsuario -> 1
+        uiState.idPropietario == idUsuario -> 2
+        else -> -1
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -125,7 +132,10 @@ fun ProductosActivity(
             productos = uiState.productos,
             productosCargando = uiState.productosCargando,
             cargando = uiState.isLoading,
+            imageLoader = viewModel.imageLoader,
             verCesta = { verCesta(idUsuario) },
+            volver = volver,
+            estadoCajon = estadoCajon,
             cambioMueble = {
                 viewModel.handleEvent(
                     ProductosContract.ProductosEvent.CambiarMueble(
@@ -150,12 +160,14 @@ fun ProductosActivity(
                     ProductosContract.ProductosEvent.AgregarProducto(nombre, cantidad, imagen)
                 )
             },
-            volver = volver,
-            esPropietario = esPropietario,
             pedirPrestado = { productoId ->
                 // TODO
             },
-            imageLoader = viewModel.imageLoader
+            agregarCajon = { nombre ->
+                viewModel.handleEvent(
+                    ProductosContract.ProductosEvent.AgregarCajon(nombre,idUsuario)
+                )
+            }
         )
     }
 }
@@ -174,8 +186,9 @@ fun PantallaProductos(
     cambiarCantidad: (Int, Boolean) -> Unit,
     verCesta: () -> Unit,
     agregarProducto: (String, String, ByteArray) -> Unit,
+    agregarCajon: (String) -> Unit,
     volver: () -> Unit,
-    esPropietario: Boolean,
+    estadoCajon: Int,
     pedirPrestado: (String) -> Unit,
     imageLoader: ImageLoader
 ) {
@@ -217,7 +230,7 @@ fun PantallaProductos(
                     productos = productos,
                     cambiarCantidad = cambiarCantidad,
                     productosCargando = productosCargando,
-                    esPropietario = esPropietario,
+                    estadoCajon = estadoCajon,
                     pedirPrestado = pedirPrestado,
                     imageLoader = imageLoader
                 )
@@ -225,9 +238,10 @@ fun PantallaProductos(
         }
 
         BotoneraProductos(
-            esPropietario = esPropietario,
+            estadoCajon = estadoCajon,
             verCesta = verCesta,
             agregarProducto = agregarProducto,
+            agregarCajon = agregarCajon,
             volver = volver,
             modifier = Modifier
                 .fillMaxWidth()
@@ -240,7 +254,7 @@ private fun ListaProductos(
     productos: List<ProductoDTO>,
     cambiarCantidad: (Int, Boolean) -> Unit,
     productosCargando: Map<String, Boolean>,
-    esPropietario: Boolean,
+    estadoCajon: Int,
     pedirPrestado: (String) -> Unit,
     imageLoader: ImageLoader
 ) {
@@ -261,7 +275,7 @@ private fun ListaProductos(
                     aumentar = { cambiarCantidad(producto.id, true) },
                     disminuir = { cambiarCantidad(producto.id, false) },
                     cargando = productosCargando[producto.nombre] == true,
-                    esPropietario = esPropietario,
+                    estadoCajon = estadoCajon,
                     pedirPrestado = { pedirPrestado(producto.nombre) },
                     imageLoader = imageLoader
                 )
@@ -301,20 +315,31 @@ fun Cabecera() {
 
 @Composable
 fun BotoneraProductos(
-    esPropietario: Boolean,
+    estadoCajon: Int,
     verCesta: () -> Unit,
     agregarProducto: (String, String, ByteArray) -> Unit,
+    agregarCajon: (String) -> Unit,
     volver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialogProducto by remember { mutableStateOf(false) }
+    var showDialogCajon by remember { mutableStateOf(false) }
 
-    if (showDialog) {
+    if (showDialogProducto) {
         AgregarProductoDialog(
-            onDismiss = { showDialog = false },
+            onDismiss = { showDialogProducto = false },
             onConfirm = { nombre, cantidad, imagen ->
                 agregarProducto(nombre, cantidad, imagen)
-                showDialog = false
+                showDialogProducto = false
+            }
+        )
+    }
+    if (showDialogCajon) {
+        AgregarCajonDialog(
+            onDismiss = { showDialogCajon = false },
+            onConfirm = { nombre ->
+                agregarCajon(nombre)
+                showDialogCajon = false
             }
         )
     }
@@ -324,14 +349,55 @@ fun BotoneraProductos(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         BotonAccion(texto = Constantes.VOLVER, accion = volver)
-        if (esPropietario) BotonAccion(
+        if (estadoCajon==2) BotonAccion(
             texto = Constantes.AGREGAR_PRODUCTO,
-            accion = { showDialog = true })
+            accion = { showDialogProducto = true })
+        if(estadoCajon==0) BotonAccion(texto = Constantes.AGREGAR_CAJON, accion = {showDialogCajon = true})
         BotonAccion(texto = Constantes.CESTA, accion = verCesta)
     }
 }
 
+@Composable
+fun AgregarCajonDialog(
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var itemName by remember { mutableStateOf("") }
 
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(text = Constantes.AGREGAR_CAJON, style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = itemName,
+                    onValueChange = { itemName = it },
+                    label = { Text(Constantes.NOMBRE) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(Constantes.SALIR)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { onConfirm(itemName) }) {
+                        Text(Constantes.AGREGAR)
+                    }
+                }
+            }
+        }
+    }
+}
 @Composable
 fun AgregarProductoDialog(
     onDismiss: () -> Unit,
@@ -489,7 +555,7 @@ fun AgregarProductoDialog(
 fun ProductoItem(
     producto: ProductoDTO,
     cargando: Boolean,
-    esPropietario: Boolean,
+    estadoCajon: Int,
     aumentar: () -> Unit,
     disminuir: () -> Unit,
     pedirPrestado: () -> Unit,
@@ -544,7 +610,7 @@ fun ProductoItem(
             if (cargando) {
                 Cargando()
             } else {
-                if (esPropietario) {
+                if (estadoCajon==2) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -619,8 +685,9 @@ fun PantallaProductosPreview() {
         agregarProducto = { _, _, _ -> },
         cargando = false,
         volver = {},
-        esPropietario = true,
+        estadoCajon = 0,
         imageLoader = ImageLoader(LocalContext.current),
         pedirPrestado = {},
+        agregarCajon = {}
     )
 }

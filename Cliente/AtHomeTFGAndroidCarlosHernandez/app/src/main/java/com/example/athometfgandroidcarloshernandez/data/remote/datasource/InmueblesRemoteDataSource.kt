@@ -1,5 +1,7 @@
 package com.example.athometfgandroidcarloshernandez.data.remote.datasource
 
+import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCajonConMuebleRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCajonRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarHabitacionRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarMuebleRequestDTO
@@ -21,4 +23,6 @@ class InmueblesRemoteDataSource @Inject constructor(
         safeApiCallNoBody{ inmueblesService.agregarCajon(cajon) }
     suspend fun borrarCajon(idCajon:String): NetworkResult<Boolean> =
         safeApiCallNoBody{ inmueblesService.borrarCajon(idCajon) }
+    suspend fun agregarCajonConMueble(cajon: AgregarCajonConMuebleRequestDTO): NetworkResult<CajonDTO> =
+        safeApiCall { inmueblesService.agregarCajonConMueble(cajon) }
 }

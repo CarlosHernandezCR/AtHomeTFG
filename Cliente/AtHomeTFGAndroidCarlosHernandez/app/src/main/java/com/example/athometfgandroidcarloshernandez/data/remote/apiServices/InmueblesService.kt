@@ -2,6 +2,8 @@ package com.example.athometfgandroidcarloshernandez.data.remote.apiServices
 
 import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths
+import com.example.athometfgandroidcarloshernandez.data.model.CajonDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCajonConMuebleRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarCajonRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarHabitacionRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.AgregarMuebleRequestDTO
@@ -22,6 +24,8 @@ interface InmueblesService {
     suspend fun agregarMueble(@Body agregarMuebleRequestDTO: AgregarMuebleRequestDTO): Response<Void>
     @POST(ConstantesPaths.AGREGAR_CAJON)
     suspend fun agregarCajon(@Body agregarCajonRequestDTO: AgregarCajonRequestDTO): Response<Void>
+    @POST(ConstantesPaths.AGREGAR_CAJON_CON_MUEBLE)
+    suspend fun agregarCajonConMueble(@Body agregarCajonConMuebleRequestDTO: AgregarCajonConMuebleRequestDTO): Response<CajonDTO>
     @DELETE(ConstantesPaths.BORRAR_CAJON)
     suspend fun borrarCajon(@Query(Constantes.IDCAJON) idCajon: String): Response<Void>
 
