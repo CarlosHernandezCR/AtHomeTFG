@@ -5,7 +5,7 @@ ATHOME es una aplicación diseñada para mejorar la convivencia entre compañero
 Sus principales funcionalidades incluyen:  
 - **Estados de Usuario**: Los miembros del hogar pueden establecer su estado (en casa, fuera, durmiendo) y visualizar el de otros para facilitar la convivencia.  
 - **Reserva de Espacios**: Sistema para reservar zonas comunes, donde los miembros pueden votar para aceptar o rechazar una solicitud.  
-- **Inventario Personalizado**: Gestión de inmuebles y productos almacenados, el control de almacén lo harán los propietarios de dichos cajones.
+- **Inventario Personalizado**: Gestión de inmuebles y productos almacenados con fotos y cantidades, el control de almacén lo harán los propietarios de dichos cajones.
 - **Préstamo de productos**: Los usuarios podrán ver qué tienen el resto de usuarios en sus cajones para así enviar una petición de préstamo con el producto a prestar y su cantidad.
 - **Cesta de la compra**: los productos que se vayan eliminando de stock por su uso o préstamo se enviarán a un apartado de cesta de la compra donde el usuario podrá ver esos productos, quitarlos si no los quiere volver a compar o añadir nuevos.
 
@@ -23,7 +23,6 @@ Sus principales funcionalidades incluyen:
 
 ### **Frontend**
 - **Vue.js**: Framework para construir la interfaz de la web de descarga.  
-- **Axios**: Para manejar las llamadas a la API desde la web.  
 - **Kotlin**: Desarrollo del cliente móvil con Jetpack Compose.  
 
 ### **Backend**
@@ -50,13 +49,25 @@ Sus principales funcionalidades incluyen:
 ---
 
 ## **Bibliotecas utilizadas**
+**BACKEND**
 - **Spring Framework**: Boot, Web, Test, JPA, Validation, Security, Mail, Thymeleaf.  
 - **Lombok**: Simplificación del código en el backend.  
 - **MySQL Connector**: Integración con la base de datos.  
 - **MapStruct**: Conversión entre entidades y DTOs.  
 - **jsonwebtoken**: Gestión de tokens para autenticación.  
 - **Glassfish Containers**: Contenedores de seguridad.  
-- **Jakarta Web API**: Para facilitar el desarrollo web.  
+- **Jakarta Web API**: Para facilitar el desarrollo web.
+**FRONTEND**
+- **Axios**: Para manejar las llamadas a la API desde la web en Vue.  
+- **Navigation**: Navegación entre pantallas
+- **Retrofit**: Generar llamadas al servidor
+- **Datastore**: Visión de control de errores para el desarrollador
+- **JWT**: Control de Tokens
+- **Material3**: Iconos
+- **ColorPicker**: Selección de color, desarrollado por Skydoves 
+- **Coil**: Guardado de imagenes en caché
+- **Cropper**: Recorte de fotos
+
 
 ---
 ## 🚀 Desarrollo
