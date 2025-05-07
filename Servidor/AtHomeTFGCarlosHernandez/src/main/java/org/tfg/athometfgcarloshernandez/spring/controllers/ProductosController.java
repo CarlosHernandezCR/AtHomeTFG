@@ -76,9 +76,11 @@ public class ProductosController {
     @PostMapping(ConstantesServer.AGREGAR_CAJON_CON_MUEBLE)
     public ResponseEntity<CajonDTO> agregarCajon(@RequestBody AgregarCajonConMuebleRequestDTO agregarCajonConMuebleRequestDTO) {
         return ResponseEntity.ok(
-                productosServicios.agregarCajonConMueble(agregarCajonConMuebleRequestDTO.getIdMueble(),
+                productosServicios.agregarCajonConMueble(
+                        agregarCajonConMuebleRequestDTO.getIdMueble(),
                         agregarCajonConMuebleRequestDTO.getNombre(),
-                        agregarCajonConMuebleRequestDTO.getIdPropietario()));
+                        agregarCajonConMuebleRequestDTO.getIdPropietario()
+                ));
     }
 
 

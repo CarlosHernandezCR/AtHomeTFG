@@ -133,7 +133,7 @@ public class ProductosServicios {
         return guardadoDeImagenDao.cargarImagen(nombre);
     }
 
-    public CajonDTO agregarCajonConMueble(String idMueble, String nombre, Integer idPropietario) {
+    public CajonDTO agregarCajonConMueble(Integer idMueble, String nombre, Integer idPropietario) {
         MuebleEntity muebleEntity = mueblesRepository.findById(Integer.parseInt(idMueble))
                 .orElseThrow(() -> new NotFoundException(ConstantesError.MUEBLE_NO_ENCONTRADO));
         UsuarioEntity usuarioEntity = usuarioRepository.findById(idPropietario)

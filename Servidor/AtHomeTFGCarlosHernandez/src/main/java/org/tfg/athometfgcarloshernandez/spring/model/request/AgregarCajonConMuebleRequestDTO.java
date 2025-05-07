@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AgregarCajonConMuebleRequestDTO {
-    private String idMueble;
+    private Integer idMueble;
     private String nombre;
     private Integer idPropietario;
 }
