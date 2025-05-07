@@ -134,7 +134,7 @@ public class ProductosServicios {
     }
 
     public CajonDTO agregarCajonConMueble(Integer idMueble, String nombre, Integer idPropietario) {
-        MuebleEntity muebleEntity = mueblesRepository.findById(Integer.parseInt(idMueble))
+        MuebleEntity muebleEntity = mueblesRepository.findById(idMueble)
                 .orElseThrow(() -> new NotFoundException(ConstantesError.MUEBLE_NO_ENCONTRADO));
         UsuarioEntity usuarioEntity = usuarioRepository.findById(idPropietario)
                 .orElseThrow(() -> new NotFoundException(ConstantesError.USUARIO_NO_ENCONTRADO));
