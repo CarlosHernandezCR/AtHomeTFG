@@ -33,6 +33,7 @@ public class ProductosServicios {
     private final CajonMappers cajonMappers;
     private final GuardadoDeImagenDao guardadoDeImagenDao;
     private final UsuarioRepository usuarioRepository;
+    private final PedidosRepository pedidosRepository;
 
     @Transactional
     public CargarProductosResponseDTO getProductos(String idCajon, String idMueble) {
@@ -141,5 +142,15 @@ public class ProductosServicios {
         CajonEntity cajonEntity = new CajonEntity(0, nombre, usuarioEntity, muebleEntity);
         cajonEntity = cajonesRepository.save(cajonEntity);
         return cajonMappers.cajonEntityToCajonDTO(cajonEntity);
+    }
+
+    public String pedirPrestado(int idProducto, int idUsuario) {
+        AlmacenaEntity almacenaEntity = almacenaRepository.findById(idProducto)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.PRODUCTO_NO_ENCONTRADO));
+        UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new NotFoundException(ConstantesError.USUARIO_NO_ENCONTRADO));
+        UsuarioEntity propietario = almacenaEntity.getIdCajon().getPropietario();
+        pedidosRepository.save(new PedidoEntity(null, almacenaEntity, propietario, usuario, null));
+        return almacenaEntity.getNombre();
     }
 }

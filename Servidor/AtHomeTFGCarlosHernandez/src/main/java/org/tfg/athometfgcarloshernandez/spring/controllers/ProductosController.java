@@ -1,7 +1,7 @@
 package org.tfg.athometfgcarloshernandez.spring.controllers;
 
-import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +12,11 @@ import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesError
 import org.tfg.athometfgcarloshernandez.spring.common.constantes.ConstantesServer;
 import org.tfg.athometfgcarloshernandez.spring.model.CajonDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.ProductoDTO;
-import org.tfg.athometfgcarloshernandez.spring.model.request.*;
+import org.tfg.athometfgcarloshernandez.spring.model.request.AgregarCajonConMuebleRequestDTO;
+import org.tfg.athometfgcarloshernandez.spring.model.request.CambiarCantidadProductoRequestDTO;
+import org.tfg.athometfgcarloshernandez.spring.model.request.PedirPrestadoRequestDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CargarProductosResponseDTO;
+import org.tfg.athometfgcarloshernandez.spring.model.response.PedirPrestadoResponseDTO;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,8 +38,8 @@ public class ProductosController {
 
     @GetMapping(ConstantesServer.CARGAR_PRODUCTOS)
     public ResponseEntity<CargarProductosResponseDTO> getProductos(@RequestParam(required = false) String idCajon,
-                                                                  @RequestParam(required = false) String idMueble) {
-        return ResponseEntity.ok( productosServicios.getProductos(idCajon, idMueble));
+                                                                   @RequestParam(required = false) String idMueble) {
+        return ResponseEntity.ok(productosServicios.getProductos(idCajon, idMueble));
     }
 
     @PostMapping(ConstantesServer.AGREGAR_PRODUTO)
@@ -73,6 +76,7 @@ public class ProductosController {
             throw new CustomedException(ConstantesError.ERROR_MANDAR_IMAGEN);
         }
     }
+
     @PostMapping(ConstantesServer.AGREGAR_CAJON_CON_MUEBLE)
     public ResponseEntity<CajonDTO> agregarCajon(@RequestBody AgregarCajonConMuebleRequestDTO agregarCajonConMuebleRequestDTO) {
         return ResponseEntity.ok(
@@ -81,6 +85,12 @@ public class ProductosController {
                         agregarCajonConMuebleRequestDTO.getNombre(),
                         agregarCajonConMuebleRequestDTO.getIdPropietario()
                 ));
+    }
+
+    @PostMapping(ConstantesServer.AGREGAR_CAJON_CON_MUEBLE)
+    public ResponseEntity<PedirPrestadoResponseDTO> agregarCajon(@RequestBody PedirPrestadoRequestDTO pedirPrestadoRequestDTO) {
+        return ResponseEntity.ok(new PedirPrestadoResponseDTO(productosServicios.pedirPrestado(pedirPrestadoRequestDTO.getIdProducto(),
+                pedirPrestadoRequestDTO.getIdUsuario())));
     }
 
 
