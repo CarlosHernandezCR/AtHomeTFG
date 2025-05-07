@@ -6,7 +6,9 @@ import com.example.athometfgandroidcarloshernandez.common.Constantes.IMAGE_JPEG
 import com.example.athometfgandroidcarloshernandez.common.Constantes.TEXT_PLAIN
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarCantidadProductoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.PedirPrestadoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.CargarProductosResponseDTO
+import com.example.athometfgandroidcarloshernandez.data.model.response.PedirPrestadoResponseDTO
 import com.example.athometfgandroidcarloshernandez.data.remote.datasource.ProductosRemoteDataSource
 import com.example.athometfgandroidcarloshernandez.data.remote.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -52,4 +54,12 @@ class ProductosRepository @Inject constructor(
                 remoteDataSource.cambiarCantidad(CambiarCantidadProductoRequestDTO(idProducto, cantidad))
             emit(result)
         }.flowOn(Dispatchers.IO)
+
+    fun pedirPrestado(productoId: String, idUsuario: String): Flow<NetworkResult<PedirPrestadoResponseDTO>> =
+        flow {
+            emit(NetworkResult.Loading())
+            val result = remoteDataSource.pedirPrestado(PedirPrestadoRequestDTO(productoId, idUsuario))
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+
 }

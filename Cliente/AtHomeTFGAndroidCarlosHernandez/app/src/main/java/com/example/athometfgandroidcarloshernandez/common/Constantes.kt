@@ -3,6 +3,8 @@ package com.example.athometfgandroidcarloshernandez.common
 import com.example.athometfgandroidcarloshernandez.BuildConfig
 
 object Constantes {
+    const val SOLICITANDO_PEDIDO = "Solicitando pedido..."
+    const val PEDIDO_REALIZADO = "Producto pedido a "
     const val TEXT_PLAIN = "text/plain"
     const val IMAGE_JPEG = "image/jpeg"
     const val IMAGEN_JPG = "imagen.jpg"

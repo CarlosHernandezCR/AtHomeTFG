@@ -161,7 +161,9 @@ fun ProductosActivity(
                 )
             },
             pedirPrestado = { productoId ->
-                // TODO
+                viewModel.handleEvent(
+                    ProductosContract.ProductosEvent.PedirPrestado(productoId, idUsuario)
+                )
             },
             agregarCajon = { nombre ->
                 viewModel.handleEvent(

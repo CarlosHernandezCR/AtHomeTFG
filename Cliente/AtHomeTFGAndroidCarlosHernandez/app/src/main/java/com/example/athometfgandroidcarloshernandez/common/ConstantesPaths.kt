@@ -35,4 +35,5 @@ object ConstantesPaths {
     const val CAMBIAR_CANTIDAD_PRODUCTO= "productos/cambiarCantidad"
     const val CARGAR_PRODUCTOS= "productos/cargarProductos"
     const val AGREGAR_PRODUCTO= "productos/agregarProducto"
+    const val PEDIR_PRESTADO= "productos/pedirPrestado"
 }

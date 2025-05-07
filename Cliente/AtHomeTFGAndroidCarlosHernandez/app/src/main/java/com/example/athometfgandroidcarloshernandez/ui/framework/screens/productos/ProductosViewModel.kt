@@ -3,6 +3,7 @@ package com.example.athometfgandroidcarloshernandez.ui.framework.screens.product
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
+import com.example.athometfgandroidcarloshernandez.common.Constantes
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.ERROR_NUMERO_ENTERO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.IMAGEN_OBLIGATORIA
 import com.example.athometfgandroidcarloshernandez.common.ConstantesError.NOMBRE_CANTIDAD_OBLIGATORIO
@@ -12,6 +13,7 @@ import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.Agr
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.AgregarProductoUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CambiarCantidadUseCase
 import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.CargarProductosUseCase
+import com.example.athometfgandroidcarloshernandez.domain.usecases.productos.PedirPrestadoUseCase
 import com.example.athometfgandroidcarloshernandez.ui.framework.screens.productos.ProductosContract.ProductosEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +29,7 @@ class ProductosViewModel @Inject constructor(
     private val cargarProductosUseCase: CargarProductosUseCase,
     private val agregarProductoUseCase: AgregarProductoUseCase,
     private val agregarCajonUseCase: AgregarCajonUseCase,
+    private val pedirPrestadoUseCase: PedirPrestadoUseCase,
     val imageLoader: ImageLoader
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductosContract.ProductosState())
@@ -44,8 +47,28 @@ class ProductosViewModel @Inject constructor(
                 event.cantidad,
                 event.imagen
             )
+
             ProductosEvent.PrimerCargado -> _uiState.update { it.copy(primerCargado = true) }
             is ProductosEvent.AgregarCajon -> agregarCajon(event.nombre, event.idUsuario)
+            is ProductosEvent.PedirPrestado -> pedirPrestado(event.productoId, event.idUsuario)
+        }
+    }
+
+    private fun pedirPrestado(productoId: String, idUsuario: String) {
+        viewModelScope.launch {
+            pedirPrestadoUseCase.invoke(productoId, idUsuario).collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        _uiState.update { it.copy(error = Constantes.PEDIDO_REALIZADO + result.data!!.nombreUsuario) }
+                    }
+                    is NetworkResult.Error -> _uiState.update {
+                        it.copy(
+                            error = result.message,
+                        )
+                    }
+                    is NetworkResult.Loading -> _uiState.update { it.copy(error = Constantes.SOLICITANDO_PEDIDO) }
+                }
+            }
         }
     }
 
@@ -55,29 +78,31 @@ class ProductosViewModel @Inject constructor(
             return
         } else {
             viewModelScope.launch {
-                agregarCajonUseCase.invoke(uiState.value.muebleActual,nombre, idUsuario).collect { result ->
-                    when (result) {
-                        is NetworkResult.Success -> {
-                            val cajonesActualizados = _uiState.value.cajones + listOf(result.data!!)
-                            _uiState.update {
+                agregarCajonUseCase.invoke(uiState.value.muebleActual, nombre, idUsuario)
+                    .collect { result ->
+                        when (result) {
+                            is NetworkResult.Success -> {
+                                val cajonesActualizados =
+                                    _uiState.value.cajones + listOf(result.data!!)
+                                _uiState.update {
+                                    it.copy(
+                                        cajones = cajonesActualizados,
+                                        isLoadingCantidad = false
+                                    )
+                                }
+                                cambiarCajon(result.data!!.id)
+                            }
+
+                            is NetworkResult.Error -> _uiState.update {
                                 it.copy(
-                                    cajones = cajonesActualizados,
+                                    error = result.message,
                                     isLoadingCantidad = false
                                 )
                             }
-                            cambiarCajon(result.data!!.id)
-                        }
 
-                        is NetworkResult.Error -> _uiState.update {
-                            it.copy(
-                                error = result.message,
-                                isLoadingCantidad = false
-                            )
+                            is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
                         }
-
-                        is NetworkResult.Loading -> _uiState.update { it.copy(isLoadingCantidad = true) }
                     }
-                }
             }
         }
     }

@@ -7,7 +7,9 @@ import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths.IDCAJO
 import com.example.athometfgandroidcarloshernandez.common.ConstantesPaths.NOMBRE_QUERY
 import com.example.athometfgandroidcarloshernandez.data.model.ProductoDTO
 import com.example.athometfgandroidcarloshernandez.data.model.request.CambiarCantidadProductoRequestDTO
+import com.example.athometfgandroidcarloshernandez.data.model.request.PedirPrestadoRequestDTO
 import com.example.athometfgandroidcarloshernandez.data.model.response.CargarProductosResponseDTO
+import com.example.athometfgandroidcarloshernandez.data.model.response.PedirPrestadoResponseDTO
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -36,4 +38,7 @@ interface ProductosService {
         @Part imagen: MultipartBody.Part,
         @Part(IDCAJON_QUERY) idCajon: RequestBody,
     ): Response<ProductoDTO>
+
+    @POST(ConstantesPaths.PEDIR_PRESTADO)
+    suspend fun pedirPrestado(@Body pedirPrestadoRequestDTO: PedirPrestadoRequestDTO): Response<PedirPrestadoResponseDTO>
 }
