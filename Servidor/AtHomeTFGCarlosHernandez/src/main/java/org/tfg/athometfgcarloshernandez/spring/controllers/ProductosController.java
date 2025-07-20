@@ -87,8 +87,8 @@ public class ProductosController {
                 ));
     }
 
-    @PostMapping(ConstantesServer.AGREGAR_CAJON_CON_MUEBLE)
-    public ResponseEntity<PedirPrestadoResponseDTO> agregarCajon(@RequestBody PedirPrestadoRequestDTO pedirPrestadoRequestDTO) {
+    @PostMapping(ConstantesServer.PEDIR_PRESTADO)
+    public ResponseEntity<PedirPrestadoResponseDTO> pedirPrestado(@RequestBody PedirPrestadoRequestDTO pedirPrestadoRequestDTO) {
         return ResponseEntity.ok(new PedirPrestadoResponseDTO(productosServicios.pedirPrestado(pedirPrestadoRequestDTO.getIdProducto(),
                 pedirPrestadoRequestDTO.getIdUsuario())));
     }

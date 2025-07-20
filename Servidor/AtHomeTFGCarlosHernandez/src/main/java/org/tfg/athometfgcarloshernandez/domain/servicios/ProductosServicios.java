@@ -18,7 +18,6 @@ import org.tfg.athometfgcarloshernandez.spring.model.MuebleDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.ProductoDTO;
 import org.tfg.athometfgcarloshernandez.spring.model.response.CargarProductosResponseDTO;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
